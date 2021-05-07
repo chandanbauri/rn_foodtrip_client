@@ -1,20 +1,23 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { Dimensions, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather';
+import RestaurantScrollView from '../../../components/scrollview/restaurant';
 const { width } = Dimensions.get('window');
 const Search = ({ navigation }) => {
+
+    const [isViewingRestaurant, setViewingRestaurant] = useState(true);
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
                 <Pressable
                     style={styles.headerBackButton}
-                    onPress={() => {navigation.navigate('Home')}}
+                    onPress={() => { navigation.navigate('Home') }}
                 >
                     <Feather name="arrow-left" size={24} color="#21BF73" />
                 </Pressable>
             )
         })
-    })
+    });
     return (
         <View style={styles.root}>
             <View style={styles.searchBarContainer}>
@@ -26,6 +29,25 @@ const Search = ({ navigation }) => {
                     />
                 </View>
             </View>
+            <View style={styles.filterContainer}>
+                <Pressable
+                    style={[styles.filterOptions, isViewingRestaurant ? styles.filterOptionsFocused : styles.filterOptionsNotFocused]}
+                    onPress={() => {
+                        setViewingRestaurant((prev) => !prev)
+                    }}
+                >
+                    <Text style={[styles.filterOptionsText, isViewingRestaurant ? styles.filterOptionsTextFocused : styles.filterOptionsTextNotFocused]}>Restaurant</Text>
+                </Pressable>
+                <Pressable
+                    style={[styles.filterOptions, isViewingRestaurant ? styles.filterOptionsNotFocused : styles.filterOptionsFocused]}
+                    onPress={() => {
+                        setViewingRestaurant((prev) => !prev)
+                    }}
+                >
+                    <Text style={[styles.filterOptionsText, isViewingRestaurant ? styles.filterOptionsTextNotFocused : styles.filterOptionsTextFocused]}>Food</Text>
+                </Pressable>
+            </View>
+            <RestaurantScrollView isRestaurant={isViewingRestaurant}/>
         </View>
     )
 }
@@ -42,7 +64,6 @@ const styles = StyleSheet.create({
     },
     searchBarContainer: {
         width: width,
-        marginTop: 2,
         paddingHorizontal: 14,
     },
     searchBar: {
@@ -51,7 +72,43 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop: 2,
     },
-    searchBarTextInput:{
+    searchBarTextInput: {
         paddingLeft: 10,
+    },
+    filterContainer: {
+        marginTop: 20,
+        width: width,
+        borderBottomWidth: 2,
+        borderBottomColor: '#21BF73',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 14,
+    },
+    filterOptions: {
+        height: 30,
+        width: 90,
+        borderRadius: 50,
+        marginBottom: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 8,
+    },
+    filterOptionsFocused: {
+        backgroundColor: '#21BF73',
+    },
+    filterOptionsNotFocused: {
+        borderColor: '#21BF73',
+        borderWidth: 1,
+        backgroundColor: "#FFF",
+    },
+    filterOptionsText: {
+        fontFamily: 'OpenSans-SemiBold',
+        fontSize: 12,
+    },
+    filterOptionsTextFocused: {
+        color: '#fff',
+    },
+    filterOptionsTextNotFocused: {
+        color: '#21BF73',
     }
 })
