@@ -1,14 +1,11 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import Home from '../../screens/home'
+import BottomNavigator from '../bottomTabNavigator'
 const Stack = createStackNavigator()
 const AuthNavigator = () => {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Home" component={Home} options={{
-                headerTitle: `Food Trip`,
-                headerTitleStyle: { color: '#21BF73', fontFamily: 'OpenSans-SemiBold' },
-            }} />
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name="Main" component={BottomNavigator} />
         </Stack.Navigator>
     )
 }
