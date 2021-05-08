@@ -1,10 +1,11 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useContext, useLayoutEffect, useState, useEffect } from 'react'
 import { Dimensions, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather';
 import RestaurantScrollView from '../../../components/scrollview/restaurant';
+import { ResourceContext, ResourceProvider } from '../../../contexts/resource';
 const { width } = Dimensions.get('window');
 const Search = ({ navigation }) => {
-
+    const { cart } = useContext(ResourceContext)
     const [isViewingRestaurant, setViewingRestaurant] = useState(true);
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -17,7 +18,7 @@ const Search = ({ navigation }) => {
                 </Pressable>
             )
         })
-    });
+    })
     return (
         <View style={styles.root}>
             <View style={styles.searchBarContainer}>
@@ -47,7 +48,7 @@ const Search = ({ navigation }) => {
                     <Text style={[styles.filterOptionsText, isViewingRestaurant ? styles.filterOptionsTextNotFocused : styles.filterOptionsTextFocused]}>Food</Text>
                 </Pressable>
             </View>
-            <RestaurantScrollView isRestaurant={isViewingRestaurant}/>
+            <RestaurantScrollView isRestaurant={isViewingRestaurant} />
         </View>
     )
 }

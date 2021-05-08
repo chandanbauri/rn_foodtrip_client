@@ -4,13 +4,32 @@ import Restaurant from '../../cards/Restaurant'
 import Food from '../../cards/food'
 
 const RestaurantScrollView = ({ isRestaurant }) => {
-    const data = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    const data = [
+        {
+            id: 1,
+        },
+        {
+            id: 2
+        },
+        {
+            id: 3,
+        },
+        {
+            id: 4
+        },
+        {
+            id: 5,
+        },
+        {
+            id: 6
+        },
+    ]
     return (
         <View style={styles.root}>
             <ScrollView style={styles.scrollView}>
                 {isRestaurant ?
                     data.map((item, index) => (<Restaurant key={index} />))
-                    : data.map((item, index) => (<Food key={index} />))}
+                    : data.map((item, index) => (<Food key={index} info={item}/>))}
             </ScrollView>
         </View>
     )

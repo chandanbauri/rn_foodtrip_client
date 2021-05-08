@@ -1,19 +1,58 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ResourceContext } from '../../../contexts/resource'
 const { width } = Dimensions.get('window')
-const Food = () => {
+const Food = (props) => {
+    const { addToCart, updateItem, deleteItemFromCart, findItemInTheCart } = useContext(ResourceContext)
+    const { info } = props
+    const [counter, setCounter] = useState();
+    useEffect(() => {
+        const item = findItemInTheCart(info.id)
+        if (item) setCounter(item.count)
+    }, [])
     return (
         <View style={styles.root}>
             <View style={styles.detailsContainer}>
                 <Text style={styles.detailsTitle}>Domino’s Pizza</Text>
                 <Text style={styles.detailsText}>₹ 350</Text>
             </View>
-            <Pressable 
-             onPress={()=>{}}
-            >
-                <SimpleLineIcons name="plus" size={35} color="#21BF73"/>
-            </Pressable>
+            {findItemInTheCart(info.id) ?
+                <View style={styles.controllButtonsContainer}>
+                    <Pressable
+                        onPress={() => {
+                            setCounter((prev) => {
+                                prev === 1 ? deleteItemFromCart(info.id) : updateItem(info.id, prev - 1)
+                                return prev - 1
+                            })
+                        }}
+                    >
+                        <MaterialCommunityIcons name="minus-box-outline" size={24} color="#21BF73" />
+                    </Pressable>
+                    <Text>{counter}</Text>
+                    <Pressable
+                        onPress={() => {
+                            setCounter((prev) => {
+                                updateItem(info.id, prev + 1)
+                                return prev + 1
+                            })
+                        }}
+                    >
+                        <MaterialCommunityIcons name="plus-box-outline" size={24} color="#21BF73" />
+                    </Pressable>
+                </View>
+                :
+                <Pressable
+                    onPress={() => {
+                        setCounter(1)
+                        addToCart({ ...info, count: 1 })
+                    }}
+                >
+                    <SimpleLineIcons name="plus" size={35} color="#21BF73" />
+                </Pressable>
+            }
+
         </View>
     )
 }
@@ -45,5 +84,11 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-Bold',
         fontSize: 13,
         color: '#21BF73'
+    },
+    controllButtonsContainer: {
+        width: 100,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around'
     }
 })

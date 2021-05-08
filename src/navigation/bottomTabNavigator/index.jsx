@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -6,8 +6,10 @@ import Cart from '../../screens/cart';
 import Account from '../../screens/account';
 import HomeScreenStack from '../homeScreenStackNavigator';
 import { Text } from 'react-native'
+import { ResourceContext } from '../../contexts/resource';
 const BottomTab = createBottomTabNavigator();
 const BottomNavigator = () => {
+    const { cart } = useContext(ResourceContext)
     return (
         <BottomTab.Navigator
             screenOptions={({ route }) => ({
@@ -20,7 +22,7 @@ const BottomNavigator = () => {
             })}
         >
             <BottomTab.Screen name="HomeScreenStack" component={HomeScreenStack} options={{ headerShown: false }} />
-            <BottomTab.Screen name="Cart" component={Cart} options={{ headerShown: false }} />
+            <BottomTab.Screen name="Cart" component={Cart} options={{ headerShown: false, tabBarBadge: cart.length > 0 ? cart.length : null }} />
             <BottomTab.Screen name="Account" component={Account} options={{ headerShown: false }} />
         </BottomTab.Navigator>
     )
@@ -46,7 +48,7 @@ const TabBarIcon = (route) => (({ focused, size }) => {
     return <MaterialCommunityIcons name={iconName} size={size} color="#000" />
 });
 
-const TabBarLabel  = (route) => (() => {
+const TabBarLabel = (route) => (() => {
     let labelName
     switch (route.name) {
         case "HomeScreenStack":
@@ -59,5 +61,5 @@ const TabBarLabel  = (route) => (() => {
             labelName = "Account"
             break
     }
-    return <Text style={{fontSize: 13, fontFamily: 'OpenSans'}}>{`${labelName}`}</Text>
+    return <Text style={{ fontSize: 13, fontFamily: 'OpenSans' }}>{`${labelName}`}</Text>
 })
