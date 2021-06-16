@@ -17,40 +17,46 @@ const Home = ({ navigation }) => {
         })
     })
     return (
-        <SafeAreaView style={styles.root}>
-            <StatusBar backgroundColor="#21BF73" />
-            <ScrollView>
-                <View style={styles.addressViewContainer}>
-                    <TouchableOpacity style={styles.addressView}>
-                        <MaterialCommunityIcons name="map-marker-radius" size={24} />
-                        <View style={styles.addressViewTextContainer}>
-                            <Text style={styles.addressViewText}>Road 5 , Asansol</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.categoryListContainer}>
-                    <View style={styles.categoryListHeaderContainer}><Text style={styles.categoryListHeader}>Categories</Text></View>
-                    <View style={styles.categoryList}>
-                        {/* restaurant cards goes here only the closest ones */}
-                    </View>
-                </View>
-                <View style={styles.restaurantListContainer}>
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                    <Restaurant />
-                </View>
-            </ScrollView>
-        </SafeAreaView>
-    )
+      <SafeAreaView style={styles.root}>
+        <StatusBar backgroundColor="#21BF73" />
+        <ScrollView>
+          <View style={styles.addressViewContainer}>
+            <TouchableOpacity style={styles.addressView}>
+              <MaterialCommunityIcons name="map-marker-radius" size={24} />
+              <View style={styles.addressViewTextContainer}>
+                <Text style={styles.addressViewText}>Road 5 , Asansol</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.categoryListContainer}>
+            <View style={styles.categoryListHeaderContainer}>
+              <Text style={styles.categoryListHeader}>Categories</Text>
+            </View>
+            <View style={styles.categoryList}>
+              {/* restaurant cards goes here only the closest ones */}
+            </View>
+          </View>
+          <View style={styles.restaurantListContainer}>
+            <Restaurant
+              onClick={() => {
+                navigation.navigate('ViewRestaurant');
+              }}
+            />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+            <Restaurant />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
 }
 
 export default Home

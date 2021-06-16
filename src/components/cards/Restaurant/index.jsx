@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 const { width } = Dimensions.get('screen')
-const Restaurant = () => {
+const Restaurant = (props) => {
+    const {onClick} = props
     return (
         <Pressable style={styles.root}
-            onPress={() => { }}
+            onPress={onClick}
         >
             <Image
                 source={{ uri: 'https://static.toiimg.com/thumb/56933159.cms?imgsize=686279&width=800&height=800' }}
