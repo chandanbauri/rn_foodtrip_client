@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "630482064680",
+    "project_id": "f-100ft",
+    "storage_bucket": "f-100ft.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630482064680:android:594df23d60dcc0625eec1d",
+        "android_client_info": {
+          "package_name": "com.foodtrip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630482064680-6a71s2ogqtqlfq2pej9avljsdftram6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.foodtrip",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "630482064680-dhr6op0pdd129m6m09i27gqgditu2vs8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaff2x-felb9d89fxgyHgjdASYPyKQM90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630482064680-dhr6op0pdd129m6m09i27gqgditu2vs8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
