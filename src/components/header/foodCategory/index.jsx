@@ -10,16 +10,19 @@ import {
 import Food from '../../cards/food';
 const {height, width} = Dimensions.get('window');
 
-const FoodCategoryHeader = () => {
+const FoodCategoryHeader = ({onOptionClick}) => {
   const [activeTab, setActiveTab] = useState(1);
 
   const HeaderItem = ({item}) => {
     const isActive = activeTab === item.index;
     return (
       <TouchableOpacity
+        style={{alignItems: 'center'}}
         onPress={() => {
           //setApp(prev => ({...prev, activeTabIndex: item.index}));
+          onOptionClick(item.title);
           setActiveTab(prev => item.index);
+          
         }}>
         <View style={styles.itemRoot}>
           <Text
@@ -42,7 +45,6 @@ const FoodCategoryHeader = () => {
         renderItem={HeaderItem}
         keyExtractor={item => item.id}
         showsHorizontalScrollIndicator={false}
-        initialNumToRender={5}
       />
     </View>
   );
@@ -56,7 +58,6 @@ const styles = StyleSheet.create({
     width: width,
     backgroundColor: '#FFFFFF',
     marginVertical: 5,
-    paddingHorizontal: 5,
   },
   //Header Item
 
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   },
   activeItemIndicator: {
     backgroundColor: '#21BF73',
-    width: (width * 25) / 100,
+    width: (width * 22) / 100,
     height: 3,
   },
   inactiveText: {
@@ -92,23 +93,23 @@ const itemList = [
   },
   {
     id: 2,
-    title: 'Burger',
+    title: 'Pizza1',
     index: 2,
   },
   {
     id: 3,
-    title: 'Pizza',
+    title: 'Pizza2',
     index: 3,
   },
-  {id: 4, title: 'Pizza', index: 4},
   {
-    id: 5,
-    title: 'Pizza',
-    index: 5,
+    id: 4,
+    title: 'Pizza3',
+    index: 4,
   },
+  {id: 5, title: 'Pizza4', index: 5},
   {
     id: 6,
-    title: 'Pizza',
+    title: 'Pizza5',
     index: 6,
   },
 ];

@@ -7,25 +7,46 @@ import Account from '../../screens/account';
 import HomeScreenStack from '../homeScreenStackNavigator';
 import { Text } from 'react-native'
 import { ResourceContext } from '../../contexts/resource';
+import Home from '../../screens/home';
 const BottomTab = createBottomTabNavigator();
 const BottomNavigator = () => {
     const { cart } = useContext(ResourceContext)
     return (
-        <BottomTab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: TabBarIcon(route),
-                tabBarActiveTintColor: '#000000',
-                tabBarInactiveTintColor: "#000000",
-                tabBarLabelStyle: { fontSize: 12 },
-                //tabBarShowLabel: false,
-                tabBarLabel: TabBarLabel(route)
-            })}
-        >
-            <BottomTab.Screen name="HomeScreenStack" component={HomeScreenStack} options={{ headerShown: false }} />
-            <BottomTab.Screen name="Cart" component={Cart} options={{ headerShown: false, tabBarBadge: cart.length > 0 ? cart.length : null }} />
-            <BottomTab.Screen name="Account" component={Account} options={{ headerShown: false }} />
-        </BottomTab.Navigator>
-    )
+      <BottomTab.Navigator
+        screenOptions={({route}) => ({
+          tabBarIcon: TabBarIcon(route),
+          tabBarActiveTintColor: '#000000',
+          tabBarInactiveTintColor: '#000000',
+          tabBarLabelStyle: {fontSize: 12},
+          //tabBarShowLabel: false,
+          tabBarLabel: TabBarLabel(route),
+        })}>
+        <BottomTab.Screen
+          name="HomeScreenStack"
+          component={Home}
+          options={{
+            headerTitle: `Food Trip`,
+            headerTitleStyle: {
+              color: '#21BF73',
+              fontFamily: 'OpenSans-SemiBold',
+            },
+          }}
+        />
+        <BottomTab.Screen
+          name="Cart"
+          component={Cart}
+          options={{
+            headerShown: false,
+            tabBarBadge: cart.length > 0 ? cart.length : null,
+          }}
+        />
+        <BottomTab.Screen
+          name="Account"
+          component={Account}
+          options={{headerShown: false}}
+        />
+      </BottomTab.Navigator>
+    );
 }
 
 export default BottomNavigator
