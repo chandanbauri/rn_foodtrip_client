@@ -1,47 +1,136 @@
-import React, {useContext, useState} from 'react';
-import {Pressable, StyleSheet, Text, View, Image} from 'react-native';
+import React, {useContext, useState, useCallback, useMemo, useRef} from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TextInput,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
-
+import AddressCard from '../../components/cards/address';
+import FilledButton from '../../components/buttons/filled';
+import BorderButton from '../../components/buttons/borderButton';
+import BottomSheet from '@gorhom/bottom-sheet';
 const Account = () => {
   const navigation = useNavigation();
   const {user} = useContext(AuthContext);
+  const bottomSheetRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ['25%', '60%'], []);
+
+  // callbacks
+  const handleSheetChanges = useCallback((fromIndex, toIndex) => {
+    if(fromIndex== 1)
+    bottomSheetRef.current?.close()
+  }, []);
+  const OpenBottomSheet = () => {
+    bottomSheetRef.current?.expand()
+  }
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root}>
       {user != null ? (
-        <View style={styles.subContainer}>
-          <View style={styles.titleBox}>
-            <View>
-              <Text style={styles.userName}>
-                {user.displayName ? user.displayName : 'User Name'}
-              </Text>
-              <Text style={styles.phoneNumber}>{user.phoneNumber}</Text>
+        <>
+          <View style={styles.subContainer}>
+            <View style={styles.titleBox}>
+              <View>
+                <Text style={styles.userName}>
+                  {user.displayName ? user.displayName : 'User Name'}
+                </Text>
+                <Text style={styles.phoneNumber}>{user.phoneNumber}</Text>
+              </View>
+              {user.photoURL ? (
+                <Image source={user.photoURL} />
+              ) : (
+                <Pressable onPress={() => {OpenBottomSheet()}}>
+                  <View
+                    style={{
+                      height: 50,
+                      width: 50,
+                      borderRadius: 25,
+                      backgroundColor: '#BBB',
+                    }}></View>
+                </Pressable>
+              )}
             </View>
-            {user.photoURL ? (
-              <Image source={user.photoURL} />
-            ) : (
-              <View
-                style={{
-                  height: 50,
-                  width: 50,
-                  borderRadius: 25,
-                  backgroundColor: '#BBB',
-                }}></View>
-            )}
           </View>
-        </View>
+          <View style={styles.subContainer}>
+            <Text style={styles.sectionTitle}>Saved Addresses</Text>
+            <AddressCard />
+            <AddressCard />
+            <AddressCard />
+            <FilledButton
+              text="New Address"
+              onPress={() => {
+                console.log('hello');
+              }}
+            />
+          </View>
+          <View style={styles.subContainer}>
+            <Text style={styles.sectionTitle}>History</Text>
+            <AddressCard />
+            <AddressCard />
+            <AddressCard />
+            <FilledButton
+              text="New Address"
+              onPress={() => {
+                console.log('hello');
+              }}
+            />
+          </View>
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={1}
+            snapPoints={snapPoints}
+            onAnimate={handleSheetChanges}
+            keyboardBehavior="fullScreen"
+            keyboardBlurBehavior="restore"
+          >
+            <View style={styles.bottomSheet}>
+              <Text style={styles.sectionTitle}>Edit your profile</Text>
+              <View>
+                <View
+                  style={{
+                    height: 50,
+                    width: 50,
+                    borderRadius: 25,
+                    backgroundColor: '#BBB',
+                  }}></View>
+              </View>
+              <View style={{width: '40%', marginBottom: 10}}>
+                <BorderButton
+                  text="upload image"
+                  onPress={() => {}}
+                  fontSize={12}
+                />
+              </View>
+              <TextInput
+                placeholder="Name"
+                style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
+              />
+              <TextInput
+                placeholder="Phone"
+                style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
+              />
+              <FilledButton
+                text="SAVE CHANGES"
+                onPress={() => {
+                  console.log('hello');
+                }}
+              />
+            </View>
+          </BottomSheet>
+        </>
       ) : (
         <PhoneAuthForm navigation={navigation} />
       )}
-    </View>
+    </ScrollView>
   );
 };
-// The block for User and Giest
-// {
-//   user ? <GuestUser />
-//     <UserProfile />
-// }
 
 export default Account;
 
@@ -51,15 +140,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#BBBBBB10',
   },
   subContainer: {
-    flex: 1,
-    paddingHorizontal: 10,
+    marginBottom: 20,
+    paddingHorizontal: 15,
   },
   titleBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   userName: {
     fontSize: 16,
@@ -108,5 +196,15 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontSize: 20,
     fontFamily: 'OpenSans-SemiBold',
+  },
+  sectionTitle: {
+    fontSize: 16,
+    color: '#44444475',
+    marginBottom: 10,
+  },
+
+  bottomSheet: {
+    paddingTop: 10,
+    paddingHorizontal: 10,
   },
 });
