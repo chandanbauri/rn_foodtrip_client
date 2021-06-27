@@ -14,23 +14,23 @@ import {AuthContext} from '../../contexts/Auth';
 import AddressCard from '../../components/cards/address';
 import FilledButton from '../../components/buttons/filled';
 import BorderButton from '../../components/buttons/borderButton';
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 const Account = () => {
   const navigation = useNavigation();
   const {user} = useContext(AuthContext);
   const bottomSheetRef = useRef(null);
-
+  const [isBottomSheetOpen, setBottomSheet] = useState(true);
   // variables
-  const snapPoints = useMemo(() => ['25%', '60%'], []);
+  const snapPoints = useMemo(() => ['0%', '60%'], []);
 
   // callbacks
   const handleSheetChanges = useCallback((fromIndex, toIndex) => {
-    if(fromIndex== 1)
-    bottomSheetRef.current?.close()
+    if (fromIndex == 1) bottomSheetRef.current?.close();
   }, []);
   const OpenBottomSheet = () => {
-    bottomSheetRef.current?.expand()
-  }
+    console.log('hello');
+    bottomSheetRef.current?.expand();
+  };
   return (
     <ScrollView style={styles.root}>
       {user != null ? (
@@ -46,7 +46,10 @@ const Account = () => {
               {user.photoURL ? (
                 <Image source={user.photoURL} />
               ) : (
-                <Pressable onPress={() => {OpenBottomSheet()}}>
+                <Pressable
+                  onPress={() => {
+                    OpenBottomSheet();
+                  }}>
                   <View
                     style={{
                       height: 50,
@@ -89,7 +92,7 @@ const Account = () => {
             onAnimate={handleSheetChanges}
             keyboardBehavior="fullScreen"
             keyboardBlurBehavior="restore"
-          >
+            backdropComponent={props => <BottomSheetBackdrop {...props} />}>
             <View style={styles.bottomSheet}>
               <Text style={styles.sectionTitle}>Edit your profile</Text>
               <View>
