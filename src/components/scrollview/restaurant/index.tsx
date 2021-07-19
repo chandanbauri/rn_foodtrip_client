@@ -2,26 +2,31 @@ import React from 'react';
 import {StyleSheet, View, ScrollView, FlatList} from 'react-native';
 import Restaurant from '../../cards/Restaurant';
 import Food from '../../cards/food';
+import {foodObj} from '../../../contexts/resource';
 
-const RestaurantScrollView = ({isRestaurant}) => {
-  const data = [
+type props = {
+  isRestaurant: boolean;
+};
+
+const RestaurantScrollView = ({isRestaurant}: props) => {
+  const data: Array<foodObj> = [
     {
-      id: 1,
+      id: '1',
     },
     {
-      id: 2,
+      id: '2',
     },
     {
-      id: 3,
+      id: '3',
     },
     {
-      id: 4,
+      id: '4',
     },
     {
-      id: 5,
+      id: '5',
     },
     {
-      id: 6,
+      id: '6',
     },
   ];
   return (
@@ -29,7 +34,11 @@ const RestaurantScrollView = ({isRestaurant}) => {
       <FlatList
         data={data}
         renderItem={props =>
-          isRestaurant ? <Restaurant /> : <Food item={props} />
+          isRestaurant ? (
+            <Restaurant onClick={() => {}} values="ny" />
+          ) : (
+            <Food item={props.item} />
+          )
         }
       />
     </View>

@@ -1,16 +1,24 @@
-import React, {useContext} from 'react';
+import * as React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Cart from '../../screens/cart';
 import Account from '../../screens/account';
-import HomeScreenStack from '../homeScreenStackNavigator';
 import {Text} from 'react-native';
 import {ResourceContext} from '../../contexts/resource';
 import Home from '../../screens/home';
-const BottomTab = createBottomTabNavigator();
+import {BottomTabNavigatorParamList} from './types';
+import {RouteProp} from '@react-navigation/core';
+
+type TabBarIconProps = {
+  focused: boolean;
+  size: number;
+};
+
+const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
+
 const BottomNavigator = () => {
-  const {cart} = useContext(ResourceContext);
+  const Resource = React.useContext(ResourceContext);
   return (
     <BottomTab.Navigator
       screenOptions={({route}) => ({
@@ -23,7 +31,7 @@ const BottomNavigator = () => {
         tabBarLabel: TabBarLabel(route),
       })}>
       <BottomTab.Screen
-        name="HomeScreenStack"
+        name="Home"
         component={Home}
         options={{
           headerTitle: `Food Trip`,
@@ -38,7 +46,10 @@ const BottomNavigator = () => {
         component={Cart}
         options={{
           headerShown: false,
-          tabBarBadge: cart.length > 0 ? cart.length : null,
+          tabBarBadge:
+            Resource?.cart && Resource?.cart.length > 0
+              ? Resource?.cart.length
+              : undefined,
         }}
       />
       <BottomTab.Screen
@@ -53,38 +64,54 @@ const BottomNavigator = () => {
 export default BottomNavigator;
 
 const TabBarIcon =
-  route =>
-  ({focused, size}) => {
+  (
+    route: RouteProp<
+      BottomTabNavigatorParamList,
+      keyof BottomTabNavigatorParamList
+    >,
+  ) =>
+  ({focused, size}: TabBarIconProps) => {
     let iconName;
     switch (route.name) {
-      case 'HomeScreenStack':
+      case 'Home':
         iconName = focused ? 'home' : 'home-outline';
-        break;
+        return (
+          <MaterialCommunityIcons name={iconName} size={size} color="#000" />
+        );
       case 'Cart':
         iconName = focused ? 'shopping' : 'shopping-outline';
-        break;
+        return (
+          <MaterialCommunityIcons name={iconName} size={size} color="#000" />
+        );
 
       case 'Account':
         iconName = focused ? 'person' : 'person-outline';
         return <Ionicons name={iconName} size={size} color="#000" />;
     }
-    return <MaterialCommunityIcons name={iconName} size={size} color="#000" />;
   };
 
-const TabBarLabel = route => () => {
-  let labelName;
-  switch (route.name) {
-    case 'HomeScreenStack':
-      labelName = 'Home';
-      break;
-    case 'Cart':
-      labelName = 'Cart';
-      break;
-    case 'Account':
-      labelName = 'Account';
-      break;
-  }
-  return (
-    <Text style={{fontSize: 13, fontFamily: 'OpenSans'}}>{`${labelName}`}</Text>
-  );
-};
+const TabBarLabel =
+  (
+    route: RouteProp<
+      BottomTabNavigatorParamList,
+      keyof BottomTabNavigatorParamList
+    >,
+  ) =>
+  () => {
+    let labelName;
+    switch (route.name) {
+      case 'Home':
+        labelName = 'Home';
+        break;
+      case 'Cart':
+        labelName = 'Cart';
+        break;
+      case 'Account':
+        labelName = 'Account';
+        break;
+    }
+    return (
+      <Text
+        style={{fontSize: 13, fontFamily: 'OpenSans'}}>{`${labelName}`}</Text>
+    );
+  };

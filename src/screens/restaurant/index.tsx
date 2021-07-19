@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import * as React from 'react';
 import {Dimensions, StyleSheet, View, Text, FlatList} from 'react-native';
 import Food from '../../components/cards/food';
 import FoodCategoryHeader from '../../components/header/foodCategory';
-import {useNavigation} from '@react-navigation/native';
 import RestaurantHeader from '../../components/header/Restaurant';
+import {RestaurantScreenProps} from '../../navigation/homeScreenStackNavigator/types';
 const {height, width} = Dimensions.get('window');
 
-const RestaurantScreen = () => {
-  const [activeList, setActiveList] = useState(foodObj[0].itemlist);
-  const navigation = useNavigation();
+const RestaurantScreen = ({navigation, route}: RestaurantScreenProps) => {
+  const [activeList, setActiveList] = React.useState<any>(foodObj[0].itemlist);
   const EmptyList = () => (
     <View
       style={{
@@ -18,17 +17,13 @@ const RestaurantScreen = () => {
       <Text>The List is Empty</Text>
     </View>
   );
-  const onCategoryChange = catName => {
+  const onCategoryChange = (catName: string) => {
     let item = foodObj.find(({categoryName}) => categoryName == catName);
-    setActiveList(() => item && item.itemlist);
+    setActiveList(() => item?.itemlist);
   };
-  useEffect(() => {
+  React.useEffect(() => {
     navigation.setOptions({
-      header: props => (
-        (
-        <RestaurantHeader {...props} title="Domino's" navigation={navigation} />
-      )
-      ),
+      header: props => <RestaurantHeader {...props} title="Domino's" />,
     }); // will be title of the Restaurant.
   }, []);
   return (

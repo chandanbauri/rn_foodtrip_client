@@ -4,15 +4,19 @@ import {ResourceProvider} from '../../contexts/resource';
 import HomeScreenStack from '../homeScreenStackNavigator';
 import {AuthContextProvider} from '../../contexts/Auth';
 import VerificationScreen from '../../screens/account/verify';
-const Stack = createStackNavigator();
+import {LocationProvider} from '../../contexts/location';
+import {AuthNavigatorParamList} from './types';
+const Stack = createStackNavigator<AuthNavigatorParamList>();
 const AuthNavigator = () => {
   return (
     <AuthContextProvider>
       <ResourceProvider>
-        <Stack.Navigator screenOptions={{headerShown: false}}>
-          <Stack.Screen name="Main" component={HomeScreenStack} />
-          <Stack.Screen name="verifyScreen" component={VerificationScreen}     />
-        </Stack.Navigator>
+        <LocationProvider>
+          <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name="Main" component={HomeScreenStack} />
+            <Stack.Screen name="Verify" component={VerificationScreen} />
+          </Stack.Navigator>
+        </LocationProvider>
       </ResourceProvider>
     </AuthContextProvider>
   );

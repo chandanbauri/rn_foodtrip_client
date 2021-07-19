@@ -10,10 +10,14 @@ import {
 import Food from '../../cards/food';
 const {height, width} = Dimensions.get('window');
 
-const FoodCategoryHeader = ({onOptionClick}) => {
+type props = {
+  onOptionClick: (title: string) => void;
+};
+
+const FoodCategoryHeader = ({onOptionClick}: props) => {
   const [activeTab, setActiveTab] = useState(1);
 
-  const HeaderItem = ({item}) => {
+  const HeaderItem = ({item}: any) => {
     const isActive = activeTab === item.index;
     return (
       <TouchableOpacity
@@ -22,7 +26,6 @@ const FoodCategoryHeader = ({onOptionClick}) => {
           //setApp(prev => ({...prev, activeTabIndex: item.index}));
           onOptionClick(item.title);
           setActiveTab(prev => item.index);
-          
         }}>
         <View style={styles.itemRoot}>
           <Text
@@ -43,7 +46,7 @@ const FoodCategoryHeader = ({onOptionClick}) => {
         horizontal={true}
         data={itemList}
         renderItem={HeaderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         showsHorizontalScrollIndicator={false}
       />
     </View>

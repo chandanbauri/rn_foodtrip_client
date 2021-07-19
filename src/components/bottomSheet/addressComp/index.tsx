@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AddressCard from '../../cards/address';

@@ -1,6 +1,13 @@
-import React from 'react';
+import * as React from 'react';
 import {StyleSheet, Pressable, View, Text} from 'react-native';
-const FilledButton = ({text, onPress}) => {
+
+type props = {
+  text: string;
+  onPress: () => void;
+  fontSize?: number;
+};
+
+const FilledButton = ({text, onPress}: props) => {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.root}>

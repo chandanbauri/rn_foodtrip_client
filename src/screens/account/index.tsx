@@ -1,4 +1,4 @@
-import React, {useContext, useState, useCallback, useMemo, useRef} from 'react';
+import * as React from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -8,43 +8,46 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
 import AddressCard from '../../components/cards/address';
 import FilledButton from '../../components/buttons/filled';
 import BorderButton from '../../components/buttons/borderButton';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-const Account = () => {
-  const navigation = useNavigation();
-  const {user} = useContext(AuthContext);
-  const bottomSheetRef = useRef(null);
-  const [isBottomSheetOpen, setBottomSheet] = useState(true);
+import {AccountScreenProps} from '../../navigation/bottomTabNavigator/types';
+import {Dimensions} from 'react-native';
+
+const {width, height} = Dimensions.get('window');
+const Account = ({navigation, route}: AccountScreenProps) => {
+  const Auth = React.useContext(AuthContext);
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
   // variables
-  const snapPoints = useMemo(() => ['0%', '60%'], []);
+  const snapPoints = React.useMemo(() => ['1%', '60%'], []);
 
   // callbacks
-  const handleSheetChanges = useCallback((fromIndex, toIndex) => {
+  const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
     if (fromIndex == 1) bottomSheetRef.current?.close();
   }, []);
   const OpenBottomSheet = () => {
     console.log('hello');
     bottomSheetRef.current?.expand();
   };
-  return (
-    <ScrollView style={styles.root}>
-      {user != null ? (
+  if (Auth?.user != null)
+    return (
+      <ScrollView style={styles.root}>
         <>
           <View style={styles.subContainer}>
             <View style={styles.titleBox}>
               <View>
                 <Text style={styles.userName}>
-                  {user.displayName ? user.displayName : 'User Name'}
+                  {Auth?.user.displayName
+                    ? Auth?.user.displayName
+                    : 'User Name'}
                 </Text>
-                <Text style={styles.phoneNumber}>{user.phoneNumber}</Text>
+                <Text style={styles.phoneNumber}>{Auth?.user.phoneNumber}</Text>
               </View>
-              {user.photoURL ? (
-                <Image source={user.photoURL} />
+              {Auth?.user.photoURL ? (
+                <Image source={Auth?.user.photoURL} />
               ) : (
                 <Pressable
                   onPress={() => {
@@ -128,18 +131,18 @@ const Account = () => {
             </View>
           </BottomSheet>
         </>
-      ) : (
-        <PhoneAuthForm navigation={navigation} />
-      )}
-    </ScrollView>
-  );
+      </ScrollView>
+    );
+  return <PhoneAuthForm />;
 };
 
 export default Account;
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
+    height: height,
+    width: width,
+    position: 'relative',
     backgroundColor: '#BBBBBB10',
   },
   subContainer: {

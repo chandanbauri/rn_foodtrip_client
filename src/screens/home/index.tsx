@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useCallback, useMemo, useRef} from 'react';
+import * as React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,12 +12,14 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Restaurant from '../../components/cards/Restaurant';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-import {useNavigation} from '@react-navigation/native';
 import BSAddressComp from '../../components/bottomSheet/addressComp';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-const Home = () => {
-  const navigation = useNavigation();
-  useLayoutEffect(() => {
+import {LocationContext} from '../../contexts/location';
+import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
+const Home = ({navigation, route}: HomeScreenProps) => {
+  const Location = React.useContext(LocationContext);
+
+  React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
@@ -31,12 +33,19 @@ const Home = () => {
     });
   });
 
-  const bottomSheetRef = useRef(null);
-  const snapPoints = useMemo(() => ['25%', '75%'], []);
-  const handleSheetChanges = useCallback((fromIndex, toIndex) => {
-    if (fromIndex == 1) bottomSheetRef.current?.close();
-  }, []);
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const snapPoints = React.useMemo(() => ['25%', '80%'], []);
+
+  const handleSheetChanges = React.useCallback(
+    (fromIndex, toIndex) => fromIndex == 1 && bottomSheetRef.current?.close(),
+    [],
+  );
+
   const OpenBottomSheet = () => bottomSheetRef.current?.expand();
+
+  React.useEffect(() => {
+    Location?.currentLocation == null && OpenBottomSheet();
+  }); // An Intital check for The Location
 
   return (
     <SafeAreaView style={styles.root}>
@@ -65,25 +74,45 @@ const Home = () => {
         <View style={styles.restaurantListContainer}>
           <Restaurant
             onClick={() => {
-              navigation.navigate('ViewRestaurant');
+              navigation.navigate('Restaurant');
             }}
+            values="any"
           />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
-          <Restaurant />
+          <Restaurant
+            onClick={() => {
+              navigation.navigate('Restaurant');
+            }}
+            values="any"
+          />
+          <Restaurant
+            onClick={() => {
+              navigation.navigate('Restaurant');
+            }}
+            values="any"
+          />
+          <Restaurant
+            onClick={() => {
+              navigation.navigate('Restaurant');
+            }}
+            values="any"
+          />
+          <Restaurant
+            onClick={() => {
+              navigation.navigate('Restaurant');
+            }}
+            values="any"
+          />
+          <Restaurant
+            onClick={() => {
+              navigation.navigate('Restaurant');
+            }}
+            values="any"
+          />
         </View>
       </ScrollView>
       <BottomSheet
         ref={bottomSheetRef}
-        index={1}
+        index={-1}
         snapPoints={snapPoints}
         onAnimate={handleSheetChanges}
         keyboardBehavior="fullScreen"
@@ -150,3 +179,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#bbbbbb30',
   },
 });
+
+const RestaurantList = [
+  {
+    Name: "Domino's",
+    tags: ['indian', 'Chinese'],
+    address: {
+      text: 'Road 5 , Dishergarh , Asansol , Barddhaman , 713333',
+      coords: {
+        lat: 82.332,
+        lng: 35.003,
+      },
+    },
+  },
+];

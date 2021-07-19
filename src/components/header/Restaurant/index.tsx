@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
   StyleSheet,
@@ -7,21 +8,30 @@ import {
   Dimensions,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import {CombinedNavigationProp} from '../../../navigation/types';
+
+type props = {
+  title: string;
+};
+
 const {width} = Dimensions.get('window');
-const RestaurantHeader = ({title, navigation}) => (
-  <View style={styles.root}>
-    <TouchableOpacity
-      style={styles.backButton}
-      onPress={() => {
-        navigation.goBack();
-      }}>
-      <Feather name="arrow-left" size={25} color="#21BF73" />
-    </TouchableOpacity>
-    <View style={styles.textContaier}>
-      <Text style={styles.text}>{title}</Text>
+const RestaurantHeader = ({title}: props) => {
+  const navigation = useNavigation<CombinedNavigationProp>();
+  return (
+    <View style={styles.root}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <Feather name="arrow-left" size={25} color="#21BF73" />
+      </TouchableOpacity>
+      <View style={styles.textContaier}>
+        <Text style={styles.text}>{title}</Text>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 export default RestaurantHeader;
 const styles = StyleSheet.create({
   root: {

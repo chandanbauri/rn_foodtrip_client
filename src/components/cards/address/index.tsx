@@ -1,5 +1,11 @@
-import React from 'react';
+import * as React from 'react';
 import {Pressable, View, Text, StyleSheet} from 'react-native';
+
+type props = {
+  title: string;
+  onPress: () => void;
+  address: string;
+};
 
 const AddressCard = () => {
   return (

@@ -1,27 +1,44 @@
-import React, {createContext, useState} from 'react';
-const ResourceContext = createContext();
-const ResourceProvider = props => {
-  const {children} = props;
-  const [cart, setCart] = useState([]);
-  const [restaurantDetails, setRestaurantDetails] = useState(null);
-  const [resource, setResource] = useState(null);
+import * as React from 'react';
+
+export interface foodObj {
+  id: string;
+  count?: number;
+}
+
+interface contextProps {
+  cart: Array<foodObj>;
+  addToCart: (item: foodObj) => void;
+  updateItem: (id: string, count: number) => void;
+  deleteItemFromCart: (id: string) => void;
+  findItemInTheCart: (id: string) => foodObj | boolean;
+  restaurantDetails: any;
+  resource: any;
+  saveRestaurantDetils: (restaurant: any) => void;
+}
+
+const ResourceContext = React.createContext<contextProps | null>(null);
+
+const ResourceProvider: React.FunctionComponent = ({children}) => {
+  const [cart, setCart] = React.useState<Array<foodObj>>([]);
+  const [restaurantDetails, setRestaurantDetails] = React.useState<any>();
+  const [resource, setResource] = React.useState<any>(null);
 
   // --------------------------------- MODIFY CART  ---------------------------------- \\
-  const addToCart = item => {
+  const addToCart = (item: foodObj) => {
     try {
-      const product = cart.findIndex(el => el.id === item.id);
+      const product = cart?.findIndex(el => el.id === item.id);
       if (product === -1) {
-        const otherProducts = cart.filter(el => el.id !== item.id);
+        const otherProducts = cart?.filter(el => el.id !== item.id);
         setCart(prev => [...otherProducts, item]);
       }
     } catch (error) {
       throw error;
     }
   };
-  const updateItem = (id, count) => {
+  const updateItem = (id: string, count: number) => {
     try {
       const product = cart.findIndex(el => el.id === id);
-      if (product.length != 0) {
+      if (product != 0) {
         setCart(prev => {
           let tmp = prev;
           tmp[product].count = count;
@@ -32,7 +49,7 @@ const ResourceProvider = props => {
       throw error;
     }
   };
-  const deleteItemFromCart = id => {
+  const deleteItemFromCart = (id: string) => {
     try {
       const productIndex = cart.findIndex(el => el.id === id);
       if (productIndex === 0) {
@@ -47,13 +64,13 @@ const ResourceProvider = props => {
       throw error;
     }
   };
-  const findItemInTheCart = id => {
+  const findItemInTheCart = (id: string) => {
     const product = cart.filter(el => el.id === id);
     if (product.length >= 1) return product[0];
     else return false;
   };
   // --------------------------------- MODIFY CART  ---------------------------------- \\
-  const saveRestaurantDetils = details => setRestaurantDetails(details);
+  const saveRestaurantDetils = (details: any) => setRestaurantDetails(details);
   return (
     <ResourceContext.Provider
       value={{

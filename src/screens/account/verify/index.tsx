@@ -1,13 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
+import * as React from 'react';
 import {View, Text, StyleSheet, TextInput, Pressable} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../../contexts/Auth';
-const VerificationScreen = ({route}) => {
-  const navigation = useNavigation();
-  const {phoneNo} = route.params;
-  const [code, setCode] = useState(null);
-  const handleTextInput = text => setCode(() => text);
-  const {resendVerificationCode, verifyPhone} = useContext(AuthContext);
+import {VerifyScreenProps} from '../../../navigation/authNavigator/types';
+const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
+  const {phone} = route.params;
+  const [code, setCode] = React.useState<string>('');
+  const handleTextInput = (text: string) => setCode(() => text);
+  const Auth = React.useContext(AuthContext);
 
   return (
     <View style={styles.root}>
@@ -23,7 +22,7 @@ const VerificationScreen = ({route}) => {
       <View style={styles.optionsContainer}>
         <Pressable
           onPress={() => {
-            resendVerificationCode(phoneNo);
+            Auth?.resendVerificationCode(phone);
           }}>
           <Text style={{fontSize: 12}}>Resend</Text>
         </Pressable>
@@ -31,7 +30,7 @@ const VerificationScreen = ({route}) => {
       <Pressable
         style={styles.filledLoginButton}
         onPress={() => {
-          verifyPhone(code);
+          Auth?.verifyPhone(code);
         }}>
         <Text style={styles.filledLoginButtonText}>Verify</Text>
       </Pressable>

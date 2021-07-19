@@ -1,6 +1,13 @@
 import React from 'react';
 import {StyleSheet, Pressable, View, Text} from 'react-native';
-const BorderButton = ({text, onPress, fontSize}) => {
+
+type props = {
+  text: string;
+  onPress: () => void;
+  fontSize: number;
+};
+
+const BorderButton = ({text, onPress, fontSize}: props) => {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.root}>
