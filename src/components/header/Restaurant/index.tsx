@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import {CombinedNavigationProp} from '../../../navigation/types';
+import {colors} from '../../../utilities';
 
 type props = {
   title: string;
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: '#21BF73',
+    color: colors.green,
     fontSize: 18,
     fontWeight: '700',
     letterSpacing: 1.5,

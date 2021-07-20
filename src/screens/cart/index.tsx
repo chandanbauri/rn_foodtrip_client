@@ -1,8 +1,18 @@
 import * as React from 'react';
 import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {ResourceContext} from '../../contexts/resource';
 import {CartScreenProps} from '../../navigation/bottomTabNavigator/types';
 
-const Cart = ({navigation}: CartScreenProps) => {
+function Cart({navigation}: CartScreenProps) {
+  const Auth = React.useContext(ResourceContext);
+
+  if (Auth?.cart.length) {
+    return (
+      <View>
+        <Text>The Cart is no empty</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.root}>
       <EmptyCart />

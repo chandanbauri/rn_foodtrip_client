@@ -3,6 +3,7 @@ import {StyleSheet, View, ScrollView, FlatList} from 'react-native';
 import Restaurant from '../../cards/Restaurant';
 import Food from '../../cards/food';
 import {foodObj} from '../../../contexts/resource';
+import {colors} from '../../../utilities';
 
 type props = {
   isRestaurant: boolean;
@@ -50,7 +51,7 @@ export default RestaurantScrollView;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#BBBBBB30',
+    backgroundColor: `${colors.gray}30`,
     paddingTop: 5,
   },
 });

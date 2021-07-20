@@ -7,6 +7,7 @@ import {
   Dimensions,
   FlatList,
 } from 'react-native';
+import {colors} from '../../../utilities';
 import Food from '../../cards/food';
 const {height, width} = Dimensions.get('window');
 
@@ -76,10 +77,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   activeItemText: {
-    color: '#21BF73',
+    color: colors.green,
   },
   activeItemIndicator: {
-    backgroundColor: '#21BF73',
+    backgroundColor: colors.green,
     width: (width * 22) / 100,
     height: 3,
   },

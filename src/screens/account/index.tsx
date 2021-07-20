@@ -16,6 +16,7 @@ import BorderButton from '../../components/buttons/borderButton';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {AccountScreenProps} from '../../navigation/bottomTabNavigator/types';
 import {Dimensions} from 'react-native';
+import {colors} from '../../utilities';
 
 const {width, height} = Dimensions.get('window');
 const Account = ({navigation, route}: AccountScreenProps) => {
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     height: height,
     width: width,
     position: 'relative',
-    backgroundColor: '#BBBBBB10',
+    backgroundColor: `${colors.gray}10`,
   },
   subContainer: {
     marginBottom: 20,
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
   guestUserContainer: {
     position: 'absolute',
     bottom: 0,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     width: '100%',
     paddingHorizontal: 14,
     paddingVertical: 15,
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 35,
     marginTop: 10,
-    backgroundColor: '#21BF73',
+    backgroundColor: colors.green,
     alignItems: 'center',
     marginBottom: 50,
   },

@@ -3,6 +3,7 @@ import {Dimensions, Pressable, StyleSheet, Text, View} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {foodObj, ResourceContext} from '../../../contexts/resource';
+import {colors} from '../../../utilities';
 const {width} = Dimensions.get('window');
 type props = {
   item: foodObj;
@@ -37,7 +38,7 @@ const Food = ({item}: props) => {
             <MaterialCommunityIcons
               name="minus-box-outline"
               size={24}
-              color="#21BF73"
+              color={colors.green}
             />
           </Pressable>
           <Text>{counter}</Text>
@@ -51,7 +52,7 @@ const Food = ({item}: props) => {
             <MaterialCommunityIcons
               name="plus-box-outline"
               size={24}
-              color="#21BF73"
+              color={colors.green}
             />
           </Pressable>
         </View>
@@ -61,7 +62,7 @@ const Food = ({item}: props) => {
             setCounter(1);
             Resource?.addToCart({...item, count: 1});
           }}>
-          <SimpleLineIcons name="plus" size={35} color="#21BF73" />
+          <SimpleLineIcons name="plus" size={35} color={colors.green} />
         </Pressable>
       )}
     </View>

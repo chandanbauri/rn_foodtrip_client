@@ -4,6 +4,7 @@ import Food from '../../components/cards/food';
 import FoodCategoryHeader from '../../components/header/foodCategory';
 import RestaurantHeader from '../../components/header/Restaurant';
 import {RestaurantScreenProps} from '../../navigation/homeScreenStackNavigator/types';
+import {colors} from '../../utilities';
 const {height, width} = Dimensions.get('window');
 
 const RestaurantScreen = ({navigation, route}: RestaurantScreenProps) => {
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
   },
   bottomTextContainer: {
     paddingVertical: 2,
-    backgroundColor: '#21BF73',
+    backgroundColor: colors.green,
     alignItems: 'center',
     justifyContent: 'center',
   },

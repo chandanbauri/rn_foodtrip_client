@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, Pressable, View, Text} from 'react-native';
+import {colors} from '../../../utilities';
 
 type props = {
   text: string;
@@ -22,7 +23,7 @@ export default BorderButton;
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    borderColor: '#21BF73',
+    borderColor: colors.green,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

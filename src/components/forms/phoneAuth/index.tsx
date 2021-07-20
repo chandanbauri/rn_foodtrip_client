@@ -4,7 +4,7 @@ import {Dimensions} from 'react-native';
 import {Pressable, StyleSheet, Text, View, TextInput} from 'react-native';
 import {AuthContext} from '../../../contexts/Auth';
 import {CombinedNavigationProp} from '../../../navigation/types';
-import {validatePhoneNo} from '../../../utilities';
+import {colors, validatePhoneNo} from '../../../utilities';
 
 const {width} = Dimensions.get('window');
 
@@ -30,7 +30,7 @@ const PhoneAuthForm: React.FunctionComponent = () => {
             styles.guestUserSubtitle
           }>{`To have delicious food quickly login/create an account`}</Text>
         <View style={styles.inputContainer}>
-          <Text style={{color: '#21BF73'}}>{'+ 91'}</Text>
+          <Text style={{color: colors.green}}>{'+ 91'}</Text>
           <TextInput
             style={{marginLeft: 10, color: '#232323'}}
             keyboardType="number-pad"
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 35,
     marginTop: 10,
-    backgroundColor: '#21BF73',
+    backgroundColor: colors.green,
     alignItems: 'center',
     marginBottom: 50,
   },
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 50,
-    borderBottomColor: '#21BF73',
+    borderBottomColor: colors.green,
     borderBottomWidth: 2,
     flexDirection: 'row',
     alignItems: 'center',

@@ -16,6 +16,7 @@ import BSAddressComp from '../../components/bottomSheet/addressComp';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {LocationContext} from '../../contexts/location';
 import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
+import {colors} from '../../utilities';
 const Home = ({navigation, route}: HomeScreenProps) => {
   const Location = React.useContext(LocationContext);
 
@@ -148,11 +149,11 @@ const styles = StyleSheet.create({
   addressViewTextContainer: {
     marginLeft: 10,
     borderBottomWidth: 2,
-    borderBottomColor: '#21BF73',
+    borderBottomColor: colors.green,
     paddingBottom: 5,
   },
   addressViewText: {
-    color: '#21BF73',
+    color: colors.green,
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 12,
   },
@@ -169,14 +170,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   categoryList: {
-    backgroundColor: '#21BF7325',
+    backgroundColor: `${colors.green}25`,
     height: 200,
     width: '100%',
     marginTop: 10,
   },
   restaurantListContainer: {
     marginTop: 10,
-    backgroundColor: '#bbbbbb30',
+    backgroundColor: `${colors.gray}30`,
   },
 });
 

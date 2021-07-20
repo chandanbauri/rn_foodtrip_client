@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Pressable, View, Text, StyleSheet} from 'react-native';
+import {colors} from '../../../utilities';
 
 type props = {
   title: string;
@@ -23,7 +24,7 @@ export default AddressCard;
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    backgroundColor: '#21BF7350',
+    backgroundColor: `${colors.green}50`,
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginVertical: 5,

@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {colors} from '../../../utilities';
 
 type props = {
   onClick: () => void;
@@ -74,11 +75,11 @@ const styles = StyleSheet.create({
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 20,
-    color: '#21BF73',
+    color: colors.green,
   },
   detailsText: {
     fontFamily: 'OpenSans',
     fontSize: 13,
-    color: '#21BF73',
+    color: colors.green,
   },
 });

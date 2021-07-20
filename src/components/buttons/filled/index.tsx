@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {StyleSheet, Pressable, View, Text} from 'react-native';
+import {colors} from '../../../utilities';
 
 type props = {
   text: string;
@@ -22,7 +23,7 @@ export default FilledButton;
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    backgroundColor: '#21BF73',
+    backgroundColor: colors.green,
     paddingVertical: 12,
     alignItems: 'center',
     marginTop: 30,
