@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {StyleSheet, Text, View, Pressable, FlatList} from 'react-native';
+import Food from '../../components/cards/food';
 import {ResourceContext} from '../../contexts/resource';
 import {CartScreenProps} from '../../navigation/bottomTabNavigator/types';
 
@@ -8,8 +9,12 @@ function Cart({navigation}: CartScreenProps) {
 
   if (Auth?.cart.length) {
     return (
-      <View>
-        <Text>The Cart is no empty</Text>
+      <View style={styles.root}>
+        <FlatList
+          data={Auth?.cart}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => <Food item={item} />}
+        />
       </View>
     );
   }
@@ -18,7 +23,7 @@ function Cart({navigation}: CartScreenProps) {
       <EmptyCart />
     </View>
   );
-};
+}
 
 export default Cart;
 

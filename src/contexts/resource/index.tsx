@@ -24,7 +24,7 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
   const [resource, setResource] = React.useState<any>(null);
 
   // --------------------------------- MODIFY CART  ---------------------------------- \\
-  const addToCart = (item: foodObj) => {
+  function addToCart(item: foodObj) {
     try {
       const product = cart?.findIndex(el => el.id === item.id);
       if (product === -1) {
@@ -34,22 +34,28 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
     } catch (error) {
       throw error;
     }
-  };
-  const updateItem = (id: string, count: number) => {
+  }
+  function updateItem(id: string, count: number) {
     try {
       const product = cart.findIndex(el => el.id === id);
-      if (product != 0) {
-        setCart(prev => {
-          let tmp = prev;
-          tmp[product].count = count;
-          return tmp;
-        });
+      if (product >= 0) {
+        // setCart(prev => {
+        //   let tmp = prev;
+        //   tmp[product].count = count;
+        //   return tmp;
+        // });
+        setCart(prev => [
+          ...prev.slice(0, product),
+          {id, count},
+          ...prev.slice(product + 1),
+        ]);
+        return;
       }
     } catch (error) {
       throw error;
     }
-  };
-  const deleteItemFromCart = (id: string) => {
+  }
+  function deleteItemFromCart(id: string) {
     try {
       const productIndex = cart.findIndex(el => el.id === id);
       if (productIndex === 0) {
@@ -63,12 +69,12 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
     } catch (error) {
       throw error;
     }
-  };
-  const findItemInTheCart = (id: string) => {
+  }
+  function findItemInTheCart(id: string) {
     const product = cart.filter(el => el.id === id);
     if (product.length >= 1) return product[0];
     else return false;
-  };
+  }
   // --------------------------------- MODIFY CART  ---------------------------------- \\
   const saveRestaurantDetils = (details: any) => setRestaurantDetails(details);
   return (

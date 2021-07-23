@@ -7,6 +7,7 @@ import BottomNavigator from '../bottomTabNavigator';
 import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../contexts/Auth';
 import {HomeScreenStackParamList} from './types';
+import ViewRestaurant from '../../screens/viewRestaurant';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
 const HomeScreenStack = () => {
   // const navigation = useNavigation();
@@ -33,7 +34,11 @@ const HomeScreenStack = () => {
         component={Search}
         options={{headerTitle: ''}}
       />
-      <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+      <Stack.Screen
+        name="Restaurant"
+        component={ViewRestaurant}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

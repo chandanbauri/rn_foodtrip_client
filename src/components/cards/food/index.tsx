@@ -5,11 +5,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {foodObj, ResourceContext} from '../../../contexts/resource';
 import {colors} from '../../../utilities';
 const {width} = Dimensions.get('window');
+
 type props = {
   item: foodObj;
 };
 
-const Food = ({item}: props) => {
+function Food({item}: props) {
   const Resource = React.useContext(ResourceContext);
 
   const [counter, setCounter] = React.useState<number>(0);
@@ -17,7 +18,8 @@ const Food = ({item}: props) => {
     const product = Resource?.findItemInTheCart(item.id);
     if (typeof product !== 'boolean' && product?.count)
       setCounter(product?.count);
-  }, []);
+    return;
+  }, [Resource?.cart]);
   return (
     <View style={styles.root}>
       <View style={styles.detailsContainer}>
@@ -67,7 +69,7 @@ const Food = ({item}: props) => {
       )}
     </View>
   );
-};
+}
 
 export default Food;
 
