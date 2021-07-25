@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AddressCard from '../../cards/address';
 import FilledButton from '../../buttons/filled';
+import {colors} from '../../../utilities';
 
 const BSAddressComp = () => {
   return (
@@ -10,7 +11,7 @@ const BSAddressComp = () => {
       <Text style={styles.title}>Choose your location</Text>
       <Pressable onPress={() => console.log('hello')}>
         <View style={styles.containerForCLOption}>
-          <Feather name="map-pin" color="#21BF73" size={28} />
+          <Feather name="map-pin" color={colors.brown} size={28} />
           <View style={styles.ClTextContainer}>
             <Text style={[styles.CLtext, styles.CLTitle]}>
               Use your current location
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   CLtext: {
-    color: '#21BF73',
+    color: colors.brown,
   },
   CLTitle: {
     fontSize: 16,

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,9 +18,10 @@ import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {LocationContext} from '../../contexts/location';
 import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
 import {colors} from '../../utilities';
+const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   const Location = React.useContext(LocationContext);
-
+  const MAX_BOTTOMSHEET_HEIGHT = 480;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -28,14 +30,17 @@ const Home = ({navigation, route}: HomeScreenProps) => {
           onPress={() => {
             navigation.navigate('Search');
           }}>
-          <Feather name="search" size={25} color="#21BF73" />
+          <Feather name="search" size={25} color={colors.brown} />
         </TouchableOpacity>
       ),
     });
   });
 
   const bottomSheetRef = React.useRef<BottomSheet>(null);
-  const snapPoints = React.useMemo(() => ['25%', '80%'], []);
+  const snapPoints = React.useMemo(
+    () => [height * 0.25, MAX_BOTTOMSHEET_HEIGHT],
+    [],
+  );
 
   const handleSheetChanges = React.useCallback(
     (fromIndex, toIndex) => fromIndex == 1 && bottomSheetRef.current?.close(),
@@ -58,7 +63,11 @@ const Home = ({navigation, route}: HomeScreenProps) => {
             onPress={() => {
               OpenBottomSheet();
             }}>
-            <MaterialCommunityIcons name="map-marker-radius" size={24} />
+            <MaterialCommunityIcons
+              name="map-marker-radius"
+              size={24}
+              color={colors.brown}
+            />
             <View style={styles.addressViewTextContainer}>
               <Text style={styles.addressViewText}>Road 5 , Asansol</Text>
             </View>
@@ -149,11 +158,11 @@ const styles = StyleSheet.create({
   addressViewTextContainer: {
     marginLeft: 10,
     borderBottomWidth: 2,
-    borderBottomColor: colors.green,
+    borderBottomColor: colors.brown,
     paddingBottom: 5,
   },
   addressViewText: {
-    color: colors.green,
+    color: colors.brown,
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 12,
   },

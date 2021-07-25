@@ -24,7 +24,7 @@ export default AddressCard;
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    backgroundColor: `${colors.green}50`,
+    backgroundColor: `${colors.brown}20`,
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginVertical: 5,

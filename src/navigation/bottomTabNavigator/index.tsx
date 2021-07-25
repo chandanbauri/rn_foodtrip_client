@@ -9,6 +9,7 @@ import {ResourceContext} from '../../contexts/resource';
 import Home from '../../screens/home';
 import {BottomTabNavigatorParamList} from './types';
 import {RouteProp} from '@react-navigation/core';
+import {colors} from '../../utilities';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -34,9 +35,9 @@ const BottomNavigator = () => {
         name="Home"
         component={Home}
         options={{
-          headerTitle: `Food Trip`,
+          headerTitle: `Food Adda`,
           headerTitleStyle: {
-            color: '#21BF73',
+            color: colors.brown,
             fontFamily: 'OpenSans-SemiBold',
           },
         }}
@@ -76,17 +77,31 @@ const TabBarIcon =
       case 'Home':
         iconName = focused ? 'home' : 'home-outline';
         return (
-          <MaterialCommunityIcons name={iconName} size={size} color="#000" />
+          <MaterialCommunityIcons
+            name={iconName}
+            size={size}
+            color={focused ? colors.brown : `${colors.brown}90`}
+          />
         );
       case 'Cart':
         iconName = focused ? 'shopping' : 'shopping-outline';
         return (
-          <MaterialCommunityIcons name={iconName} size={size} color="#000" />
+          <MaterialCommunityIcons
+            name={iconName}
+            size={size}
+            color={focused ? colors.brown : `${colors.brown}90`}
+          />
         );
 
       case 'Account':
         iconName = focused ? 'person' : 'person-outline';
-        return <Ionicons name={iconName} size={size} color="#000" />;
+        return (
+          <Ionicons
+            name={iconName}
+            size={size}
+            color={focused ? colors.brown : `${colors.brown}90`}
+          />
+        );
     }
   };
 
@@ -97,7 +112,7 @@ const TabBarLabel =
       keyof BottomTabNavigatorParamList
     >,
   ) =>
-  () => {
+  ({focused}: any) => {
     let labelName;
     switch (route.name) {
       case 'Home':
@@ -112,6 +127,10 @@ const TabBarLabel =
     }
     return (
       <Text
-        style={{fontSize: 13, fontFamily: 'OpenSans'}}>{`${labelName}`}</Text>
+        style={{
+          fontSize: 13,
+          fontFamily: 'OpenSans',
+          color: focused ? colors.brown : `${colors.brown}95`,
+        }}>{`${labelName}`}</Text>
     );
   };

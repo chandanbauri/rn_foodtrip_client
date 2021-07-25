@@ -17,18 +17,20 @@ type props = {
   animatedHeight: any;
   coverScale: any;
   coverOpacity: any;
-  mainTitleOpactiy: any;
+  OverLayOpacity: any;
+  titleColor: any;
   goBack: () => void;
 };
 
 const {height, width} = Dimensions.get('window');
-const MIN_HEADER_HEIGHT = height * 0.3;
+const MIN_HEADER_HEIGHT = height * 0.1;
 
 export default function AnimatedHeader({
   animatedHeight,
   coverScale,
   coverOpacity,
-  mainTitleOpactiy,
+  OverLayOpacity,
+  titleColor,
   goBack,
 }: props) {
   return (
@@ -45,16 +47,19 @@ export default function AnimatedHeader({
           style={{flex: 1}}
         />
       </Animated.View>
+      <Animated.View style={[styles.overlay, {opacity: OverLayOpacity}]} />
       <View style={styles.headerComponent}>
-        <Animated.Text style={styles.title}>Domino's</Animated.Text>
+        <Animated.Text style={[styles.title, {color: titleColor}]}>
+          Domino's
+        </Animated.Text>
+        <Pressable
+          style={styles.headerLeft}
+          onPress={() => {
+            goBack();
+          }}>
+          <Entypo name="chevron-left" size={24} color={colors.brown} />
+        </Pressable>
       </View>
-      <Pressable
-        style={styles.headerLeft}
-        onPress={() => {
-          goBack();
-        }}>
-        <Entypo name="chevron-left" size={24} color={colors.green} />
-      </Pressable>
     </Animated.View>
   );
 }
@@ -71,11 +76,18 @@ const styles = StyleSheet.create({
   },
   cover: {
     flex: 1,
-    backgroundColor: '#000000',
+  },
+  overlay: {
+    backgroundColor: '#00000050',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   headerComponent: {
     position: 'absolute',
-    top: 20,
+    top: 0,
     left: 0,
     right: 0,
     bottom: 0,
@@ -83,10 +95,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
+    // backgroundColor: '#00000050',
+    paddingTop: 15,
   },
   headerLeft: {
     position: 'absolute',
-    top: 27,
+    top: 35,
     left: 20,
     padding: 10,
     backgroundColor: '#FFF',
@@ -98,10 +112,5 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    color: colors.green,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    backgroundColor: colors.white,
-    borderRadius: 50,
   },
 });

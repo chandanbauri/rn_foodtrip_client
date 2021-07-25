@@ -11,6 +11,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import RestaurantScrollView from '../../../components/scrollview/restaurant';
 import {ResourceContext, ResourceProvider} from '../../../contexts/resource';
 import {SearchScreenProps} from '../../../navigation/homeScreenStackNavigator/types';
+import {colors} from '../../../utilities';
 const {width} = Dimensions.get('window');
 const Search = ({navigation}: SearchScreenProps) => {
   const Resource = React.useContext(ResourceContext);
@@ -24,7 +25,7 @@ const Search = ({navigation}: SearchScreenProps) => {
           onPress={() => {
             navigation.navigate('Home');
           }}>
-          <Feather name="arrow-left" size={24} color="#21BF73" />
+          <Feather name="arrow-left" size={24} color={colors.brown} />
         </Pressable>
       ),
     });
@@ -35,7 +36,7 @@ const Search = ({navigation}: SearchScreenProps) => {
         <View style={styles.searchBar}>
           <TextInput
             placeholder="Search your favourite Food or Restaurant"
-            placeholderTextColor="#21BF73"
+            placeholderTextColor={colors.brown}
             style={styles.searchBarTextInput}
           />
         </View>
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     borderWidth: 2,
-    borderColor: '#21BF73',
+    borderColor: colors.brown,
     width: '100%',
     marginTop: 2,
   },
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: width,
     borderBottomWidth: 2,
-    borderBottomColor: '#21BF73',
+    borderBottomColor: colors.brown,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingLeft: 14,
@@ -129,10 +130,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   filterOptionsFocused: {
-    backgroundColor: '#21BF73',
+    backgroundColor: colors.brown,
   },
   filterOptionsNotFocused: {
-    borderColor: '#21BF73',
+    borderColor: colors.brown,
     borderWidth: 1,
     backgroundColor: '#FFF',
   },
@@ -144,6 +145,6 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   filterOptionsTextNotFocused: {
-    color: '#21BF73',
+    color: colors.brown,
   },
 });

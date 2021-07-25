@@ -23,7 +23,7 @@ export default FilledButton;
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    backgroundColor: colors.green,
+    backgroundColor: colors.brown,
     paddingVertical: 12,
     alignItems: 'center',
     marginTop: 30,

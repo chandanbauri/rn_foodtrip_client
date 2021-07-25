@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Dimensions, Pressable, StyleSheet, Text, View} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {foodObj, ResourceContext} from '../../../contexts/resource';
 import {colors} from '../../../utilities';
@@ -33,28 +34,28 @@ function Food({item}: props) {
               setCounter(prev => {
                 prev === 1
                   ? Resource?.deleteItemFromCart(item.id)
-                  : Resource?.updateItem(item.id, prev - 1);
+                  : Resource?.updateItem(item.id, prev - 1,item.price);
                 return prev - 1;
               });
             }}>
             <MaterialCommunityIcons
               name="minus-box-outline"
               size={24}
-              color={colors.green}
+              color={colors.brown}
             />
           </Pressable>
           <Text>{counter}</Text>
           <Pressable
             onPress={() => {
               setCounter(prev => {
-                Resource?.updateItem(item.id, prev + 1);
+                Resource?.updateItem(item.id, prev + 1,item.price);
                 return prev + 1;
               });
             }}>
             <MaterialCommunityIcons
               name="plus-box-outline"
               size={24}
-              color={colors.green}
+              color={colors.brown}
             />
           </Pressable>
         </View>
@@ -64,7 +65,15 @@ function Food({item}: props) {
             setCounter(1);
             Resource?.addToCart({...item, count: 1});
           }}>
-          <SimpleLineIcons name="plus" size={35} color={colors.green} />
+          <View
+            style={{
+              padding: 8,
+              borderWidth: 1,
+              borderColor: colors.brown,
+              borderRadius: 100 / 2,
+            }}>
+            <AntDesign name="plus" size={24} color={colors.brown} />
+          </View>
         </Pressable>
       )}
     </View>
@@ -92,17 +101,25 @@ const styles = StyleSheet.create({
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 15,
-    color: '#21BF73',
+    fontWeight: '100',
+    color: colors.brown,
   },
   detailsText: {
     fontFamily: 'OpenSans-Bold',
     fontSize: 13,
-    color: '#21BF73',
+    fontWeight: '100',
+    color: colors.brown,
   },
   controllButtonsContainer: {
-    width: 100,
+    width: 120,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+    backgroundColor: '#AAAAAA20',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: '#AAAAAA20',
   },
 });

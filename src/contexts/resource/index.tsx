@@ -3,12 +3,13 @@ import * as React from 'react';
 export interface foodObj {
   id: string;
   count?: number;
+  price: number;
 }
 
 interface contextProps {
   cart: Array<foodObj>;
   addToCart: (item: foodObj) => void;
-  updateItem: (id: string, count: number) => void;
+  updateItem: (id: string, count: number, price: number) => void;
   deleteItemFromCart: (id: string) => void;
   findItemInTheCart: (id: string) => foodObj | boolean;
   restaurantDetails: any;
@@ -35,7 +36,7 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
       throw error;
     }
   }
-  function updateItem(id: string, count: number) {
+  function updateItem(id: string, count: number, price: number) {
     try {
       const product = cart.findIndex(el => el.id === id);
       if (product >= 0) {
@@ -46,7 +47,7 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
         // });
         setCart(prev => [
           ...prev.slice(0, product),
-          {id, count},
+          {id, count, price},
           ...prev.slice(product + 1),
         ]);
         return;

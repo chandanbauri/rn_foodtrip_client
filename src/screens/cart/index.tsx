@@ -1,21 +1,58 @@
 import * as React from 'react';
-import {StyleSheet, Text, View, Pressable, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import Food from '../../components/cards/food';
-import {ResourceContext} from '../../contexts/resource';
+import {foodObj, ResourceContext} from '../../contexts/resource';
 import {CartScreenProps} from '../../navigation/bottomTabNavigator/types';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {colors} from '../../utilities';
+import CartInfo from '../../components/bottomSheet/cart';
 
+const {height, width} = Dimensions.get('window');
 function Cart({navigation}: CartScreenProps) {
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const snapPoints = React.useMemo(() => [150, 200], []);
   const Auth = React.useContext(ResourceContext);
+  const getTotalCost = (list: Array<foodObj>) => {
+    let total = 0;
+    list.reduce((prevVal: foodObj, value: foodObj) => {
+      total += value.price;
+      return value;
+    });
+
+    console.log(total);
+    return total;
+  };
 
   if (Auth?.cart.length) {
     return (
-      <View style={styles.root}>
-        <FlatList
-          data={Auth?.cart}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => <Food item={item} />}
-        />
-      </View>
+      <>
+        <View style={styles.root}>
+          <FlatList
+            data={Auth?.cart}
+            ListHeaderComponent={() => <Header />}
+            keyExtractor={item => item.id}
+            renderItem={({item}) => <Food item={item} />}
+            ListFooterComponent={() => (
+              <View style={{marginVertical: 90}}></View>
+            )}
+          />
+        </View>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          index={0}
+          keyboardBehavior="fullScreen"
+          keyboardBlurBehavior="restore">
+          <CartInfo />
+        </BottomSheet>
+      </>
     );
   }
   return (
@@ -38,23 +75,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   emptyCartText: {
-    color: '#21BF73',
+    color: colors.brown,
+    fontWeight: 'bold',
     fontSize: 12,
   },
   visitNearByRestaurantButton: {
     borderWidth: 2,
-    borderColor: '#21BF73',
+    borderColor: colors.brown,
     paddingVertical: 12,
     paddingHorizontal: 35,
     marginTop: 10,
   },
   visitNearByRestaurantButtonText: {
-    color: '#21BF73',
+    color: colors.brown,
     textTransform: 'uppercase',
     fontSize: 12,
     fontWeight: 'bold',
   },
+  cartHeader: {
+    height: height * 0.1,
+    width: width,
+    backgroundColor: colors.white,
+    elevation: 10,
+    justifyContent: 'center',
+    paddingLeft: 12,
+  },
+  cartHeaderTitle: {
+    fontSize: 35,
+    color: colors.brown,
+  },
 });
+
+const Header = () => (
+  <View style={styles.cartHeader}>
+    <Text style={styles.cartHeaderTitle}>Cart</Text>
+  </View>
+);
 
 const EmptyCart = () => (
   <View style={styles.emptyCartContainer}>

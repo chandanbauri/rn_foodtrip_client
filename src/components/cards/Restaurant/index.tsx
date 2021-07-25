@@ -31,17 +31,31 @@ const Restaurant = ({onClick, values}: props) => {
   if (values)
     return (
       <Pressable style={styles.root} onPress={onClick}>
-        <Image
-          source={{
-            uri: 'https://static.toiimg.com/thumb/56933159.cms?imgsize=686279&width=800&height=800',
-          }}
-          style={{height: 100, width: 100, resizeMode: 'cover'}}
-        />
+        <View style={{height: 100, width: 100}}>
+          <Image
+            source={{
+              uri: 'https://static.toiimg.com/thumb/56933159.cms?imgsize=686279&width=800&height=800',
+            }}
+            style={{flex: 1, resizeMode: 'cover'}}
+          />
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: '#00000020',
+            }}
+          />
+        </View>
         <View style={styles.detailsContainer}>
           <Text style={styles.detailsTitle}>Domino’s Pizza</Text>
           <Text style={styles.detailsText}>Indian . Chineese</Text>
           <Text style={styles.detailsText}>2 km . Court more</Text>
-          <Text style={styles.detailsText}>Order online</Text>
+          <Text style={[styles.detailsText, styles.ordeOnlineText]}>
+            Order online
+          </Text>
         </View>
       </Pressable>
     );
@@ -75,11 +89,15 @@ const styles = StyleSheet.create({
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 20,
-    color: colors.green,
+    color: colors.brown,
   },
   detailsText: {
     fontFamily: 'OpenSans',
     fontSize: 13,
-    color: colors.green,
+    color: colors.brown,
+  },
+  ordeOnlineText: {
+    fontWeight: 'bold',
+    color: colors.purple,
   },
 });
