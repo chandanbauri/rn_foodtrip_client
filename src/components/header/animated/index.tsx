@@ -1,13 +1,5 @@
 import * as React from 'react';
-import {
-  Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {Dimensions, Image, Pressable, StyleSheet, View} from 'react-native';
 import Animated from 'react-native-reanimated';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../../utilities';
@@ -23,7 +15,7 @@ type props = {
 };
 
 const {height, width} = Dimensions.get('window');
-const MIN_HEADER_HEIGHT = height * 0.1;
+const MIN_HEADER_HEIGHT = height * 0.25;
 
 export default function AnimatedHeader({
   animatedHeight,
@@ -100,7 +92,7 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     position: 'absolute',
-    top: 35,
+    top: height * 0.035,
     left: 20,
     padding: 10,
     backgroundColor: '#FFF',
