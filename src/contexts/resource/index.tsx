@@ -15,6 +15,10 @@ interface contextProps {
   restaurantDetails: any;
   resource: any;
   saveRestaurantDetils: (restaurant: any) => void;
+  restaurantList: any;
+  setRestaurants: (restaurantList: any) => void;
+  menuList: any;
+  setMenu: (menuList: any) => void;
 }
 
 const ResourceContext = React.createContext<contextProps | null>(null);
@@ -23,6 +27,8 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
   const [cart, setCart] = React.useState<Array<foodObj>>([]);
   const [restaurantDetails, setRestaurantDetails] = React.useState<any>();
   const [resource, setResource] = React.useState<any>(null);
+  const [restaurantList, setRestaurantList] = React.useState<any>(null);
+  const [menuList, setMenuList] = React.useState<any>(null);
 
   // --------------------------------- MODIFY CART  ---------------------------------- \\
   function addToCart(item: foodObj) {
@@ -78,6 +84,9 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
   }
   // --------------------------------- MODIFY CART  ---------------------------------- \\
   const saveRestaurantDetils = (details: any) => setRestaurantDetails(details);
+  const setRestaurants = (restaurantList: any) =>
+    setRestaurantList(restaurantList);
+  const setMenu = (menuList: any) => setMenuList(menuList);
   return (
     <ResourceContext.Provider
       value={{
@@ -89,6 +98,10 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
         restaurantDetails,
         resource,
         saveRestaurantDetils,
+        restaurantList,
+        setRestaurants,
+        menuList,
+        setMenu,
       }}>
       {children}
     </ResourceContext.Provider>

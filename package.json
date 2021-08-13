@@ -12,8 +12,9 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^3.6.5",
     "@react-native-community/masked-view": "^0.1.11",
-    "@react-native-firebase/app": "^12.1.0",
-    "@react-native-firebase/auth": "^12.1.0",
+    "@react-native-firebase/app": "^12.5.0",
+    "@react-native-firebase/auth": "^12.5.0",
+    "@react-native-firebase/functions": "^12.5.0",
     "@react-navigation/bottom-tabs": "^6.0.0-next.18",
     "@react-navigation/material-top-tabs": "^6.0.0-next.14",
     "@react-navigation/native": "^6.0.0-next.3",
