@@ -23,7 +23,7 @@ export default BorderButton;
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    borderColor: colors.green,
+    borderColor: colors.brown,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   text: {
-    color: '#21BF73',
+    color: colors.brown,
     textTransform: 'uppercase',
   },
 });

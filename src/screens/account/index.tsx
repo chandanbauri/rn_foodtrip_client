@@ -7,6 +7,9 @@ import {
   Image,
   ScrollView,
   TextInput,
+  Platform,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
@@ -19,21 +22,33 @@ import {Dimensions} from 'react-native';
 import {colors, getValue} from '../../utilities';
 import {FlatList} from 'react-native-gesture-handler';
 import {foodObj} from '../../contexts/resource';
+import firestore from '@react-native-firebase/firestore';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import * as ImagePicker from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
+import * as Progress from 'react-native-progress';
 
+import auth from '@react-native-firebase/auth';
 const {width, height} = Dimensions.get('window');
+const usersCollection = firestore().collection('Users');
 const Account = ({navigation, route}: AccountScreenProps) => {
   const Auth = React.useContext(AuthContext);
   const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   // variables
-  const snapPoints = React.useMemo(() => ['1%', '60%'], []);
+  const snapPoints = React.useMemo(() => ['1%', '40%'], []);
+  // const profileImage = (filename: string) =>
+  //   `https://firebasestorage.googleapis.com/v0/b/foodaddamain.appspot.com/o/${filename}`;
 
   // callbacks
   const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
     if (fromIndex == 1) bottomSheetRef.current?.close();
   }, []);
+
+  const handleTextInput = (name: string) => (text: string) => {
+    setDetails(prev => ({...prev, [name]: text}));
+  };
   const OpenBottomSheet = () => {
-    console.log('hello');
     bottomSheetRef.current?.expand();
   };
   const getData = async () => {
@@ -57,6 +72,15 @@ const Account = ({navigation, route}: AccountScreenProps) => {
       }
     });
   }, []);
+
+  const [details, setDetails] = React.useState({
+    name: '',
+    email: '',
+    address: '',
+  });
+  // const [image, setImage] = React.useState<any>(null);
+  // const [uploading, setUploading] = React.useState<boolean>(false);
+  // const [transferred, setTransferred] = React.useState<number>(0);
   const Header = () => (
     <>
       <View style={styles.titleBox}>
@@ -66,27 +90,92 @@ const Account = ({navigation, route}: AccountScreenProps) => {
           </Text>
           <Text style={styles.phoneNumber}>{Auth?.user.phoneNumber}</Text>
         </View>
-        {Auth?.user.photoURL ? (
-          <Image source={Auth?.user.photoURL} />
-        ) : (
-          <Pressable
-            onPress={() => {
-              OpenBottomSheet();
-            }}>
+        <Pressable
+          onPress={() => {
+            OpenBottomSheet();
+          }}>
+          {/* {Auth?.user.photoURL ? (
+            <Image
+              source={{
+                uri: profileImage(
+                  'https://firebasestorage.googleapis.com/v0/b/foodaddamain.appspot.com/o/rn_image_picker_lib_temp_8eeb93e4-73d8-4fc0-a1df-56060e68f1b6.jpg',
+                ),
+                method: 'POST',
+              }}
+              style={{height: 60, width: 60}}
+            />
+          ) : (
             <View
               style={{
-                height: 50,
-                width: 50,
-                borderRadius: 25,
-                backgroundColor: '#BBB',
-              }}></View>
-          </Pressable>
-        )}
+                height: 60,
+                width: 60,
+                borderRadius: 30,
+                backgroundColor: colors.white,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <FontAwesome5 name="user-alt" size={35} color={colors.brown} />
+            </View>
+          )} */}
+          <Text style={{color: colors.brown, fontWeight: '700'}}>EDIT</Text>
+        </Pressable>
       </View>
 
       <Text style={styles.sectionTitle}>My Orders</Text>
     </>
   );
+  // const selectImage = () => {
+  //   const options: ImagePicker.ImageLibraryOptions = {
+  //     maxWidth: 2000,
+  //     maxHeight: 2000,
+  //     mediaType: 'photo',
+  //     // storageOptions: {
+  //     //   skipBackup: true,
+  //     //   path: 'images',
+  //     // },
+  //   };
+  //   ImagePicker.launchImageLibrary(options, async response => {
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.errorMessage) {
+  //       console.log('ImagePicker Error: ', response.errorMessage);
+  //     } else if (response.assets) {
+  //       const source = {uri: response.assets[0].uri};
+  //       console.log(source);
+  //       setImage(source);
+  //     }
+  //   });
+  // };
+
+  // const uploadImage = async () => {
+  //   if (image) {
+  //     const {uri} = image;
+  //     const filename = uri.substring(uri.lastIndexOf('/') + 1);
+  //     const uploadUri =
+  //       Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+  //     setUploading(true);
+  //     setTransferred(0);
+  //     const task = storage().ref(filename).putFile(uploadUri);
+  //     // set progress state
+  //     task.on('state_changed', async snapshot => {
+  //       console.log(await snapshot.ref.getDownloadURL());
+  //       setTransferred(
+  //         Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+  //       );
+  //     });
+  //     try {
+  //       await task;
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //     setUploading(false);
+  //     Alert.alert(
+  //       'Photo uploaded!',
+  //       'Your photo has been uploaded to Firebase Cloud Storage!',
+  //     );
+  //     setImage(null);
+  //   }
+  // };
   if (Auth?.user !== null)
     return (
       // <ScrollView style={styles.root}>
@@ -122,6 +211,8 @@ const Account = ({navigation, route}: AccountScreenProps) => {
             keyExtractor={(item, index: number) => {
               return `${index}`;
             }}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => (
               <View
                 style={{
@@ -162,7 +253,7 @@ const Account = ({navigation, route}: AccountScreenProps) => {
         </View>
         <BottomSheet
           ref={bottomSheetRef}
-          index={1}
+          index={Auth?.user.displayName ? -1 : 1}
           snapPoints={snapPoints}
           onAnimate={handleSheetChanges}
           keyboardBehavior="fullScreen"
@@ -170,36 +261,103 @@ const Account = ({navigation, route}: AccountScreenProps) => {
           backdropComponent={props => <BottomSheetBackdrop {...props} />}>
           <View style={styles.bottomSheet}>
             <Text style={styles.sectionTitle}>Edit your profile</Text>
-            <View>
+            {/* <View>
               <View
                 style={{
-                  height: 50,
-                  width: 50,
-                  borderRadius: 25,
-                  backgroundColor: '#BBB',
-                }}></View>
+                  height: 60,
+                  width: 60,
+                  borderRadius: 30,
+                  backgroundColor: colors.white,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <FontAwesome5 name="user-alt" size={35} color={colors.brown} />
+              </View>
             </View>
             <View style={{width: '40%', marginBottom: 10}}>
               <BorderButton
                 text="upload image"
-                onPress={() => {}}
-                fontSize={12}
+                onPress={() => {
+                  // selectImage();
+                }}
+                fontSize={13}
               />
-            </View>
+            </View> */}
             <TextInput
               placeholder="Name"
-              style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
+              placeholderTextColor={colors.brown}
+              style={{borderBottomColor: colors.brown, borderBottomWidth: 1}}
+              onChangeText={handleTextInput('name')}
             />
             <TextInput
-              placeholder="Phone"
-              style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
+              placeholder="email"
+              placeholderTextColor={colors.brown}
+              style={{borderBottomColor: colors.brown, borderBottomWidth: 1}}
+              onChangeText={handleTextInput('email')}
+              keyboardType="email-address"
             />
+            <TextInput
+              placeholder="Address"
+              placeholderTextColor={colors.brown}
+              style={{borderBottomColor: colors.brown, borderBottomWidth: 1}}
+              onChangeText={handleTextInput('address')}
+            />
+
             <FilledButton
               text="SAVE CHANGES"
-              onPress={() => {
-                console.log('hello');
+              onPress={async () => {
+                console.log(Auth?.user);
+                // uploadImage();
+                if (details.name !== '')
+                  await auth().currentUser?.updateProfile({
+                    displayName: details.name,
+                  });
+                if (details.name !== '')
+                  await auth().currentUser?.updateEmail(details.email);
+                if (Auth?.user.displayName) {
+                  try {
+                    await usersCollection
+                      .doc(auth().currentUser?.uid)
+                      .set(details);
+                    Alert.alert(
+                      'Profile Saved',
+                      'Your Profile has been saved Successfully',
+                      [
+                        {
+                          text: 'Ok',
+                          onPress: () => bottomSheetRef.current?.close(),
+                        },
+                      ],
+                    );
+                  } catch (error) {
+                    throw error;
+                  }
+                } else {
+                  try {
+                    await usersCollection
+                      .doc(auth().currentUser?.uid)
+                      .update(details);
+                    Alert.alert(
+                      'Profile Saved',
+                      'Your Profile has been saved Successfully',
+                      [
+                        {
+                          text: 'Ok',
+                          onPress: () => bottomSheetRef.current?.close(),
+                        },
+                      ],
+                    );
+                  } catch (error) {
+                    throw error;
+                  }
+                }
               }}
             />
+            {/* {uploading && (
+              <View style={styles.progressBarContainer}>
+                <Progress.Bar progress={transferred} width={300} />
+              </View>
+            )} */}
           </View>
         </BottomSheet>
       </>
@@ -284,5 +442,12 @@ const styles = StyleSheet.create({
   bottomSheet: {
     paddingTop: 10,
     paddingHorizontal: 10,
+  },
+  progressBarContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import auth from '@react-native-firebase/auth';
-import {NativeViewGestureHandlerPayload} from 'react-native-gesture-handler';
+
 
 type contextProps = {
   user: any;

@@ -230,7 +230,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           }}>
           <Pressable
             onPress={() => {
-              navigation.navigate('Cart');
+              navigation.navigate('BookOrder');
             }}>
             <View style={styles.gotoCartButton}>
               <Text
@@ -238,7 +238,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
                   fontSize: 18,
                   color: colors.white,
                 }}>
-                Cart
+                Proceed
               </Text>
             </View>
           </Pressable>

@@ -28,7 +28,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
     Auth?.verifyPhone(
       value,
       () => {
-        navigation.navigate('Home');
+        // navigation.navigate('Home');
       },
       () => {
         setError('Please Enter a valid Verification code');
