@@ -16,8 +16,8 @@ const HomeScreenStack = () => {
   const onAuthStateChnaged = (user: any) => {
     if (user !== null) {
       Auth?.setUser(user);
-      navigation.navigate('Home');
-    }
+    } else Auth?.setUser(null);
+    navigation.navigate('Home');
   };
   React.useEffect(() => {
     const subscribe = auth().onAuthStateChanged(onAuthStateChnaged);

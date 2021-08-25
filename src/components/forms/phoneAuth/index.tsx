@@ -11,13 +11,23 @@ const {width} = Dimensions.get('window');
 const PhoneAuthForm: React.FunctionComponent = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
   const [phoneNo, setPhoneNo] = React.useState<string>('');
-  const handleTextInput = (text: string) => setPhoneNo(() => text);
+  const [error, setError] = React.useState<boolean>(false);
+  const handleTextInput = (text: string) => {
+    setPhoneNo(prev => {
+      if (text.length === 10 || text.length === 0) {
+        setError(false);
+      } else setError(true);
+      return text;
+    });
+  };
   const Auth = React.useContext(AuthContext);
 
   const handleSubmit = async () => {
     if (validatePhoneNo(phoneNo)) {
       Auth?.phoneAuth(`+91${phoneNo}`);
       navigation.navigate('Verify', {phone: `+91${phoneNo}`});
+    } else {
+      setError(true);
     }
   };
   //+-555-521-5554
@@ -32,12 +42,21 @@ const PhoneAuthForm: React.FunctionComponent = () => {
         <View style={styles.inputContainer}>
           <Text style={{color: colors.brown}}>{'+ 91'}</Text>
           <TextInput
-            style={{marginLeft: 10, color: colors.brown}}
+            style={{
+              marginLeft: 10,
+              color: error ? colors.error : colors.brown,
+              width: '100%',
+            }}
             keyboardType="number-pad"
             value={phoneNo}
             onChangeText={handleTextInput}
           />
         </View>
+        {error == true && (
+          <Text style={{color: colors.error, marginTop: 2, fontSize: 12}}>
+            The phone number is invalid
+          </Text>
+        )}
         <Pressable style={styles.filledLoginButton} onPress={handleSubmit}>
           <Text style={styles.filledLoginButtonText}>Login</Text>
         </Pressable>

@@ -1,82 +1,153 @@
+import {useIsFocused} from '@react-navigation/native';
 import * as React from 'react';
 import {View, Text, StyleSheet, TextInput, Pressable} from 'react-native';
+import VerifyForm from '../../../components/forms/verify';
 import {AuthContext} from '../../../contexts/Auth';
 import {VerifyScreenProps} from '../../../navigation/authNavigator/types';
+import {colors} from '../../../utilities';
 const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   const {phone} = route.params;
-  const [code, setCode] = React.useState<string>('');
-  const handleTextInput = (text: string) => setCode(() => text);
+  const [counter, setCounter] = React.useState<number>(30);
+  const isFocused = useIsFocused();
+  const [value, setValue] = React.useState('');
+  const [Error, setError] = React.useState<string>('');
+  const decreaseCounter = () => {
+    let timer = setInterval(() => {
+      if (isFocused)
+        setCounter(prev => {
+          if (prev > 0) return prev - 1;
+          else {
+            clearInterval(timer);
+            return 0;
+          }
+        });
+    }, 1000);
+  };
   const Auth = React.useContext(AuthContext);
-
+  const onVrify = () => {
+    Auth?.verifyPhone(
+      value,
+      () => {
+        navigation.navigate('Home');
+      },
+      () => {
+        setError('Please Enter a valid Verification code');
+      },
+    );
+  };
+  React.useEffect(() => {
+    if (isFocused) decreaseCounter();
+    return;
+  }, []);
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Verify Phone Number</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          textAlign="center"
-          placeholder="_ _ _ _ _ _"
-          value={code}
-          onChangeText={handleTextInput}
-        />
+      <Text style={styles.titleText}>Verify Code</Text>
+      <View style={{width: 200}}>
+        <Text
+          style={{
+            color: colors.brown,
+            textAlign: 'center',
+          }}>{`A code has been sent to  ${phone}  via SMS`}</Text>
       </View>
-      <View style={styles.optionsContainer}>
+      <View style={styles.inputContainer}>
+        <VerifyForm value={value} setValue={setValue} />
         <Pressable
           onPress={() => {
-            Auth?.resendVerificationCode(phone);
+            if (counter == 0) {
+              setCounter(prev => 30);
+              decreaseCounter();
+              Auth?.resendVerificationCode(phone);
+            }
           }}>
-          <Text style={{fontSize: 12}}>Resend</Text>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              textDecorationColor: colors.brown,
+              color: colors.brown,
+            }}>{`Resend code ${counter}`}</Text>
         </Pressable>
       </View>
-      <Pressable
-        style={styles.filledLoginButton}
-        onPress={() => {
-          Auth?.verifyPhone(code);
-          console.log(phone);
-        }}>
-        <Text style={styles.filledLoginButtonText}>Verify</Text>
-      </Pressable>
+      <View style={{width: '100%', paddingHorizontal: 15}}>
+        <Pressable
+          style={styles.nextButton}
+          onPress={() => {
+            onVrify();
+            //navigation.navigate('tour_screen');
+          }}>
+          <Text style={{fontSize: 20, fontWeight: '700', color: colors.white}}>
+            Verify
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
-
-export default VerificationScreen;
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 14,
+    justifyContent: 'space-between',
+    paddingBottom: 20,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: 'OpenSans-SemiBold',
+  titleText: {
+    color: colors.black,
+    fontSize: 20,
+    fontWeight: '700',
+    marginTop: 80,
   },
   inputContainer: {
-    height: 50,
-    width: '100%',
-    borderColor: '#21BF73',
-    borderWidth: 1,
-    marginTop: 40,
-  },
-  optionsContainer: {
-    width: '100%',
-    marginTop: 5,
-    marginBottom: 10,
-    alignItems: 'flex-end',
-  },
-  filledLoginButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 35,
-    marginTop: 10,
-    backgroundColor: '#21BF73',
     alignItems: 'center',
-    marginBottom: 50,
   },
-  filledLoginButtonText: {
-    color: '#fff',
-    textTransform: 'uppercase',
-    fontSize: 14,
-    fontFamily: 'OpenSans-SemiBold',
+  nextButton: {
+    width: '100%',
+    paddingVertical: 15,
+    backgroundColor: colors.brown,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    elevation: 3,
   },
 });
+
+export default VerificationScreen;
+
+// const styles = StyleSheet.create({
+//   root: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     paddingHorizontal: 14,
+//   },
+//   title: {
+//     fontSize: 24,
+//     fontFamily: 'OpenSans-SemiBold',
+//   },
+//   inputContainer: {
+//     height: 50,
+//     width: '100%',
+//     borderColor: '#21BF73',
+//     borderWidth: 1,
+//     marginTop: 40,
+//   },
+//   optionsContainer: {
+//     width: '100%',
+//     marginTop: 5,
+//     marginBottom: 10,
+//     alignItems: 'flex-end',
+//   },
+//   filledLoginButton: {
+//     paddingVertical: 12,
+//     paddingHorizontal: 35,
+//     marginTop: 10,
+//     backgroundColor: '#21BF73',
+//     alignItems: 'center',
+//     marginBottom: 50,
+//   },
+//   filledLoginButtonText: {
+//     color: '#fff',
+//     textTransform: 'uppercase',
+//     fontSize: 14,
+//     fontFamily: 'OpenSans-SemiBold',
+//   },
+// });

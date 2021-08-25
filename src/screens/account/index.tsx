@@ -87,7 +87,7 @@ const Account = ({navigation, route}: AccountScreenProps) => {
       <Text style={styles.sectionTitle}>My Orders</Text>
     </>
   );
-  if (Auth?.user != null)
+  if (Auth?.user !== null)
     return (
       // <ScrollView style={styles.root}>
       <>
@@ -143,6 +143,15 @@ const Account = ({navigation, route}: AccountScreenProps) => {
               </View>
             )}
             // renderItem={() => <Text>hello</Text>}
+            ListFooterComponent={
+              <FilledButton
+                text="Log out"
+                onPress={() => {
+                  console.log('ehll');
+                  Auth?.signOut();
+                }}
+              />
+            }
           />
           {/* <FilledButton
             text="View All"

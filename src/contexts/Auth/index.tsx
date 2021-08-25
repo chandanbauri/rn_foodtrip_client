@@ -1,12 +1,19 @@
 import * as React from 'react';
 import auth from '@react-native-firebase/auth';
+import {NativeViewGestureHandlerPayload} from 'react-native-gesture-handler';
 
 type contextProps = {
   user: any;
+  guest: string | null;
   setUser: React.Dispatch<React.SetStateAction<any>>;
   phoneAuth: (phone: string) => void;
-  verifyPhone: (code: string) => void;
-  resendVerificationCode: (phone: string) => void;
+  verifyPhone: (
+    code: string,
+    callBack: () => void,
+    failure: () => void,
+  ) => Promise<void>;
+  resendVerificationCode: (phone: string | null) => void;
+  signOut: () => void;
 };
 
 const AuthContext = React.createContext<contextProps | null>(null);
@@ -14,11 +21,12 @@ const AuthContext = React.createContext<contextProps | null>(null);
 const AuthContextProvider: React.FunctionComponent = ({children}) => {
   const [user, setUser] = React.useState<any>(null);
   const [confirmation, setConfirmation] = React.useState<any>(null);
-
+  const [guest, setGuest] = React.useState<string | null>(null);
   const phoneAuth = async (phone: string) => {
     try {
       let confirm = await auth().signInWithPhoneNumber(phone);
       setConfirmation(confirm);
+      setGuest(prev => phone);
     } catch (error) {
       throw error;
     }
@@ -33,12 +41,21 @@ const AuthContextProvider: React.FunctionComponent = ({children}) => {
       }
     }
   };
-  const resendVerificationCode = async (phone: string) => {
+  const resendVerificationCode = async (phone: string | null) => {
     try {
-      let confirm = await auth().signInWithPhoneNumber(phone, true);
-      setConfirmation(confirm);
+      if (phone) {
+        let confirm = await auth().signInWithPhoneNumber(phone, true);
+        setConfirmation(confirm);
+      }
     } catch (error) {
       throw error;
+    }
+  };
+  const signOut = async () => {
+    try {
+      await auth().signOut();
+    } catch (e) {
+      throw e;
     }
   };
   return (
@@ -49,6 +66,8 @@ const AuthContextProvider: React.FunctionComponent = ({children}) => {
         phoneAuth,
         verifyPhone,
         resendVerificationCode,
+        signOut,
+        guest,
       }}>
       {children}
     </AuthContext.Provider>

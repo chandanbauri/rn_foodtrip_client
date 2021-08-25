@@ -114,8 +114,6 @@ function Loader() {
 }
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
-  const Resource = useResource();
-
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const MAX_SCOLL_OFFSET = height * 0.1;
   const bottomSheetRef = React.useRef<BottomSheet>(null);
@@ -232,18 +230,16 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           }}>
           <Pressable
             onPress={() => {
-              console.log(Resource?.cart);
+              navigation.navigate('Cart');
             }}>
             <View style={styles.gotoCartButton}>
-              {Resource && (
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: colors.white,
-                  }}>
-                  {Resource?.getTotalCost()}
-                </Text>
-              )}
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: colors.white,
+                }}>
+                Cart
+              </Text>
             </View>
           </Pressable>
         </View>

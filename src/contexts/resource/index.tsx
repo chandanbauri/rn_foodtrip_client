@@ -20,11 +20,12 @@ interface contextProps {
   menuList: any;
   setMenu: (menuList: any) => void;
   EmptyCart: () => void;
-  getTotalCost: () => any;
+  getTotalCost: () => void;
 }
 
 export const ResourceContext = React.createContext<contextProps | null>(null);
 export const useResource = () => React.useContext(ResourceContext);
+
 export const ResourceProvider: React.FunctionComponent = ({children}) => {
   const [cart, setCart] = React.useState<Array<foodObj>>([]);
   const [restaurantDetails, setRestaurantDetails] = React.useState<any>();
@@ -95,12 +96,11 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
   };
 
   function getTotalCost() {
-    let total: number = 0;
+    let total: number;
     if (cart.length) {
       cart.map((item: foodObj) => {
         if (item.count) total = total + item.price * item.count;
       });
-      return total;
     }
   }
   return (

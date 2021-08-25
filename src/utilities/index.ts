@@ -10,6 +10,7 @@ export const colors = {
   brown: '#DE8971',
   black: '#0F0F0F',
   purple: '#6930C3',
+  error: '#FF2442',
 };
 
 export const setValue = async (value: any, key: string) => {
