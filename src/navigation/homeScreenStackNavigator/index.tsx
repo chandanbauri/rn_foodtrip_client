@@ -21,7 +21,7 @@ const HomeScreenStack = () => {
       });
     } else {
       Auth?.setUser(null);
-      navigation.navigate('Home');
+      // navigation.navigate('Home');
     }
   };
   React.useEffect(() => {

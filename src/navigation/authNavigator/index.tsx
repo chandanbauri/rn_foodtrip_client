@@ -36,9 +36,7 @@ const AuthNavigator = () => {
             screenOptions={{headerShown: false}}>
             <Stack.Screen name="Main" component={HomeScreenStack} />
             <Stack.Screen name="Verify" component={VerificationScreen} />
-            {isFirstVisit && (
-              <Stack.Screen name="Greet" component={GreetScreen} />
-            )}
+            <Stack.Screen name="Greet" component={GreetScreen} />
           </Stack.Navigator>
         </LocationProvider>
       </ResourceProvider>

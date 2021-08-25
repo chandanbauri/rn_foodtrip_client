@@ -22,6 +22,7 @@ import {colors} from '../../utilities';
 import functions from '@react-native-firebase/functions';
 import {getMenuList, getRestaurantList} from '../../utilities/cloud/functions';
 import {ResourceContext} from '../../contexts/resource';
+import {CategoryCard} from '../../components/cards/category';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
@@ -80,6 +81,29 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   React.useEffect(() => {
     getList();
   }, []);
+  let category = [1, 2, 3, 4, 5, 6, 7, 6, 7];
+  const ListHeader = () => (
+    <>
+      <View style={styles.categoryListContainer}>
+        <View style={styles.categoryListHeaderContainer}>
+          <Text style={styles.categoryListHeader}>Categories</Text>
+        </View>
+        <View style={styles.categoryList}>
+          <FlatList
+            horizontal={true}
+            keyExtractor={(item, index) => `${index}`}
+            data={category}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            renderItem={() => <CategoryCard />}
+          />
+        </View>
+      </View>
+      <View style={styles.ListHeader}>
+        <Text style={styles.ListHeaderTitle}>Restaurants Around You</Text>
+      </View>
+    </>
+  );
   if (initializing)
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -106,18 +130,12 @@ const Home = ({navigation, route}: HomeScreenProps) => {
           </View>
         </TouchableOpacity>
       </View> */}
-      <View style={styles.categoryListContainer}>
-        <View style={styles.categoryListHeaderContainer}>
-          <Text style={styles.categoryListHeader}>Categories</Text>
-        </View>
-        <View style={styles.categoryList}>
-          {/* restaurant cards goes here only the closest ones */}
-        </View>
-      </View>
+
       <View style={styles.restaurantListContainer}>
         <FlatList
-          data={Resource?.restaurantList}
-          keyExtractor={item => item._fieldsProto.name.stringValue}
+          data={[1, 2, 3, 4, 5, 6, 7, 8]}
+          keyExtractor={(item, index) => `${index}`}
+          ListHeaderComponent={<ListHeader />}
           renderItem={({item, index: number}) => (
             <Restaurant
               onClick={() => {
@@ -183,19 +201,30 @@ const styles = StyleSheet.create({
     marginLeft: 18,
   },
   categoryListHeader: {
-    color: '#929AAB',
+    color: colors.brown,
     fontFamily: 'OpenSans-SemiBold',
-    fontSize: 14,
+    fontSize: 18,
   },
   categoryList: {
-    backgroundColor: `${colors.green}25`,
-    height: 200,
+    backgroundColor: colors.white,
     width: '100%',
-    marginTop: 10,
+    paddingVertical: 30,
+    flexDirection: 'row',
   },
   restaurantListContainer: {
     marginTop: 10,
-    backgroundColor: `${colors.gray}30`,
+    backgroundColor: colors.white,
+  },
+  ListHeader: {
+    width: '100%',
+    paddingVertical: 10,
+    paddingLeft: 14,
+    backgroundColor: colors.white,
+  },
+  ListHeaderTitle: {
+    color: colors.brown,
+    fontWeight: '700',
+    fontSize: 20,
   },
 });
 

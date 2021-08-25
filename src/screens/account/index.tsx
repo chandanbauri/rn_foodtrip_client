@@ -86,9 +86,16 @@ const Account = ({navigation, route}: AccountScreenProps) => {
       <View style={styles.titleBox}>
         <View>
           <Text style={styles.userName}>
-            {Auth?.user.displayName ? Auth?.user.displayName : 'User Name'}
+            {Auth?.user.displayName
+              ? auth().currentUser?.displayName
+              : 'User Name'}
           </Text>
-          <Text style={styles.phoneNumber}>{Auth?.user.phoneNumber}</Text>
+          <Text style={styles.phoneNumber}>{`${Auth?.user.phoneNumber}`}</Text>
+          {auth().currentUser?.email && (
+            <Text style={styles.phoneNumber}>{`${
+              auth().currentUser?.email
+            }`}</Text>
+          )}
         </View>
         <Pressable
           onPress={() => {
@@ -286,20 +293,32 @@ const Account = ({navigation, route}: AccountScreenProps) => {
             <TextInput
               placeholder="Name"
               placeholderTextColor={colors.brown}
-              style={{borderBottomColor: colors.brown, borderBottomWidth: 1}}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
               onChangeText={handleTextInput('name')}
             />
             <TextInput
               placeholder="email"
               placeholderTextColor={colors.brown}
-              style={{borderBottomColor: colors.brown, borderBottomWidth: 1}}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
               onChangeText={handleTextInput('email')}
               keyboardType="email-address"
             />
             <TextInput
               placeholder="Address"
               placeholderTextColor={colors.brown}
-              style={{borderBottomColor: colors.brown, borderBottomWidth: 1}}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
               onChangeText={handleTextInput('address')}
             />
 
@@ -312,7 +331,7 @@ const Account = ({navigation, route}: AccountScreenProps) => {
                   await auth().currentUser?.updateProfile({
                     displayName: details.name,
                   });
-                if (details.name !== '')
+                if (details.email !== '')
                   await auth().currentUser?.updateEmail(details.email);
                 if (Auth?.user.displayName) {
                   try {
@@ -329,6 +348,7 @@ const Account = ({navigation, route}: AccountScreenProps) => {
                         },
                       ],
                     );
+                    setDetails({name: '', email: '', address: ''});
                   } catch (error) {
                     throw error;
                   }
@@ -347,6 +367,7 @@ const Account = ({navigation, route}: AccountScreenProps) => {
                         },
                       ],
                     );
+                    setDetails({name: '', email: '', address: ''});
                   } catch (error) {
                     throw error;
                   }
