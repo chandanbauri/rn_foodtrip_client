@@ -16,11 +16,14 @@ import BorderButton from '../../components/buttons/borderButton';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {AccountScreenProps} from '../../navigation/bottomTabNavigator/types';
 import {Dimensions} from 'react-native';
-import {colors} from '../../utilities';
+import {colors, getValue} from '../../utilities';
+import {FlatList} from 'react-native-gesture-handler';
+import {foodObj} from '../../contexts/resource';
 
 const {width, height} = Dimensions.get('window');
 const Account = ({navigation, route}: AccountScreenProps) => {
   const Auth = React.useContext(AuthContext);
+  const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   // variables
   const snapPoints = React.useMemo(() => ['1%', '60%'], []);
@@ -33,39 +36,62 @@ const Account = ({navigation, route}: AccountScreenProps) => {
     console.log('hello');
     bottomSheetRef.current?.expand();
   };
+  const getData = async () => {
+    let data = await getValue('orders');
+    return data;
+  };
+  const getTotalCost = (list: Array<foodObj> | any) => {
+    let total = 0;
+    list.map((item: foodObj) => {
+      if (item.count) total = total + item.price * item.count;
+    });
+
+    // console.log(total);
+    return total;
+  };
+  React.useEffect(() => {
+    getData().then(value => {
+      if (value != null) {
+        // console.log(value);
+        setData(value);
+      }
+    });
+  }, []);
+  const Header = () => (
+    <>
+      <View style={styles.titleBox}>
+        <View>
+          <Text style={styles.userName}>
+            {Auth?.user.displayName ? Auth?.user.displayName : 'User Name'}
+          </Text>
+          <Text style={styles.phoneNumber}>{Auth?.user.phoneNumber}</Text>
+        </View>
+        {Auth?.user.photoURL ? (
+          <Image source={Auth?.user.photoURL} />
+        ) : (
+          <Pressable
+            onPress={() => {
+              OpenBottomSheet();
+            }}>
+            <View
+              style={{
+                height: 50,
+                width: 50,
+                borderRadius: 25,
+                backgroundColor: '#BBB',
+              }}></View>
+          </Pressable>
+        )}
+      </View>
+
+      <Text style={styles.sectionTitle}>My Orders</Text>
+    </>
+  );
   if (Auth?.user != null)
     return (
-      <ScrollView style={styles.root}>
-        <>
-          <View style={styles.subContainer}>
-            <View style={styles.titleBox}>
-              <View>
-                <Text style={styles.userName}>
-                  {Auth?.user.displayName
-                    ? Auth?.user.displayName
-                    : 'User Name'}
-                </Text>
-                <Text style={styles.phoneNumber}>{Auth?.user.phoneNumber}</Text>
-              </View>
-              {Auth?.user.photoURL ? (
-                <Image source={Auth?.user.photoURL} />
-              ) : (
-                <Pressable
-                  onPress={() => {
-                    OpenBottomSheet();
-                  }}>
-                  <View
-                    style={{
-                      height: 50,
-                      width: 50,
-                      borderRadius: 25,
-                      backgroundColor: '#BBB',
-                    }}></View>
-                </Pressable>
-              )}
-            </View>
-          </View>
-          <View style={styles.subContainer}>
+      // <ScrollView style={styles.root}>
+      <>
+        {/* <View style={styles.subContainer}>
             <Text style={styles.sectionTitle}>Saved Addresses</Text>
             <AddressCard />
             <AddressCard />
@@ -83,56 +109,92 @@ const Account = ({navigation, route}: AccountScreenProps) => {
             <AddressCard />
             <AddressCard />
             <FilledButton
-              text="New Address"
+              text="View All"
+              onPress={() => {
+                console.log('hello');
+              }}
+            />
+          </View> */}
+        <View style={styles.subContainer}>
+          <FlatList
+            data={data}
+            ListHeaderComponent={() => <Header />}
+            keyExtractor={(item, index: number) => {
+              return `${index}`;
+            }}
+            renderItem={({item, index}) => (
+              <View
+                style={{
+                  padding: 4,
+                  marginVertical: 5,
+                  backgroundColor: colors.white,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: colors.brown,
+                  }}>{`Order Id: #45184484 ${index}`}</Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: colors.brown,
+                    marginTop: 5,
+                  }}>{`Cost : ${getTotalCost(item)}`}</Text>
+              </View>
+            )}
+            // renderItem={() => <Text>hello</Text>}
+          />
+          {/* <FilledButton
+            text="View All"
+            onPress={() => {
+              console.log('hello');
+            }}
+          /> */}
+        </View>
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          onAnimate={handleSheetChanges}
+          keyboardBehavior="fullScreen"
+          keyboardBlurBehavior="restore"
+          backdropComponent={props => <BottomSheetBackdrop {...props} />}>
+          <View style={styles.bottomSheet}>
+            <Text style={styles.sectionTitle}>Edit your profile</Text>
+            <View>
+              <View
+                style={{
+                  height: 50,
+                  width: 50,
+                  borderRadius: 25,
+                  backgroundColor: '#BBB',
+                }}></View>
+            </View>
+            <View style={{width: '40%', marginBottom: 10}}>
+              <BorderButton
+                text="upload image"
+                onPress={() => {}}
+                fontSize={12}
+              />
+            </View>
+            <TextInput
+              placeholder="Name"
+              style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
+            />
+            <TextInput
+              placeholder="Phone"
+              style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
+            />
+            <FilledButton
+              text="SAVE CHANGES"
               onPress={() => {
                 console.log('hello');
               }}
             />
           </View>
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={1}
-            snapPoints={snapPoints}
-            onAnimate={handleSheetChanges}
-            keyboardBehavior="fullScreen"
-            keyboardBlurBehavior="restore"
-            backdropComponent={props => <BottomSheetBackdrop {...props} />}>
-            <View style={styles.bottomSheet}>
-              <Text style={styles.sectionTitle}>Edit your profile</Text>
-              <View>
-                <View
-                  style={{
-                    height: 50,
-                    width: 50,
-                    borderRadius: 25,
-                    backgroundColor: '#BBB',
-                  }}></View>
-              </View>
-              <View style={{width: '40%', marginBottom: 10}}>
-                <BorderButton
-                  text="upload image"
-                  onPress={() => {}}
-                  fontSize={12}
-                />
-              </View>
-              <TextInput
-                placeholder="Name"
-                style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
-              />
-              <TextInput
-                placeholder="Phone"
-                style={{borderBottomColor: '#AAA', borderBottomWidth: 1}}
-              />
-              <FilledButton
-                text="SAVE CHANGES"
-                onPress={() => {
-                  console.log('hello');
-                }}
-              />
-            </View>
-          </BottomSheet>
-        </>
-      </ScrollView>
+        </BottomSheet>
+      </>
+      // </ScrollView>
     );
   return <PhoneAuthForm />;
 };

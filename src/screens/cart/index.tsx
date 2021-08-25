@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Food from '../../components/cards/food';
 import {foodObj, ResourceContext} from '../../contexts/resource';
-import {CartScreenProps} from '../../navigation/bottomTabNavigator/types';
+import {CartScreenProps} from '../../navigation/BookOrder/types';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {colors} from '../../utilities';
 import CartInfo from '../../components/bottomSheet/cart';

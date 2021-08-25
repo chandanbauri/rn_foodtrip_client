@@ -31,6 +31,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
         style={styles.filledLoginButton}
         onPress={() => {
           Auth?.verifyPhone(code);
+          console.log(phone);
         }}>
         <Text style={styles.filledLoginButtonText}>Verify</Text>
       </Pressable>

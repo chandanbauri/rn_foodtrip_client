@@ -4,13 +4,17 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthNavigatorParamList} from './authNavigator/types';
 import {BottomTabNavigatorParamList} from './bottomTabNavigator/types';
 import {HomeScreenStackParamList} from './homeScreenStackNavigator/types';
+import {BookOrderParamList} from './BookOrder/types';
 
 export type CombinedNavigationProp = CompositeNavigationProp<
   StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
   CompositeNavigationProp<
-    BottomTabNavigationProp<
-      BottomTabNavigatorParamList,
-      keyof BottomTabNavigatorParamList
+    CompositeNavigationProp<
+      BottomTabNavigationProp<
+        BottomTabNavigatorParamList,
+        keyof BottomTabNavigatorParamList
+      >,
+      StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>
     >,
     StackNavigationProp<
       HomeScreenStackParamList,

@@ -1,8 +1,10 @@
 import * as React from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, Text, View} from 'react-native';
 import {foodObj, ResourceContext} from '../../../contexts/resource';
 import {colors} from '../../../utilities';
 import FilledButton from '../../buttons/filled';
+import {CombinedNavigationProp} from '../../../navigation/types';
 
 function CartInfo() {
   const Resource = React.useContext(ResourceContext);
@@ -16,6 +18,7 @@ function CartInfo() {
       setTotalCost(total);
     }
   }, [Resource?.cart]);
+  const navigation = useNavigation<CombinedNavigationProp>();
   return (
     <View style={styles.root}>
       <View style={styles.costSection}>
@@ -25,7 +28,7 @@ function CartInfo() {
       <FilledButton
         text="Proceed"
         onPress={() => {
-          console.log('hello');
+          navigation.navigate('Proceed', {grandTotal: totalCost});
         }}
       />
     </View>

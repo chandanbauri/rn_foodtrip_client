@@ -17,7 +17,7 @@ const PhoneAuthForm: React.FunctionComponent = () => {
   const handleSubmit = async () => {
     if (validatePhoneNo(phoneNo)) {
       Auth?.phoneAuth(`+91${phoneNo}`);
-      navigation.navigate('Verify', {phone: phoneNo});
+      navigation.navigate('Verify', {phone: `+91${phoneNo}`});
     }
   };
   //+-555-521-5554

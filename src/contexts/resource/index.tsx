@@ -19,11 +19,13 @@ interface contextProps {
   setRestaurants: (restaurantList: any) => void;
   menuList: any;
   setMenu: (menuList: any) => void;
+  EmptyCart: () => void;
+  getTotalCost: () => any;
 }
 
-const ResourceContext = React.createContext<contextProps | null>(null);
-
-const ResourceProvider: React.FunctionComponent = ({children}) => {
+export const ResourceContext = React.createContext<contextProps | null>(null);
+export const useResource = () => React.useContext(ResourceContext);
+export const ResourceProvider: React.FunctionComponent = ({children}) => {
   const [cart, setCart] = React.useState<Array<foodObj>>([]);
   const [restaurantDetails, setRestaurantDetails] = React.useState<any>();
   const [resource, setResource] = React.useState<any>(null);
@@ -82,11 +84,25 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
     if (product.length >= 1) return product[0];
     else return false;
   }
+
   // --------------------------------- MODIFY CART  ---------------------------------- \\
   const saveRestaurantDetils = (details: any) => setRestaurantDetails(details);
   const setRestaurants = (restaurantList: any) =>
     setRestaurantList(restaurantList);
   const setMenu = (menuList: any) => setMenuList(menuList);
+  const EmptyCart = () => {
+    setCart([]);
+  };
+
+  function getTotalCost() {
+    let total: number = 0;
+    if (cart.length) {
+      cart.map((item: foodObj) => {
+        if (item.count) total = total + item.price * item.count;
+      });
+      return total;
+    }
+  }
   return (
     <ResourceContext.Provider
       value={{
@@ -102,10 +118,12 @@ const ResourceProvider: React.FunctionComponent = ({children}) => {
         setRestaurants,
         menuList,
         setMenu,
+        EmptyCart,
+        getTotalCost,
       }}>
       {children}
     </ResourceContext.Provider>
   );
 };
 
-export {ResourceContext, ResourceProvider};
+

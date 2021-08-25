@@ -8,20 +8,21 @@ import auth from '@react-native-firebase/auth';
 import {AuthContext} from '../../contexts/Auth';
 import {HomeScreenStackParamList} from './types';
 import ViewRestaurant from '../../screens/viewRestaurant';
+import {CombinedNavigationProp} from '../types';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
 const HomeScreenStack = () => {
-  // const navigation = useNavigation();
-  // const {setUser} = React.useContext(AuthContext);
-  // const onAuthStateChnaged = user => {
-  //   if (user !== null) {
-  //     setUser(user);
-  //     navigation.navigate('Home', {screen: 'HomeScreenStack'});
-  //   }
-  // };
-  // React.useEffect(() => {
-  //   const subscribe = auth().onAuthStateChanged(onAuthStateChnaged);
-  //   return subscribe;
-  // }, []);
+  const navigation = useNavigation<CombinedNavigationProp>();
+  const Auth = React.useContext(AuthContext);
+  const onAuthStateChnaged = (user: any) => {
+    if (user !== null) {
+      Auth?.setUser(user);
+      navigation.navigate('Home');
+    }
+  };
+  React.useEffect(() => {
+    const subscribe = auth().onAuthStateChanged(onAuthStateChnaged);
+    return subscribe;
+  }, []);
   return (
     <Stack.Navigator>
       <Stack.Screen

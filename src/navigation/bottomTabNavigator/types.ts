@@ -3,7 +3,7 @@ import {RouteProp} from '@react-navigation/native';
 import {CombinedNavigationProp} from '../types';
 export type BottomTabNavigatorParamList = {
   Home: undefined;
-  Cart: undefined;
+  BookOrder: undefined;
   Account: undefined;
 };
 
@@ -12,10 +12,7 @@ export type HomeScreenProps = {
   route: RouteProp<BottomTabNavigatorParamList, 'Home'>;
 };
 
-export type CartScreenProps = {
-  navigation: CombinedNavigationProp;
-  route: RouteProp<BottomTabNavigatorParamList, 'Cart'>;
-};
+
 
 export type AccountScreenProps = {
   navigation: CombinedNavigationProp;

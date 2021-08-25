@@ -10,6 +10,7 @@ import Home from '../../screens/home';
 import {BottomTabNavigatorParamList} from './types';
 import {RouteProp} from '@react-navigation/core';
 import {colors} from '../../utilities';
+import BookOrderNavigator from '../BookOrder';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -43,8 +44,8 @@ const BottomNavigator = () => {
         }}
       />
       <BottomTab.Screen
-        name="Cart"
-        component={Cart}
+        name="BookOrder"
+        component={BookOrderNavigator}
         options={{
           headerShown: false,
           tabBarBadge:
@@ -83,7 +84,7 @@ const TabBarIcon =
             color={focused ? colors.brown : `${colors.brown}90`}
           />
         );
-      case 'Cart':
+      case 'BookOrder':
         iconName = focused ? 'shopping' : 'shopping-outline';
         return (
           <MaterialCommunityIcons
@@ -118,7 +119,7 @@ const TabBarLabel =
       case 'Home':
         labelName = 'Home';
         break;
-      case 'Cart':
+      case 'BookOrder':
         labelName = 'Cart';
         break;
       case 'Account':

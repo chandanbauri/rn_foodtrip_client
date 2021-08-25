@@ -1,5 +1,10 @@
 import * as React from 'react';
-import {ActivityIndicator, Dimensions, StyleSheet} from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
 import {Text, View, FlatList} from 'react-native';
 import Food from '../../components/cards/food';
 import AnimatedHeader from '../../components/header/animated';
@@ -11,7 +16,9 @@ import Animated, {
 import FocusedStatusBar from '../../components/statusBar';
 import {RestaurantScreenProps} from '../../navigation/homeScreenStackNavigator/types';
 import {colors} from '../../utilities';
-const {height, width} = Dimensions.get('screen');
+import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
+import {ResourceContext, useResource} from '../../contexts/resource';
+const {height, width} = Dimensions.get('window');
 const foodObj = [
   {
     categoryName: 'Pizza',
@@ -106,12 +113,13 @@ function Loader() {
   );
 }
 
-const ViewRestaurant = ({navigation, route}: RestaurantScreenProps) => {
+function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
+  const Resource = useResource();
+
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const MAX_SCOLL_OFFSET = height * 0.1;
-
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
   const y = new Value<number>(0);
-
   let h = y.interpolate({
     inputRange: [0, MAX_SCOLL_OFFSET],
     outputRange: [height * 0.5, MAX_SCOLL_OFFSET],
@@ -140,6 +148,16 @@ const ViewRestaurant = ({navigation, route}: RestaurantScreenProps) => {
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
   const goBack = () => {
     navigation.goBack();
+  };
+  const snapPoints = React.useMemo(() => [100, 200], []);
+  // const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
+  //   if (fromIndex == 1) bottomSheetRef.current?.snapTo(0);
+  // }, []);
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.snapTo(0);
+  };
+  const closeBottomSheet = () => {
+    bottomSheetRef.current?.close();
   };
 
   React.useEffect(() => {
@@ -179,20 +197,84 @@ const ViewRestaurant = ({navigation, route}: RestaurantScreenProps) => {
           />
         )}
         keyExtractor={(item: any) => item?.id}
-        renderItem={({item}: any) => <Food item={item} />}
+        renderItem={({item}: any) => (
+          <Food
+            item={item}
+            addToCardAction={() => {
+              openBottomSheet();
+            }}
+            removeFromCardAction={() => {
+              closeBottomSheet();
+            }}
+          />
+        )}
         stickyHeaderIndices={[0]}
-        ListFooterComponent={() => <View style={{height: 30}} />}
+        ListFooterComponent={() => (
+          <View style={styles.bottomTextContainer}>
+            <Text
+              style={styles.bottomText}>{`Minimum order For 350 for one`}</Text>
+          </View>
+        )}
         style={{flex: 1}}
       />
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        // onAnimate={handleSheetChanges}
+        keyboardBehavior="fullScreen"
+        keyboardBlurBehavior="restore"
+        backdropComponent={props => <BottomSheetBackdrop {...props} />}>
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: 10,
+          }}>
+          <Pressable
+            onPress={() => {
+              console.log(Resource?.cart);
+            }}>
+            <View style={styles.gotoCartButton}>
+              {Resource && (
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: colors.white,
+                  }}>
+                  {Resource?.getTotalCost()}
+                </Text>
+              )}
+            </View>
+          </Pressable>
+        </View>
+      </BottomSheet>
     </View>
   );
-};
+}
 
 export default ViewRestaurant;
 
 const styles = StyleSheet.create({
   root: {
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
+    flex: 1,
+  },
+  bottomTextContainer: {
+    paddingVertical: 3,
+    backgroundColor: colors.green,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomText: {
+    fontSize: 10,
+    color: '#FFFFFF',
+  },
+  gotoCartButton: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    backgroundColor: colors.brown,
   },
 });

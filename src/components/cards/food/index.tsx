@@ -9,9 +9,11 @@ const {width} = Dimensions.get('window');
 
 type props = {
   item: foodObj;
+  addToCardAction?: () => void;
+  removeFromCardAction?: () => void;
 };
 
-function Food({item}: props) {
+function Food({item, addToCardAction, removeFromCardAction}: props) {
   const Resource = React.useContext(ResourceContext);
 
   const [counter, setCounter] = React.useState<number>(0);
@@ -31,10 +33,14 @@ function Food({item}: props) {
         <View style={styles.controllButtonsContainer}>
           <Pressable
             onPress={() => {
+              console.log(Resource?.cart.length);
               setCounter(prev => {
+                if (Resource?.cart.length <= 1 && removeFromCardAction) {
+                  removeFromCardAction();
+                }
                 prev === 1
                   ? Resource?.deleteItemFromCart(item.id)
-                  : Resource?.updateItem(item.id, prev - 1,item.price);
+                  : Resource?.updateItem(item.id, prev - 1, item.price);
                 return prev - 1;
               });
             }}>
@@ -48,7 +54,8 @@ function Food({item}: props) {
           <Pressable
             onPress={() => {
               setCounter(prev => {
-                Resource?.updateItem(item.id, prev + 1,item.price);
+                if (addToCardAction) addToCardAction();
+                Resource?.updateItem(item.id, prev + 1, item.price);
                 return prev + 1;
               });
             }}>
@@ -63,6 +70,7 @@ function Food({item}: props) {
         <Pressable
           onPress={() => {
             setCounter(1);
+            if (addToCardAction) addToCardAction();
             Resource?.addToCart({...item, count: 1});
           }}>
           <View

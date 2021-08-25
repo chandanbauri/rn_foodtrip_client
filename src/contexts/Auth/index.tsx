@@ -28,6 +28,7 @@ const AuthContextProvider: React.FunctionComponent = ({children}) => {
       try {
         await confirmation.confirm(code);
       } catch (error) {
+        console.log(error);
         console.log('Invalid code.');
       }
     }
