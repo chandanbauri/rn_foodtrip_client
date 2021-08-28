@@ -19,16 +19,6 @@ function Cart({navigation}: CartScreenProps) {
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   const snapPoints = React.useMemo(() => [150, 200], []);
   const Auth = React.useContext(ResourceContext);
-  const getTotalCost = (list: Array<foodObj>) => {
-    let total = 0;
-    list.reduce((prevVal: foodObj, value: foodObj) => {
-      total += value.price;
-      return value;
-    });
-
-    console.log(total);
-    return total;
-  };
 
   if (Auth?.cart.length) {
     return (

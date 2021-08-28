@@ -3,7 +3,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Cart from '../../screens/cart';
-import Account from '../../screens/account';
 import {Text} from 'react-native';
 import {ResourceContext} from '../../contexts/resource';
 import Home from '../../screens/home';
@@ -11,6 +10,7 @@ import {BottomTabNavigatorParamList} from './types';
 import {RouteProp} from '@react-navigation/core';
 import {colors} from '../../utilities';
 import BookOrderNavigator from '../BookOrder';
+import Account from '../../screens/account/Account';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -23,6 +23,7 @@ const BottomNavigator = () => {
   const Resource = React.useContext(ResourceContext);
   return (
     <BottomTab.Navigator
+      initialRouteName="Home"
       screenOptions={({route}) => ({
         tabBarIcon: TabBarIcon(route),
         tabBarActiveTintColor: '#000000',

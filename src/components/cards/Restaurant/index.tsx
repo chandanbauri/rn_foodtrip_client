@@ -50,9 +50,11 @@ const Restaurant = ({onClick, values}: props) => {
           />
         </View>
         <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTitle}>Domino’s Pizza</Text>
-          <Text style={styles.detailsText}>Indian . Chineese</Text>
-          <Text style={styles.detailsText}>2 km . Court more</Text>
+          <Text style={styles.detailsTitle}>{values.restaurantName}</Text>
+          {/* <Text style={styles.detailsText}>Indian . Chineese</Text> */}
+          <Text style={styles.detailsText}>{`${
+            values.preparationDuration
+          } . ${values.address.slice(0, 10)}...`}</Text>
           <Text style={[styles.detailsText, styles.ordeOnlineText]}>
             Order online
           </Text>

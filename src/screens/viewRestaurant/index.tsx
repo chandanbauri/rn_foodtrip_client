@@ -18,6 +18,7 @@ import {RestaurantScreenProps} from '../../navigation/homeScreenStackNavigator/t
 import {colors} from '../../utilities';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {ResourceContext, useResource} from '../../contexts/resource';
+import {getFoodList} from '../../utilities/cloud/functions';
 const {height, width} = Dimensions.get('window');
 const foodObj = [
   {
@@ -113,53 +114,74 @@ function Loader() {
   );
 }
 
+const y = new Value<number>(0);
+const MAX_SCOLL_OFFSET = height * 0.1;
+let h = y.interpolate({
+  inputRange: [0, MAX_SCOLL_OFFSET],
+  outputRange: [height * 0.5, MAX_SCOLL_OFFSET],
+  extrapolate: Extrapolate.CLAMP,
+});
+let scale = y.interpolate({
+  inputRange: [0, MAX_SCOLL_OFFSET],
+  outputRange: [2.5, 1],
+  extrapolate: Extrapolate.CLAMP,
+});
+let coverOpacity = y.interpolate({
+  inputRange: [0, MAX_SCOLL_OFFSET],
+  outputRange: [1, 0],
+  extrapolate: Extrapolate.CLAMP,
+});
+let OverLayOpacity = y.interpolate({
+  inputRange: [0, MAX_SCOLL_OFFSET],
+  outputRange: [1, 0],
+  extrapolate: Extrapolate.CLAMP,
+});
+let titleColor = interpolateColors(y, {
+  inputRange: [0, MAX_SCOLL_OFFSET],
+  outputColorRange: [colors.white, colors.brown],
+});
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const [initializing, setInitializing] = React.useState<boolean>(true);
-  const MAX_SCOLL_OFFSET = height * 0.1;
-  const bottomSheetRef = React.useRef<BottomSheet>(null);
-  const y = new Value<number>(0);
-  let h = y.interpolate({
-    inputRange: [0, MAX_SCOLL_OFFSET],
-    outputRange: [height * 0.5, MAX_SCOLL_OFFSET],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  let scale = y.interpolate({
-    inputRange: [0, MAX_SCOLL_OFFSET],
-    outputRange: [2.5, 1],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  let coverOpacity = y.interpolate({
-    inputRange: [0, MAX_SCOLL_OFFSET],
-    outputRange: [1, 0],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  let OverLayOpacity = y.interpolate({
-    inputRange: [0, MAX_SCOLL_OFFSET],
-    outputRange: [1, 0],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  let titleColor = interpolateColors(y, {
-    inputRange: [0, MAX_SCOLL_OFFSET],
-    outputColorRange: [colors.white, colors.brown],
-  });
-
+  let trigger = React.useRef(false);
+  let Resouce = useResource();
+  const [foodList, setFoodList] = React.useState<Array<any>>([]);
+  let list = React.useRef<Array<any>>([]);
+  const {collection, id} = route.params;
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
   const goBack = () => {
     navigation.goBack();
   };
-  const snapPoints = React.useMemo(() => [100, 200], []);
-  // const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
-  //   if (fromIndex == 1) bottomSheetRef.current?.snapTo(0);
-  // }, []);
+
   const openBottomSheet = () => {
-    bottomSheetRef.current?.snapTo(0);
+    trigger.current = true;
   };
   const closeBottomSheet = () => {
-    bottomSheetRef.current?.close();
+    trigger.current = false;
+  };
+
+  const fetchFoodList = async () => {
+    try {
+      let res = await getFoodList({parentName: collection, parentID: id});
+      if (res.data) {
+        console.log(JSON.parse(res.data));
+        list.current = JSON.parse(res.data);
+        setFoodList(list.current);
+        setInitializing(false);
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 
   React.useEffect(() => {
     let timeOut = setTimeout(() => setInitializing(() => false), 2000);
+    if (Resouce?.cart?.length && Resouce?.cart?.length > 0)
+      trigger.current = true;
+    console.log(trigger, Resouce?.cart.length);
+    fetchFoodList().catch(error => {
+      throw error;
+    });
+    return;
     // return clearTimeout(timeOut);
   }, []);
   if (initializing) return <Loader />;
@@ -181,7 +203,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             },
           },
         ])}
-        data={foodObj[0].itemlist}
+        data={foodList}
         ListHeaderComponent={() => (
           <AnimatedHeader
             animatedHeight={{height: h}}
@@ -207,15 +229,9 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           />
         )}
         stickyHeaderIndices={[0]}
-        ListFooterComponent={() => (
-          <View style={styles.bottomTextContainer}>
-            <Text
-              style={styles.bottomText}>{`Minimum order For 350 for one`}</Text>
-          </View>
-        )}
         style={{flex: 1}}
       />
-      <BottomSheet
+      {/* <BottomSheet
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
@@ -228,9 +244,22 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             flex: 1,
             paddingHorizontal: 10,
           }}>
+          
+        </View>
+      </BottomSheet> */}
+      <View
+        style={{
+          width: '100%',
+          backgroundColor: colors.white,
+          position: 'absolute',
+          bottom: 0,
+          paddingTop: 20,
+        }}>
+        <View style={{width: '100%', paddingHorizontal: 14}}>
           <Pressable
+            style={{}}
             onPress={() => {
-              navigation.navigate('BookOrder');
+              if (trigger.current) navigation.navigate('BookOrder');
             }}>
             <View style={styles.gotoCartButton}>
               <Text
@@ -243,7 +272,11 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             </View>
           </Pressable>
         </View>
-      </BottomSheet>
+        <View style={styles.bottomTextContainer}>
+          <Text
+            style={styles.bottomText}>{`Minimum order For 350 for one`}</Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -257,6 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomTextContainer: {
+    marginTop: 10,
     paddingVertical: 3,
     backgroundColor: colors.green,
     alignItems: 'center',
@@ -272,5 +306,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     backgroundColor: colors.brown,
+    borderRadius: 10,
   },
 });

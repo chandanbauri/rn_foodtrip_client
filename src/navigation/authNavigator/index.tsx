@@ -8,6 +8,7 @@ import {LocationProvider} from '../../contexts/location';
 import {AuthNavigatorParamList} from './types';
 import GreetScreen from '../../screens/greet';
 import {getValue, setValue} from '../../utilities';
+import AddNewAddress from '../../screens/account/addNewAddress';
 const Stack = createStackNavigator<AuthNavigatorParamList>();
 const AuthNavigator = () => {
   const [isFirstVisit, setFirstVisit] = React.useState<boolean>(false);
@@ -36,6 +37,7 @@ const AuthNavigator = () => {
             screenOptions={{headerShown: false}}>
             <Stack.Screen name="Main" component={HomeScreenStack} />
             <Stack.Screen name="Verify" component={VerificationScreen} />
+
             <Stack.Screen name="Greet" component={GreetScreen} />
           </Stack.Navigator>
         </LocationProvider>

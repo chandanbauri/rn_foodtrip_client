@@ -9,6 +9,7 @@ import {AuthContext} from '../../contexts/Auth';
 import {HomeScreenStackParamList} from './types';
 import ViewRestaurant from '../../screens/viewRestaurant';
 import {CombinedNavigationProp} from '../types';
+import AddNewAddress from '../../screens/account/addNewAddress';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
 const HomeScreenStack = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
@@ -16,9 +17,9 @@ const HomeScreenStack = () => {
   const onAuthStateChnaged = (user: any) => {
     if (user !== null) {
       Auth?.setUser(user);
-      navigation.navigate('TabNav', {
-        screen: 'Account',
-      });
+      // navigation.navigate('TabNav', {
+      //   screen: 'Account',
+      // });
     } else {
       Auth?.setUser(null);
       // navigation.navigate('Home');
@@ -29,7 +30,7 @@ const HomeScreenStack = () => {
     return subscribe;
   }, []);
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="TabNav">
       <Stack.Screen
         name="TabNav"
         component={BottomNavigator}
@@ -43,6 +44,11 @@ const HomeScreenStack = () => {
       <Stack.Screen
         name="Restaurant"
         component={ViewRestaurant}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddNewAddress"
+        component={AddNewAddress}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

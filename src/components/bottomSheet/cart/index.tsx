@@ -12,8 +12,8 @@ function CartInfo() {
   React.useEffect(() => {
     if (Resource?.cart.length) {
       let total = 0;
-      Resource.cart.map((item: foodObj) => {
-        if (item.count) total = total + item.price * item.count;
+      Resource.cart.map((item: any) => {
+        if (item.count) total = total + item.cost * item.count;
       });
       setTotalCost(total);
     }

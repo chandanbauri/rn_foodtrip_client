@@ -3,17 +3,34 @@ import {Pressable, View, Text, StyleSheet} from 'react-native';
 import {colors} from '../../../utilities';
 
 type props = {
-  title: string;
-  onPress: () => void;
-  address: string;
+  tag: string;
+  // onPress: () => void;
+  pincode: '';
+  home: '';
+  area: '';
+  landmark: '';
+  city: '';
+  state: '';
 };
 
-const AddressCard = () => {
+const AddressCard = ({
+  tag,
+  pincode,
+  home,
+  area,
+  landmark,
+  city,
+  state,
+}: props) => {
+  // console.log(tag, pincode, home, area, landmark, city, state);
   return (
     <Pressable>
       <View style={styles.root}>
-        <Text style={styles.title}>Home</Text>
-        <Text style={styles.address}>Dishergarh Bazar para </Text>
+        <Text style={styles.title}>{tag}</Text>
+        <Text
+          style={
+            styles.address
+          }>{`${home}, ${area}, ${landmark}, ${city}, ${state},${pincode}`}</Text>
       </View>
     </Pressable>
   );

@@ -1,8 +1,11 @@
 import * as React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../../../utilities';
+type props = {
+  name: string;
+};
 
-export const CategoryCard = () => {
+export const CategoryCard = ({name}: props) => {
   return (
     <View style={styles.root}>
       <Image
@@ -11,7 +14,7 @@ export const CategoryCard = () => {
         }}
         style={{height: 70, width: 70, borderRadius: 35}}
       />
-      <Text style={styles.text}>Category</Text>
+      <Text style={styles.text}>{name}</Text>
     </View>
   );
 };

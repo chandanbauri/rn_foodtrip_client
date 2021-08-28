@@ -79,7 +79,10 @@ const Home = ({navigation, route}: HomeScreenProps) => {
     }
   };
   React.useEffect(() => {
-    getList();
+    getList().catch(error => {
+      throw error;
+    });
+    return;
   }, []);
   let category = [1, 2, 3, 4, 5, 6, 7, 6, 7];
   const ListHeader = () => (
@@ -92,10 +95,10 @@ const Home = ({navigation, route}: HomeScreenProps) => {
           <FlatList
             horizontal={true}
             keyExtractor={(item, index) => `${index}`}
-            data={category}
+            data={Resource?.menuList}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            renderItem={() => <CategoryCard />}
+            renderItem={({item}) => <CategoryCard name={item.name} />}
           />
         </View>
       </View>
@@ -133,13 +136,16 @@ const Home = ({navigation, route}: HomeScreenProps) => {
 
       <View style={styles.restaurantListContainer}>
         <FlatList
-          data={[1, 2, 3, 4, 5, 6, 7, 8]}
+          data={Resource?.restaurantList}
           keyExtractor={(item, index) => `${index}`}
           ListHeaderComponent={<ListHeader />}
           renderItem={({item, index: number}) => (
             <Restaurant
               onClick={() => {
-                navigation.navigate('Restaurant');
+                navigation.navigate('Restaurant', {
+                  id: item.id,
+                  collection: 'restaurants',
+                });
               }}
               values={item}
             />

@@ -6,7 +6,8 @@ import {CombinedNavigationProp} from '../types';
 export type HomeScreenStackParamList = {
   TabNav: NavigatorScreenParams<BottomTabNavigatorParamList>;
   Search: undefined;
-  Restaurant: undefined;
+  Restaurant: {id: string; collection: string};
+  AddNewAddress: undefined;
 };
 
 // export type TabNavProps = {
@@ -21,4 +22,9 @@ export type SearchScreenProps = {
 export type RestaurantScreenProps = {
   navigation: CombinedNavigationProp;
   route: RouteProp<HomeScreenStackParamList, 'Restaurant'>;
+};
+
+export type AddNewAddressScreenProps = {
+  navigation: CombinedNavigationProp;
+  route: RouteProp<HomeScreenStackParamList, 'AddNewAddress'>;
 };

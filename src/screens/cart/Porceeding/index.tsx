@@ -44,7 +44,7 @@ export default function ProceedingScreen({
                     setIsCOD(false);
                   }}
                 />
-                <Text style={styles.textContent}>Payment gateway</Text>
+                <Text style={styles.textContent}>Pay Online</Text>
               </View>
             </View>
             <View style={styles.checkBoxContainer}>

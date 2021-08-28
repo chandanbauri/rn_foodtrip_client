@@ -18,3 +18,5 @@ export type GreetScreenProps = {
   navigation: CombinedNavigationProp;
   route: RouteProp<AuthNavigatorParamList, 'Greet'>;
 };
+
+

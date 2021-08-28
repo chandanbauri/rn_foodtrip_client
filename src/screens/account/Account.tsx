@@ -4,43 +4,36 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
-  ScrollView,
   TextInput,
-  Platform,
   Alert,
-  TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
 import AddressCard from '../../components/cards/address';
 import FilledButton from '../../components/buttons/filled';
-import BorderButton from '../../components/buttons/borderButton';
-import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
 import {AccountScreenProps} from '../../navigation/bottomTabNavigator/types';
-import {Dimensions} from 'react-native';
 import {colors, getValue} from '../../utilities';
-import {FlatList} from 'react-native-gesture-handler';
 import {foodObj} from '../../contexts/resource';
 import firestore from '@react-native-firebase/firestore';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import * as ImagePicker from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
-import * as Progress from 'react-native-progress';
+import {Picker} from '@react-native-picker/picker';
+// import auth from '@react-native-firebase/auth';
 
-import auth from '@react-native-firebase/auth';
-const {width, height} = Dimensions.get('window');
 const usersCollection = firestore().collection('Users');
-const Account = ({navigation, route}: AccountScreenProps) => {
+export default function Account({navigation, route}: AccountScreenProps) {
+  const [addresses, setAddress] = React.useState<Array<any>>([]);
   const Auth = React.useContext(AuthContext);
   const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const [states, setStates] = React.useState<Array<any>>([]);
+  const [initializing, setInitializing] = React.useState<boolean>(false);
   // variables
-  const snapPoints = React.useMemo(() => ['1%', '40%'], []);
-  // const profileImage = (filename: string) =>
-  //   `https://firebasestorage.googleapis.com/v0/b/foodaddamain.appspot.com/o/${filename}`;
+  const snapPoints = React.useMemo(() => ['1%', '80%'], []);
 
-  // callbacks
   const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
     if (fromIndex == 1) bottomSheetRef.current?.close();
   }, []);
@@ -61,156 +54,121 @@ const Account = ({navigation, route}: AccountScreenProps) => {
       if (item.count) total = total + item.price * item.count;
     });
 
-    // console.log(total);
     return total;
   };
-  React.useEffect(() => {
-    getData().then(value => {
-      if (value != null) {
-        // console.log(value);
-        setData(value);
-      }
-    });
-  }, []);
 
-  const [details, setDetails] = React.useState({
+  const getUserDetails = async () => {
+    try {
+      let list = await usersCollection
+        .doc(Auth?.user?.uid)
+        .collection('addresses')
+        .get();
+      if (list.size) {
+        setAddress(list.docs);
+      } else {
+        setAddress([]);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+  const fetchStatesDetails = async () => {
+    // try {
+    //   let states = await getDBdata({collection: 'resouce', fieldName: 'state'});
+    // } catch (error) {
+    //   throw error
+    // }
+    return [
+      {
+        label: 'West Bengal',
+        value: 'westbengal',
+      },
+      {
+        label: 'Jharkhand',
+        value: 'jharkhand',
+      },
+    ];
+  };
+  React.useEffect(() => {
+    getData()
+      .then(value => {
+        if (value != null) {
+          setData(value);
+        }
+      })
+      .catch(error => {
+        throw error;
+      });
+  }, []);
+  React.useEffect(() => {
+    fetchStatesDetails()
+      .then(res => {
+        setStates(res);
+      })
+      .catch(error => {
+        throw error;
+      });
+  }, []);
+  React.useEffect(() => {
+    if (Auth?.user?.uid) {
+      getUserDetails().catch(error => {
+        throw error;
+      });
+    } else {
+      setAddress([]);
+      setData([]);
+    }
+  }, []);
+  let initDetails = {
     name: '',
     email: '',
-    address: '',
-  });
-  // const [image, setImage] = React.useState<any>(null);
-  // const [uploading, setUploading] = React.useState<boolean>(false);
-  // const [transferred, setTransferred] = React.useState<number>(0);
+    pincode: '',
+    home: '',
+    area: '',
+    landmark: '',
+    city: '',
+    state: 'westbengal',
+  };
+  const [details, setDetails] = React.useState(initDetails);
+
   const Header = () => (
     <>
       <View style={styles.titleBox}>
         <View>
           <Text style={styles.userName}>
-            {Auth?.user.displayName
-              ? auth().currentUser?.displayName
-              : 'User Name'}
+            {Auth?.user.displayName ? Auth?.user?.displayName : 'User Name'}
           </Text>
           <Text style={styles.phoneNumber}>{`${Auth?.user.phoneNumber}`}</Text>
-          {auth().currentUser?.email && (
-            <Text style={styles.phoneNumber}>{`${
-              auth().currentUser?.email
-            }`}</Text>
+          {Auth?.user?.email && (
+            <Text style={styles.phoneNumber}>{`${Auth?.user?.email}`}</Text>
           )}
         </View>
         <Pressable
           onPress={() => {
             OpenBottomSheet();
           }}>
-          {/* {Auth?.user.photoURL ? (
-            <Image
-              source={{
-                uri: profileImage(
-                  'https://firebasestorage.googleapis.com/v0/b/foodaddamain.appspot.com/o/rn_image_picker_lib_temp_8eeb93e4-73d8-4fc0-a1df-56060e68f1b6.jpg',
-                ),
-                method: 'POST',
-              }}
-              style={{height: 60, width: 60}}
-            />
-          ) : (
-            <View
-              style={{
-                height: 60,
-                width: 60,
-                borderRadius: 30,
-                backgroundColor: colors.white,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <FontAwesome5 name="user-alt" size={35} color={colors.brown} />
-            </View>
-          )} */}
           <Text style={{color: colors.brown, fontWeight: '700'}}>EDIT</Text>
         </Pressable>
       </View>
-
-      <Text style={styles.sectionTitle}>My Orders</Text>
+      <Text style={styles.sectionTitle}>Address</Text>
+      <FlatList
+        data={addresses}
+        keyExtractor={(item, index) => `${index}`}
+        renderItem={({item, index}) => <AddressCard {...item._data} />}
+      />
+      <FilledButton
+        text="Add New"
+        onPress={() => {
+          navigation.navigate('AddNewAddress');
+        }}
+      />
+      <Text style={[styles.sectionTitle, {marginTop: 20}]}>My Orders</Text>
     </>
   );
-  // const selectImage = () => {
-  //   const options: ImagePicker.ImageLibraryOptions = {
-  //     maxWidth: 2000,
-  //     maxHeight: 2000,
-  //     mediaType: 'photo',
-  //     // storageOptions: {
-  //     //   skipBackup: true,
-  //     //   path: 'images',
-  //     // },
-  //   };
-  //   ImagePicker.launchImageLibrary(options, async response => {
-  //     if (response.didCancel) {
-  //       console.log('User cancelled image picker');
-  //     } else if (response.errorMessage) {
-  //       console.log('ImagePicker Error: ', response.errorMessage);
-  //     } else if (response.assets) {
-  //       const source = {uri: response.assets[0].uri};
-  //       console.log(source);
-  //       setImage(source);
-  //     }
-  //   });
-  // };
 
-  // const uploadImage = async () => {
-  //   if (image) {
-  //     const {uri} = image;
-  //     const filename = uri.substring(uri.lastIndexOf('/') + 1);
-  //     const uploadUri =
-  //       Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-  //     setUploading(true);
-  //     setTransferred(0);
-  //     const task = storage().ref(filename).putFile(uploadUri);
-  //     // set progress state
-  //     task.on('state_changed', async snapshot => {
-  //       console.log(await snapshot.ref.getDownloadURL());
-  //       setTransferred(
-  //         Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
-  //       );
-  //     });
-  //     try {
-  //       await task;
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //     setUploading(false);
-  //     Alert.alert(
-  //       'Photo uploaded!',
-  //       'Your photo has been uploaded to Firebase Cloud Storage!',
-  //     );
-  //     setImage(null);
-  //   }
-  // };
   if (Auth?.user !== null)
     return (
-      // <ScrollView style={styles.root}>
-      <>
-        {/* <View style={styles.subContainer}>
-            <Text style={styles.sectionTitle}>Saved Addresses</Text>
-            <AddressCard />
-            <AddressCard />
-            <AddressCard />
-            <FilledButton
-              text="New Address"
-              onPress={() => {
-                console.log('hello');
-              }}
-            />
-          </View>
-          <View style={styles.subContainer}>
-            <Text style={styles.sectionTitle}>History</Text>
-            <AddressCard />
-            <AddressCard />
-            <AddressCard />
-            <FilledButton
-              text="View All"
-              onPress={() => {
-                console.log('hello');
-              }}
-            />
-          </View> */}
+      <View style={styles.root}>
         <View style={styles.subContainer}>
           <FlatList
             data={data}
@@ -240,23 +198,15 @@ const Account = ({navigation, route}: AccountScreenProps) => {
                   }}>{`Cost : ${getTotalCost(item)}`}</Text>
               </View>
             )}
-            // renderItem={() => <Text>hello</Text>}
             ListFooterComponent={
               <FilledButton
                 text="Log out"
                 onPress={() => {
-                  console.log('ehll');
                   Auth?.signOut();
                 }}
               />
             }
           />
-          {/* <FilledButton
-            text="View All"
-            onPress={() => {
-              console.log('hello');
-            }}
-          /> */}
         </View>
         <BottomSheet
           ref={bottomSheetRef}
@@ -265,31 +215,12 @@ const Account = ({navigation, route}: AccountScreenProps) => {
           onAnimate={handleSheetChanges}
           keyboardBehavior="fullScreen"
           keyboardBlurBehavior="restore"
-          backdropComponent={props => <BottomSheetBackdrop {...props} />}>
+          // backdropComponent={props => <BottomSheetBackdrop {...props} />}
+        >
+          {/* <BottomSheetScrollView> */}
           <View style={styles.bottomSheet}>
             <Text style={styles.sectionTitle}>Edit your profile</Text>
-            {/* <View>
-              <View
-                style={{
-                  height: 60,
-                  width: 60,
-                  borderRadius: 30,
-                  backgroundColor: colors.white,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <FontAwesome5 name="user-alt" size={35} color={colors.brown} />
-              </View>
-            </View>
-            <View style={{width: '40%', marginBottom: 10}}>
-              <BorderButton
-                text="upload image"
-                onPress={() => {
-                  // selectImage();
-                }}
-                fontSize={13}
-              />
-            </View> */}
+
             <TextInput
               placeholder="Name"
               placeholderTextColor={colors.brown}
@@ -312,32 +243,100 @@ const Account = ({navigation, route}: AccountScreenProps) => {
               keyboardType="email-address"
             />
             <TextInput
-              placeholder="Address"
+              placeholder="House no. , Flat, Building, Company, Apartment"
               placeholderTextColor={colors.brown}
               style={{
                 borderBottomColor: colors.brown,
                 borderBottomWidth: 1,
                 color: colors.brown,
               }}
-              onChangeText={handleTextInput('address')}
+              onChangeText={handleTextInput('home')}
             />
+            <TextInput
+              placeholder="Area, Street, Sector, Village"
+              placeholderTextColor={colors.brown}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
+              onChangeText={handleTextInput('area')}
+            />
+            <TextInput
+              placeholder="Landmark"
+              placeholderTextColor={colors.brown}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
+              onChangeText={handleTextInput('landmark')}
+            />
+            <TextInput
+              placeholder="Town/City"
+              placeholderTextColor={colors.brown}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
+              onChangeText={handleTextInput('city')}
+            />
+            <TextInput
+              placeholder="Pincode"
+              placeholderTextColor={colors.brown}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
+              onChangeText={handleTextInput('pincode')}
+              keyboardType="number-pad"
+            />
+
+            <View
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+              }}>
+              <Picker
+                selectedValue={details.state}
+                onValueChange={(itemValue, itemIndex) => {
+                  console.log(itemValue);
+                  setDetails(prev => ({...prev, state: itemValue}));
+                }}
+                style={{
+                  color: colors.brown,
+                }}>
+                {states.map((item, index: number) => (
+                  <Picker.Item
+                    label={item.label}
+                    value={item.value}
+                    key={index}
+                  />
+                ))}
+              </Picker>
+            </View>
 
             <FilledButton
               text="SAVE CHANGES"
               onPress={async () => {
-                console.log(Auth?.user);
-                // uploadImage();
-                if (details.name !== '')
-                  await auth().currentUser?.updateProfile({
-                    displayName: details.name,
-                  });
-                if (details.email !== '')
-                  await auth().currentUser?.updateEmail(details.email);
-                if (Auth?.user.displayName) {
+                setInitializing(true);
+                if (!Auth?.user?.displayName || !addresses.length) {
                   try {
                     await usersCollection
-                      .doc(auth().currentUser?.uid)
-                      .set(details);
+                      .doc(Auth?.user?.uid)
+                      .collection('addresses')
+                      .add({
+                        tag: 'Home',
+                        pincode: details.pincode,
+                        home: details.home,
+                        area: details.area,
+                        landmark: details.landmark,
+                        city: details.city,
+                        state: details.state,
+                      });
+                    setInitializing(false);
                     Alert.alert(
                       'Profile Saved',
                       'Your Profile has been saved Successfully',
@@ -348,15 +347,31 @@ const Account = ({navigation, route}: AccountScreenProps) => {
                         },
                       ],
                     );
-                    setDetails({name: '', email: '', address: ''});
+                    setDetails(initDetails);
                   } catch (error) {
                     throw error;
                   }
                 } else {
                   try {
+                    let home = await usersCollection
+                      .doc(Auth?.user?.uid)
+                      .collection('addresses')
+                      .where('tag', '==', 'Home')
+                      .get();
                     await usersCollection
-                      .doc(auth().currentUser?.uid)
-                      .update(details);
+                      .doc(Auth?.user?.uid)
+                      .collection('addresses')
+                      .doc(home.docs[0].id)
+                      .update({
+                        tag: 'Home',
+                        pincode: details.pincode,
+                        home: details.home,
+                        area: details.area,
+                        landmark: details.landmark,
+                        city: details.city,
+                        state: details.state,
+                      });
+                    setInitializing(false);
                     Alert.alert(
                       'Profile Saved',
                       'Your Profile has been saved Successfully',
@@ -367,34 +382,25 @@ const Account = ({navigation, route}: AccountScreenProps) => {
                         },
                       ],
                     );
-                    setDetails({name: '', email: '', address: ''});
+                    setDetails(initDetails);
                   } catch (error) {
                     throw error;
                   }
                 }
               }}
             />
-            {/* {uploading && (
-              <View style={styles.progressBarContainer}>
-                <Progress.Bar progress={transferred} width={300} />
-              </View>
-            )} */}
           </View>
+          {/* </BottomSheetScrollView>  */}
         </BottomSheet>
-      </>
-      // </ScrollView>
+      </View>
     );
   return <PhoneAuthForm />;
-};
-
-export default Account;
+}
 
 const styles = StyleSheet.create({
   root: {
-    height: height,
-    width: width,
+    flex: 1,
     position: 'relative',
-    backgroundColor: `${colors.gray}10`,
   },
   subContainer: {
     marginBottom: 20,

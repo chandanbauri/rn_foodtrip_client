@@ -8,7 +8,7 @@ import {colors} from '../../../utilities';
 const {width} = Dimensions.get('window');
 
 type props = {
-  item: foodObj;
+  item: any;
   addToCardAction?: () => void;
   removeFromCardAction?: () => void;
 };
@@ -26,8 +26,8 @@ function Food({item, addToCardAction, removeFromCardAction}: props) {
   return (
     <View style={styles.root}>
       <View style={styles.detailsContainer}>
-        <Text style={styles.detailsTitle}>Domino’s Pizza</Text>
-        <Text style={styles.detailsText}>₹ 350</Text>
+        <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
+        <Text style={styles.detailsText}>{`₹ ${item.cost}`}</Text>
       </View>
       {Resource?.findItemInTheCart(item.id) ? (
         <View style={styles.controllButtonsContainer}>
