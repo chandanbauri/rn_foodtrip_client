@@ -5,12 +5,15 @@ import {colors} from '../../../utilities';
 type props = {
   tag: string;
   // onPress: () => void;
-  pincode: '';
-  home: '';
-  area: '';
-  landmark: '';
-  city: '';
-  state: '';
+  pincode: string;
+  home: string;
+  area: string;
+  landmark: string;
+  city: string;
+  state: string;
+
+  isInProfile?: boolean;
+  isDefault?: boolean;
 };
 
 const AddressCard = ({
@@ -56,5 +59,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#171717',
     letterSpacing: 1.2,
+  },
+  defaultAddress: {
+    borderColor: colors.green,
+    borderWidth: 1,
   },
 });

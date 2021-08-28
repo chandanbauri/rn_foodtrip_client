@@ -4,7 +4,11 @@ import {CombinedNavigationProp} from '../types';
 
 export type BookOrderParamList = {
   Cart: undefined;
-  Proceed: {grandTotal: number};
+  Proceed: {
+    grandTotal: number;
+    alternatePhone?: string | null;
+    address: string;
+  };
 };
 
 export type CartScreenProps = {

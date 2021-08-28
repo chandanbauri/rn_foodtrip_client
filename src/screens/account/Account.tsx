@@ -25,7 +25,7 @@ import {Picker} from '@react-native-picker/picker';
 
 const usersCollection = firestore().collection('Users');
 export default function Account({navigation, route}: AccountScreenProps) {
-  const [addresses, setAddress] = React.useState<Array<any>>([]);
+  const [addresses, setAddresses] = React.useState<Array<any>>([]);
   const Auth = React.useContext(AuthContext);
   const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
@@ -37,7 +37,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
   const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
     if (fromIndex == 1) bottomSheetRef.current?.close();
   }, []);
-
   const handleTextInput = (name: string) => (text: string) => {
     setDetails(prev => ({...prev, [name]: text}));
   };
@@ -45,13 +44,27 @@ export default function Account({navigation, route}: AccountScreenProps) {
     bottomSheetRef.current?.expand();
   };
   const getData = async () => {
-    let data = await getValue('orders');
-    return data;
+    try {
+      let myOrders = await usersCollection
+        .doc(Auth?.user?.uid)
+        .collection('orders')
+        .get();
+      if (myOrders.size) {
+        setData(
+          myOrders.docs.map((item, index) => ({...item.data(), id: item.id})),
+        );
+      } else {
+        setData([]);
+      }
+    } catch (error) {
+      setData([]);
+      throw error;
+    }
   };
-  const getTotalCost = (list: Array<foodObj> | any) => {
+  const getTotalCost = (list: Array<any> | any) => {
     let total = 0;
-    list.map((item: foodObj) => {
-      if (item.count) total = total + item.price * item.count;
+    list.map((item: any) => {
+      if (item.count) total = total + item.cost * item.count;
     });
 
     return total;
@@ -64,13 +77,18 @@ export default function Account({navigation, route}: AccountScreenProps) {
         .collection('addresses')
         .get();
       if (list.size) {
-        setAddress(list.docs);
+        setAddresses(() => {
+          return list.docs.map((item, index) => ({
+            ...item.data(),
+            id: item.id,
+          }));
+        });
+
+        // );
       } else {
-        setAddress([]);
+        setAddresses([]);
       }
-    } catch (error) {
-      throw error;
-    }
+    } catch (error) {}
   };
   const fetchStatesDetails = async () => {
     // try {
@@ -90,6 +108,17 @@ export default function Account({navigation, route}: AccountScreenProps) {
     ];
   };
   React.useEffect(() => {
+    if (Auth?.user?.uid) {
+      getUserDetails().catch(error => {
+        throw error;
+      });
+    } else {
+      setAddresses([]);
+      setData([]);
+    }
+    return;
+  }, []);
+  React.useEffect(() => {
     getData()
       .then(value => {
         if (value != null) {
@@ -99,6 +128,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       .catch(error => {
         throw error;
       });
+    return;
   }, []);
   React.useEffect(() => {
     fetchStatesDetails()
@@ -108,16 +138,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       .catch(error => {
         throw error;
       });
-  }, []);
-  React.useEffect(() => {
-    if (Auth?.user?.uid) {
-      getUserDetails().catch(error => {
-        throw error;
-      });
-    } else {
-      setAddress([]);
-      setData([]);
-    }
+    return;
   }, []);
   let initDetails = {
     name: '',
@@ -154,7 +175,9 @@ export default function Account({navigation, route}: AccountScreenProps) {
       <FlatList
         data={addresses}
         keyExtractor={(item, index) => `${index}`}
-        renderItem={({item, index}) => <AddressCard {...item._data} />}
+        renderItem={({item, index}) => (
+          <AddressCard {...item} isInProfile={true} isDefault={true} />
+        )}
       />
       <FilledButton
         text="Add New"
@@ -181,21 +204,57 @@ export default function Account({navigation, route}: AccountScreenProps) {
             renderItem={({item, index}) => (
               <View
                 style={{
-                  padding: 4,
+                  paddingVertical: 10,
+                  paddingHorizontal: 10,
                   marginVertical: 5,
                   backgroundColor: colors.white,
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     color: colors.brown,
-                  }}>{`Order Id: #45184484 ${index}`}</Text>
+                  }}>{`Order Id: ${item.id}`}</Text>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     color: colors.brown,
                     marginTop: 5,
-                  }}>{`Cost : ${getTotalCost(item)}`}</Text>
+                  }}>{`Cost : ${getTotalCost(item.items)}`}</Text>
+                {item.isPending && (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.brown,
+                    }}>{`Order is Pending`}</Text>
+                )}
+                {item.isRejected && (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.brown,
+                    }}>{`Order was Rejected`}</Text>
+                )}
+                {item.isCanceled && (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.brown,
+                    }}>{`Order is Canceled`}</Text>
+                )}
+                {item.isOnGoing && (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.brown,
+                    }}>{`Order is On the way`}</Text>
+                )}
+                {item.isDelivered && (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.brown,
+                    }}>{`Order was Delivered`}</Text>
+                )}
               </View>
             )}
             ListFooterComponent={
@@ -214,10 +273,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
           snapPoints={snapPoints}
           onAnimate={handleSheetChanges}
           keyboardBehavior="fullScreen"
-          keyboardBlurBehavior="restore"
-          // backdropComponent={props => <BottomSheetBackdrop {...props} />}
-        >
-          {/* <BottomSheetScrollView> */}
+          keyboardBlurBehavior="restore">
           <View style={styles.bottomSheet}>
             <Text style={styles.sectionTitle}>Edit your profile</Text>
 
@@ -390,7 +446,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
               }}
             />
           </View>
-          {/* </BottomSheetScrollView>  */}
         </BottomSheet>
       </View>
     );
@@ -401,6 +456,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     position: 'relative',
+    backgroundColor: colors.white,
   },
   subContainer: {
     marginBottom: 20,

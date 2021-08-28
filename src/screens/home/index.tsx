@@ -23,9 +23,11 @@ import functions from '@react-native-firebase/functions';
 import {getMenuList, getRestaurantList} from '../../utilities/cloud/functions';
 import {ResourceContext} from '../../contexts/resource';
 import {CategoryCard} from '../../components/cards/category';
+import {useIsFocused} from '@react-navigation/native';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
+  let isFocused = useIsFocused();
   const Resource = React.useContext(ResourceContext);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   // const MAX_BOTTOMSHEET_HEIGHT = 480;
@@ -79,9 +81,10 @@ const Home = ({navigation, route}: HomeScreenProps) => {
     }
   };
   React.useEffect(() => {
-    getList().catch(error => {
-      throw error;
-    });
+    if (isFocused)
+      getList().catch(error => {
+        throw error;
+      });
     return;
   }, []);
   let category = [1, 2, 3, 4, 5, 6, 7, 6, 7];
@@ -145,6 +148,8 @@ const Home = ({navigation, route}: HomeScreenProps) => {
                 navigation.navigate('Restaurant', {
                   id: item.id,
                   collection: 'restaurants',
+                  address: item.address,
+                  name: item.restaurantName,
                 });
               }}
               values={item}

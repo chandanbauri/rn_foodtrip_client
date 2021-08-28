@@ -28,20 +28,22 @@ function Cart({navigation}: CartScreenProps) {
             data={Auth?.cart}
             ListHeaderComponent={() => <Header />}
             keyExtractor={item => item.id}
-            renderItem={({item}) => <Food item={item} />}
+            renderItem={({item}) => <Food item={item} isInCartView={true} />}
             ListFooterComponent={() => (
-              <View style={{marginVertical: 90}}></View>
+              <View>
+                <CartInfo />
+              </View>
             )}
           />
         </View>
-        <BottomSheet
+        {/* <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
           index={0}
           keyboardBehavior="fullScreen"
           keyboardBlurBehavior="restore">
-          <CartInfo />
-        </BottomSheet>
+         
+        </BottomSheet> */}
       </>
     );
   }
@@ -57,6 +59,7 @@ export default Cart;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: colors.white,
   },
 
   emptyCartContainer: {

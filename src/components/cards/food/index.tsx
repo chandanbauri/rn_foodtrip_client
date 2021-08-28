@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dimensions, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, Dimensions, Pressable, StyleSheet, Text, View} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -11,9 +11,17 @@ type props = {
   item: any;
   addToCardAction?: () => void;
   removeFromCardAction?: () => void;
+  isInCartView?: boolean;
+  id?: string;
 };
 
-function Food({item, addToCardAction, removeFromCardAction}: props) {
+function Food({
+  item,
+  addToCardAction,
+  removeFromCardAction,
+  isInCartView,
+  id,
+}: props) {
   const Resource = React.useContext(ResourceContext);
 
   const [counter, setCounter] = React.useState<number>(0);
@@ -27,20 +35,21 @@ function Food({item, addToCardAction, removeFromCardAction}: props) {
     <View style={styles.root}>
       <View style={styles.detailsContainer}>
         <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
-        <Text style={styles.detailsText}>{`₹ ${item.cost}`}</Text>
+        <Text style={styles.detailsText}>{`₹ ${
+          isInCartView ? item.cost * counter : item.cost
+        }`}</Text>
       </View>
       {Resource?.findItemInTheCart(item.id) ? (
         <View style={styles.controllButtonsContainer}>
           <Pressable
             onPress={() => {
-              console.log(Resource?.cart.length);
               setCounter(prev => {
                 if (Resource?.cart.length <= 1 && removeFromCardAction) {
                   removeFromCardAction();
                 }
                 prev === 1
                   ? Resource?.deleteItemFromCart(item.id)
-                  : Resource?.updateItem(item.id, prev - 1, item.price);
+                  : Resource?.updateItem({...item, count: prev - 1});
                 return prev - 1;
               });
             }}>
@@ -53,11 +62,16 @@ function Food({item, addToCardAction, removeFromCardAction}: props) {
           <Text>{counter}</Text>
           <Pressable
             onPress={() => {
-              setCounter(prev => {
-                if (addToCardAction) addToCardAction();
-                Resource?.updateItem(item.id, prev + 1, item.price);
-                return prev + 1;
-              });
+              if (
+                Resource?.restaurantDetails &&
+                Resource?.restaurantDetails?.id == id
+              ) {
+                setCounter(prev => {
+                  if (addToCardAction) addToCardAction();
+                  Resource?.updateItem({...item, count: prev + 1});
+                  return prev + 1;
+                });
+              }
             }}>
             <MaterialCommunityIcons
               name="plus-box-outline"
@@ -69,9 +83,27 @@ function Food({item, addToCardAction, removeFromCardAction}: props) {
       ) : (
         <Pressable
           onPress={() => {
-            setCounter(1);
-            if (addToCardAction) addToCardAction();
-            Resource?.addToCart({...item, count: 1});
+            if (
+              Resource?.restaurantDetails &&
+              Resource?.restaurantDetails.id == id
+            ) {
+              setCounter(1);
+              if (addToCardAction) addToCardAction();
+              Resource?.addToCart({...item, count: 1});
+            } else if (!Resource?.restaurantDetails) {
+              setCounter(1);
+              if (addToCardAction) addToCardAction();
+              Resource?.addToCart({...item, count: 1});
+            } else if (
+              Resource?.restaurantDetails &&
+              Resource?.restaurantDetails.id !== id
+            ) {
+              Alert.alert(
+                'You can only order from one Restaurant at a time',
+                '',
+                [{text: 'OK', onPress: () => {}}],
+              );
+            }
           }}>
           <View
             style={{

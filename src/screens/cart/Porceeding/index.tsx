@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   StyleSheet,
   Text,
@@ -11,14 +12,23 @@ import {colors, getValue, setValue} from '../../../utilities';
 import CheckBox from '@react-native-community/checkbox';
 import FilledButton from '../../../components/buttons/filled';
 import {ResourceContext} from '../../../contexts/resource';
+import {
+  createOrder,
+  generateOrderID,
+  verifyPaymentRazorPay,
+} from '../../../utilities/cloud/functions';
+import {config} from '../../../utilities/razorpay';
+import RazorpayCheckout from 'react-native-razorpay';
+import auth from '@react-native-firebase/auth';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({
   navigation,
   route,
 }: ProceedScreenProps) {
-  const {grandTotal} = route.params;
+  const {grandTotal, alternatePhone, address} = route.params;
   const [isCOD, setIsCOD] = React.useState<boolean>(false);
+  const [isOnline, setIsOnline] = React.useState<boolean>(true);
   const Resource = React.useContext(ResourceContext);
 
   // React.useEffect(() => {
@@ -32,16 +42,17 @@ export default function ProceedingScreen({
         <View style={styles.content}>
           <View style={styles.detailsSection}>
             <Text style={styles.textContent}>{`Grand Total`}</Text>
-            <Text style={styles.textContent}>{grandTotal}</Text>
+            <Text style={styles.textContent}>{`₹ ${grandTotal}`}</Text>
           </View>
           <View style={styles.container}>
             <Text style={styles.title}>Select a Payment Method</Text>
             <View>
               <View style={styles.checkBoxContainer}>
                 <CheckBox
-                  value={!isCOD}
+                  value={isOnline}
                   onValueChange={() => {
-                    setIsCOD(false);
+                    setIsOnline(prev => !prev);
+                    setIsCOD(prev => !prev);
                   }}
                 />
                 <Text style={styles.textContent}>Pay Online</Text>
@@ -51,7 +62,9 @@ export default function ProceedingScreen({
               <CheckBox
                 value={isCOD}
                 onValueChange={() => {
-                  setIsCOD(true);
+                  setIsOnline(prev => !prev);
+
+                  setIsCOD(prev => !prev);
                 }}
               />
               <Text style={styles.textContent}>COD</Text>
@@ -61,28 +74,220 @@ export default function ProceedingScreen({
             <FilledButton
               text="Book Now"
               onPress={async () => {
-                if (isCOD) {
+                if (isCOD && !isOnline) {
                   let OrderList: Array<any> = [];
                   // console.log(await getValue('orders'));
                   //setValue(null, 'orders');
                   if (Resource?.cart) {
-                    if (
-                      (await getValue('orders')) !== null &&
-                      Resource?.cart.length > 0
-                    ) {
-                      let value = await getValue('orders');
-                      OrderList.push(Resource?.cart, ...value);
-                      Resource?.EmptyCart();
-                      setValue(OrderList, 'orders');
-                    } else if (
-                      (await getValue('orders')) == null &&
-                      Resource?.cart.length > 0
-                    ) {
-                      OrderList.push(Resource?.cart);
-                      setValue(OrderList, 'orders');
+                    // if (
+                    //   (await getValue('orders')) !== null &&
+                    //   Resource?.cart.length > 0
+                    // ) {
+                    //   let value = await getValue('orders');
+                    //   OrderList.push(Resource?.cart, ...value);
+                    //   Resource?.EmptyCart();
+                    //   setValue(OrderList, 'orders');
+                    // } else if (
+                    //   (await getValue('orders')) == null &&
+                    //   Resource?.cart.length > 0
+                    // ) {
+                    //   OrderList.push(Resource?.cart);
+                    //   setValue(OrderList, 'orders');
+                    // }
+                    const ORDER = {
+                      amount: grandTotal,
+                      currency: 'INR',
+                      paymentMethod: 'COD',
+                      amountPaid: false,
+                      razorpayDetails: null,
+                      items: Resource?.cart,
+                      userDetails: {
+                        deliveryAddress: address,
+                        phone: auth().currentUser?.phoneNumber,
+                        name: auth().currentUser?.displayName,
+                        uid: auth().currentUser?.uid,
+                        alternatePhone: alternatePhone,
+                      },
+                      restaurantDetails: {
+                        ...Resource.restaurantDetails,
+                      },
+                      isPending: true,
+                      isCanceled: false,
+                      isOnGoing: false,
+                      isDelivered: false,
+                      isRejected: false,
+                    };
+                    try {
+                      let res = await createOrder({order: ORDER});
+                      let response = JSON.parse(res.data);
+                      if (response.success) {
+                        Alert.alert('Order is Placed successfully', '', [
+                          {
+                            text: 'OK',
+                            onPress: () => {
+                              Resource?.EmptyCart();
+                              Resource?.saveRestaurantDetils(null);
+                              navigation.navigate('Account');
+                            },
+                          },
+                        ]);
+                      } else {
+                        Alert.alert('Sorry Can not place order right now', '', [
+                          {
+                            text: 'OK',
+                            onPress: () => {},
+                          },
+                        ]);
+                      }
+                    } catch (error) {
+                      Alert.alert('Sorry Can not place order right now', '', [
+                        {
+                          text: 'OK',
+                          onPress: () => {},
+                        },
+                      ]);
+                      throw error;
                     }
                   }
-                  navigation.navigate('Account');
+                } else if (isOnline && !isCOD) {
+                  try {
+                    // {
+                    //   data: {
+                    //     amount: 85000,
+                    //     amount_due: 85000,
+                    //     amount_paid: 0,
+                    //     attempts: 0,
+                    //     created_at: 1630146419,
+                    //     currency: 'INR',
+                    //     entity: 'order',
+                    //     id: 'order_HqaJ5lGJ2ydlDi',
+                    //     notes: [],
+                    //     offer_id: null,
+                    //     receipt: null,
+                    //     status: 'created',
+                    //   },
+                    //   msg: 'Order created',
+                    //   success: true,
+                    // };
+                    let res = await generateOrderID({
+                      orderAmount: grandTotal * 100,
+                      currency: 'INR',
+                    });
+                    let data = JSON.parse(res.data);
+                    console.log(data);
+                    var options = {
+                      name: 'some prod',
+                      image: '',
+                      description: 'some desc',
+                      order_id: data.data.id,
+                      amount: data.data.amount,
+                      currency: data.data.currency,
+                      key: config.keyID,
+                      prefill: {
+                        email: auth().currentUser?.email,
+                        contact: auth().currentUser?.phoneNumber?.slice(3),
+                        name: auth().currentUser?.displayName,
+                      },
+                      theme: {color: colors.brown},
+                    };
+                    await RazorpayCheckout.open(options)
+                      .then(async (transaction: any) => {
+                        const validSignature = await verifyPaymentRazorPay({
+                          orderID: data.data.id,
+                          transaction: transaction,
+                        });
+                        let paymentSuccess = JSON.parse(validSignature.data);
+                        if (paymentSuccess.validSignature) {
+                          const ORDER = {
+                            amount: grandTotal,
+                            currency: data.data.currency,
+                            paymentMethod: 'RAZORPAY',
+                            amountPaid: true,
+                            razorpayDetails: {
+                              id: data.data.id,
+                            },
+                            items: Resource?.cart,
+                            userDetails: {
+                              deliveryAddress: address,
+                              phone: auth().currentUser?.phoneNumber,
+                              name: auth().currentUser?.displayName,
+                              uid: auth().currentUser?.uid,
+                              alternatePhone: alternatePhone,
+                            },
+                            restaurantDetails: {
+                              ...Resource.restaurantDetails,
+                            },
+                            isPending: true,
+                            isCanceled: false,
+                            isOnGoing: false,
+                            isDelivered: false,
+                            isRejected: false,
+                          };
+                          try {
+                            let res = await createOrder({order: ORDER});
+                            let response = JSON.parse(res.data);
+                            if (response.success) {
+                              Alert.alert('Order is Placed successfully', '', [
+                                {
+                                  text: 'OK',
+                                  onPress: () => {
+                                    Resource?.EmptyCart();
+                                    Resource?.saveRestaurantDetils(null);
+                                    navigation.navigate('Account');
+                                  },
+                                },
+                              ]);
+                            } else {
+                              Alert.alert(
+                                'Sorry Can not place order right now',
+                                '',
+                                [
+                                  {
+                                    text: 'OK',
+                                    onPress: () => {},
+                                  },
+                                ],
+                              );
+                            }
+                          } catch (error) {
+                            Alert.alert(
+                              'Sorry Can not place order right now',
+                              '',
+                              [
+                                {
+                                  text: 'OK',
+                                  onPress: () => {},
+                                },
+                              ],
+                            );
+                            throw error;
+                          }
+                        }
+                      })
+                      .catch(() => {
+                        Alert.alert('Sorry Can not place order right now', '', [
+                          {
+                            text: 'OK',
+                            onPress: () => {},
+                          },
+                        ]);
+                      });
+                  } catch (error) {
+                    Alert.alert('Sorry Can not place order right now', '', [
+                      {
+                        text: 'OK',
+                        onPress: () => {},
+                      },
+                    ]);
+                    throw error;
+                  }
+                } else if (!isCOD && !isOnline) {
+                  Alert.alert('Please slecet a valid payment Method', '', [
+                    {
+                      text: 'OK',
+                      onPress: () => {},
+                    },
+                  ]);
                 }
               }}
             />

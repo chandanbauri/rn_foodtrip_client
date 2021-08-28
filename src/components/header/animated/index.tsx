@@ -12,6 +12,7 @@ type props = {
   OverLayOpacity: any;
   titleColor: any;
   goBack: () => void;
+  title: string;
 };
 
 const {height, width} = Dimensions.get('window');
@@ -24,6 +25,7 @@ export default function AnimatedHeader({
   OverLayOpacity,
   titleColor,
   goBack,
+  title,
 }: props) {
   return (
     <Animated.View style={[styles.root, animatedHeight]}>
@@ -42,7 +44,7 @@ export default function AnimatedHeader({
       <Animated.View style={[styles.overlay, {opacity: OverLayOpacity}]} />
       <View style={styles.headerComponent}>
         <Animated.Text style={[styles.title, {color: titleColor}]}>
-          Domino's
+          {title}
         </Animated.Text>
         <Pressable
           style={styles.headerLeft}

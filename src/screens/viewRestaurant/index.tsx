@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Pressable,
   StyleSheet,
@@ -146,7 +147,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   let Resouce = useResource();
   const [foodList, setFoodList] = React.useState<Array<any>>([]);
   let list = React.useRef<Array<any>>([]);
-  const {collection, id} = route.params;
+  const {collection, id, name, address} = route.params;
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
   const goBack = () => {
     navigation.goBack();
@@ -211,6 +212,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             coverOpacity={coverOpacity}
             OverLayOpacity={OverLayOpacity}
             titleColor={titleColor}
+            title={name}
             goBack={() => {
               goBack();
             }}
@@ -219,11 +221,30 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         keyExtractor={(item: any) => item?.id}
         renderItem={({item}: any) => (
           <Food
+            id={id}
             item={item}
             addToCardAction={() => {
-              openBottomSheet();
+              if (!Resouce?.restaurantDetails) {
+                Resouce?.saveRestaurantDetils({id, name, address});
+                openBottomSheet();
+              } else {
+                if (
+                  Resouce?.restaurantDetails &&
+                  Resouce.restaurantDetails?.id == id
+                ) {
+                  openBottomSheet();
+                } else {
+                  Alert.alert(
+                    'You can only order from one Restaurant at a time',
+                    '',
+                    [{text: 'OK', onPress: () => {}}],
+                  );
+                }
+              }
             }}
             removeFromCardAction={() => {
+              Resouce?.saveRestaurantDetils(null);
+              Resouce?.setRestaurants(null);
               closeBottomSheet();
             }}
           />
@@ -259,7 +280,8 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           <Pressable
             style={{}}
             onPress={() => {
-              if (trigger.current) navigation.navigate('BookOrder');
+              console.log(Resouce?.restaurantDetails);
+              // if (trigger.current) navigation.navigate('BookOrder');
             }}>
             <View style={styles.gotoCartButton}>
               <Text
@@ -274,7 +296,9 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         </View>
         <View style={styles.bottomTextContainer}>
           <Text
-            style={styles.bottomText}>{`Minimum order For 350 for one`}</Text>
+            style={
+              styles.bottomText
+            }>{`Minimum order is For 150 for one`}</Text>
         </View>
       </View>
     </View>

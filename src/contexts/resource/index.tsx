@@ -7,11 +7,11 @@ export interface foodObj {
 }
 
 interface contextProps {
-  cart: Array<foodObj>;
-  addToCart: (item: foodObj) => void;
-  updateItem: (id: string, count: number, price: number) => void;
+  cart: Array<any>;
+  addToCart: (item: any) => void;
+  updateItem: (props: any) => void;
   deleteItemFromCart: (id: string) => void;
-  findItemInTheCart: (id: string) => foodObj | boolean;
+  findItemInTheCart: (id: string) => any | boolean;
   restaurantDetails: any;
   resource: any;
   saveRestaurantDetils: (restaurant: any) => void;
@@ -27,14 +27,14 @@ export const ResourceContext = React.createContext<contextProps | null>(null);
 export const useResource = () => React.useContext(ResourceContext);
 
 export const ResourceProvider: React.FunctionComponent = ({children}) => {
-  const [cart, setCart] = React.useState<Array<foodObj>>([]);
+  const [cart, setCart] = React.useState<Array<any>>([]);
   const [restaurantDetails, setRestaurantDetails] = React.useState<any>();
   const [resource, setResource] = React.useState<any>(null);
   const [restaurantList, setRestaurantList] = React.useState<any>(null);
   const [menuList, setMenuList] = React.useState<any>(null);
 
   // --------------------------------- MODIFY CART  ---------------------------------- \\
-  function addToCart(item: foodObj) {
+  function addToCart(item: any) {
     try {
       const product = cart?.findIndex(el => el.id === item.id);
       if (product === -1) {
@@ -45,9 +45,9 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
       throw error;
     }
   }
-  function updateItem(id: string, count: number, price: number) {
+  function updateItem(props: any) {
     try {
-      const product = cart.findIndex(el => el.id === id);
+      const product = cart.findIndex(el => el.id === props.id);
       if (product >= 0) {
         // setCart(prev => {
         //   let tmp = prev;
@@ -56,7 +56,7 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
         // });
         setCart(prev => [
           ...prev.slice(0, product),
-          {id, count, price},
+          {...props},
           ...prev.slice(product + 1),
         ]);
         return;
