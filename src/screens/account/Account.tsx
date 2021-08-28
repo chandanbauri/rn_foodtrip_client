@@ -108,7 +108,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
     ];
   };
   React.useEffect(() => {
-    if (Auth?.user?.uid) {
+    if (Auth?.user) {
       getUserDetails().catch(error => {
         throw error;
       });
@@ -117,7 +117,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       setData([]);
     }
     return;
-  }, []);
+  }, [Auth?.user]);
   React.useEffect(() => {
     getData()
       .then(value => {
@@ -129,7 +129,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
         throw error;
       });
     return;
-  }, []);
+  }, [Auth?.user]);
   React.useEffect(() => {
     fetchStatesDetails()
       .then(res => {
@@ -139,7 +139,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
         throw error;
       });
     return;
-  }, []);
+  }, [Auth?.user]);
   let initDetails = {
     name: '',
     email: '',
@@ -148,7 +148,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
     area: '',
     landmark: '',
     city: '',
-    state: 'westbengal',
+    state: '',
   };
   const [details, setDetails] = React.useState(initDetails);
 
@@ -164,12 +164,12 @@ export default function Account({navigation, route}: AccountScreenProps) {
             <Text style={styles.phoneNumber}>{`${Auth?.user?.email}`}</Text>
           )}
         </View>
-        <Pressable
+        {/* <Pressable
           onPress={() => {
             OpenBottomSheet();
           }}>
           <Text style={{color: colors.brown, fontWeight: '700'}}>EDIT</Text>
-        </Pressable>
+        </Pressable> */}
       </View>
       <Text style={styles.sectionTitle}>Address</Text>
       <FlatList
@@ -349,8 +349,19 @@ export default function Account({navigation, route}: AccountScreenProps) {
               onChangeText={handleTextInput('pincode')}
               keyboardType="number-pad"
             />
+            <TextInput
+              placeholder="State"
+              placeholderTextColor={colors.brown}
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+                color: colors.brown,
+              }}
+              onChangeText={handleTextInput('state')}
+              keyboardType="number-pad"
+            />
 
-            <View
+            {/* <View
               style={{
                 borderBottomColor: colors.brown,
                 borderBottomWidth: 1,
@@ -358,7 +369,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
               <Picker
                 selectedValue={details.state}
                 onValueChange={(itemValue, itemIndex) => {
-                  console.log(itemValue);
                   setDetails(prev => ({...prev, state: itemValue}));
                 }}
                 style={{
@@ -372,7 +382,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   />
                 ))}
               </Picker>
-            </View>
+            </View> */}
 
             <FilledButton
               text="SAVE CHANGES"

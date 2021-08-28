@@ -25,7 +25,6 @@ const AddressCard = ({
   city,
   state,
 }: props) => {
-  // console.log(tag, pincode, home, area, landmark, city, state);
   return (
     <Pressable>
       <View style={styles.root}>

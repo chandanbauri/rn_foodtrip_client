@@ -76,7 +76,6 @@ export default function ProceedingScreen({
               onPress={async () => {
                 if (isCOD && !isOnline) {
                   let OrderList: Array<any> = [];
-                  // console.log(await getValue('orders'));
                   //setValue(null, 'orders');
                   if (Resource?.cart) {
                     // if (
@@ -174,7 +173,6 @@ export default function ProceedingScreen({
                       currency: 'INR',
                     });
                     let data = JSON.parse(res.data);
-                    console.log(data);
                     var options = {
                       name: 'some prod',
                       image: '',

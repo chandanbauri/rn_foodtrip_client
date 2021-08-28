@@ -164,7 +164,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
     try {
       let res = await getFoodList({parentName: collection, parentID: id});
       if (res.data) {
-        console.log(JSON.parse(res.data));
         list.current = JSON.parse(res.data);
         setFoodList(list.current);
         setInitializing(false);
@@ -175,10 +174,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   };
 
   React.useEffect(() => {
-    let timeOut = setTimeout(() => setInitializing(() => false), 2000);
-    if (Resouce?.cart?.length && Resouce?.cart?.length > 0)
-      trigger.current = true;
-    console.log(trigger, Resouce?.cart.length);
     fetchFoodList().catch(error => {
       throw error;
     });
@@ -244,7 +239,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             }}
             removeFromCardAction={() => {
               Resouce?.saveRestaurantDetils(null);
-              Resouce?.setRestaurants(null);
               closeBottomSheet();
             }}
           />
@@ -280,8 +274,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           <Pressable
             style={{}}
             onPress={() => {
-              console.log(Resouce?.restaurantDetails);
-              // if (trigger.current) navigation.navigate('BookOrder');
+              if (trigger.current) navigation.navigate('BookOrder');
             }}>
             <View style={styles.gotoCartButton}>
               <Text

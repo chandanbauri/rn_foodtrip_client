@@ -21,6 +21,7 @@ function CartInfo() {
   const Resource = React.useContext(ResourceContext);
   const Auth = React.useContext(AuthContext);
   const [totalCost, setTotalCost] = React.useState<number>(0);
+  const [addresses, setAddresses] = React.useState<Array<any>>([]);
   const getUserDetails = async () => {
     try {
       let list = await usersCollection
@@ -43,7 +44,6 @@ function CartInfo() {
       throw error;
     }
   };
-  const [addresses, setAddresses] = React.useState<Array<any>>([]);
   React.useEffect(() => {
     if (Resource?.cart.length) {
       let total = 0;
@@ -68,7 +68,6 @@ function CartInfo() {
         <Picker
           selectedValue={orderAddress}
           onValueChange={(itemValue, itemIndex) => {
-            console.log(itemValue);
             setOrderAddress(prev => itemValue);
           }}
           style={{
@@ -97,6 +96,7 @@ function CartInfo() {
           <TextInput
             placeholder="Alternate phone number (if any)"
             placeholderTextColor={colors.brown}
+            style={{color: colors.brown}}
             keyboardType="number-pad"
             onChangeText={text => {
               setAlternatePhone(text);

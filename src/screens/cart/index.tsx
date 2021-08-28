@@ -49,7 +49,11 @@ function Cart({navigation}: CartScreenProps) {
   }
   return (
     <View style={styles.root}>
-      <EmptyCart />
+      <EmptyCart
+        onClick={() => {
+          navigation.navigate('Home');
+        }}
+      />
     </View>
   );
 }
@@ -105,12 +109,16 @@ const Header = () => (
   </View>
 );
 
-const EmptyCart = () => (
+const EmptyCart = ({onClick}: any) => (
   <View style={styles.emptyCartContainer}>
     <View style={{alignItems: 'center', marginTop: 100}}>
       <Text style={styles.emptyCartText}>{`Your cart is empty`}</Text>
       <Text style={styles.emptyCartText}>{`Add something from the menu`}</Text>
-      <Pressable style={styles.visitNearByRestaurantButton} onPress={() => {}}>
+      <Pressable
+        style={styles.visitNearByRestaurantButton}
+        onPress={() => {
+          onClick();
+        }}>
         <Text
           style={
             styles.visitNearByRestaurantButtonText

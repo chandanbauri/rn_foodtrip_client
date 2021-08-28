@@ -139,36 +139,22 @@ export default function AddNewAddress({
             onChangeText={handleTextInput('pincode')}
             keyboardType="number-pad"
           />
-          <View
+          <TextInput
+            placeholder="State"
+            placeholderTextColor={colors.brown}
             style={{
               borderBottomColor: colors.brown,
               borderBottomWidth: 1,
-            }}>
-            <Picker
-              selectedValue={state.state}
-              onValueChange={(itemValue, itemIndex) => {
-                console.log(itemValue);
-                setState(prev => ({...prev, state: itemValue}));
-              }}
-              style={{
-                color: colors.brown,
-              }}>
-              {states.map((item, index: number) => (
-                <Picker.Item
-                  label={item.label}
-                  value={item.value}
-                  key={index}
-                />
-              ))}
-              {/* <Picker.Item label="Jharkhand" value="jharkhand" /> */}
-            </Picker>
-          </View>
+              color: colors.brown,
+            }}
+            onChangeText={handleTextInput('state')}
+            keyboardType="number-pad"
+          />
         </View>
         <View>
           <FilledButton
             text="save"
             onPress={async () => {
-              //   console.log(state);
               if (
                 state.area == '' ||
                 state.city == '' ||

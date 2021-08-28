@@ -22,6 +22,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
           }
         });
     }, 1000);
+    return;
   };
   const Auth = React.useContext(AuthContext);
   const onVrify = () => {

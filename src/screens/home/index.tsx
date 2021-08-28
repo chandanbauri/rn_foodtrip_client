@@ -31,19 +31,19 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   const Resource = React.useContext(ResourceContext);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   // const MAX_BOTTOMSHEET_HEIGHT = 480;
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={() => {
-            navigation.navigate('Search');
-          }}>
-          <Feather name="search" size={25} color={colors.brown} />
-        </TouchableOpacity>
-      ),
-    });
-  });
+  // React.useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <TouchableOpacity
+  //         style={styles.searchButton}
+  //         onPress={() => {
+  //           navigation.navigate('Search');
+  //         }}>
+  //         <Feather name="search" size={25} color={colors.brown} />
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // });
 
   // const bottomSheetRef = React.useRef<BottomSheet>(null);
   // const snapPoints = React.useMemo(

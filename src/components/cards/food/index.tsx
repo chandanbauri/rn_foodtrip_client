@@ -1,5 +1,12 @@
 import * as React from 'react';
-import {Alert, Dimensions, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -62,16 +69,11 @@ function Food({
           <Text>{counter}</Text>
           <Pressable
             onPress={() => {
-              if (
-                Resource?.restaurantDetails &&
-                Resource?.restaurantDetails?.id == id
-              ) {
-                setCounter(prev => {
-                  if (addToCardAction) addToCardAction();
-                  Resource?.updateItem({...item, count: prev + 1});
-                  return prev + 1;
-                });
-              }
+              setCounter(prev => {
+                if (addToCardAction) addToCardAction();
+                Resource?.updateItem({...item, count: prev + 1});
+                return prev + 1;
+              });
             }}>
             <MaterialCommunityIcons
               name="plus-box-outline"

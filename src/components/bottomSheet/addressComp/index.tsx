@@ -9,7 +9,7 @@ const BSAddressComp = () => {
   return (
     <View style={styles.root}>
       <Text style={styles.title}>Choose your location</Text>
-      <Pressable onPress={() => console.log('hello')}>
+      <Pressable onPress={() => {}}>
         <View style={styles.containerForCLOption}>
           <Feather name="map-pin" color={colors.brown} size={28} />
           <View style={styles.ClTextContainer}>
@@ -27,12 +27,7 @@ const BSAddressComp = () => {
         <AddressCard />
         <AddressCard />
         <AddressCard />
-        <FilledButton
-          text="New Address"
-          onPress={() => {
-            console.log('hello');
-          }}
-        />
+        <FilledButton text="New Address" onPress={() => {}} />
       </View>
     </View>
   );
