@@ -148,7 +148,7 @@ export default function AddNewAddress({
               color: colors.brown,
             }}
             onChangeText={handleTextInput('state')}
-            keyboardType="number-pad"
+            keyboardType="default"
           />
         </View>
         <View>

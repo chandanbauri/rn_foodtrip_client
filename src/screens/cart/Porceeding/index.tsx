@@ -14,6 +14,7 @@ import FilledButton from '../../../components/buttons/filled';
 import {ResourceContext} from '../../../contexts/resource';
 import {
   createOrder,
+  generateFCMToken,
   generateOrderID,
   verifyPaymentRazorPay,
 } from '../../../utilities/cloud/functions';
@@ -78,6 +79,7 @@ export default function ProceedingScreen({
                   let OrderList: Array<any> = [];
                   //setValue(null, 'orders');
                   if (Resource?.cart) {
+                    let FCM = await generateFCMToken;
                     // if (
                     //   (await getValue('orders')) !== null &&
                     //   Resource?.cart.length > 0
@@ -106,6 +108,7 @@ export default function ProceedingScreen({
                         name: auth().currentUser?.displayName,
                         uid: auth().currentUser?.uid,
                         alternatePhone: alternatePhone,
+                        FCM: FCM,
                       },
                       restaurantDetails: {
                         ...Resource.restaurantDetails,
@@ -196,6 +199,7 @@ export default function ProceedingScreen({
                         });
                         let paymentSuccess = JSON.parse(validSignature.data);
                         if (paymentSuccess.validSignature) {
+                          let FCM = await generateFCMToken;
                           const ORDER = {
                             amount: grandTotal,
                             currency: data.data.currency,
@@ -211,6 +215,7 @@ export default function ProceedingScreen({
                               name: auth().currentUser?.displayName,
                               uid: auth().currentUser?.uid,
                               alternatePhone: alternatePhone,
+                              FCM: FCM,
                             },
                             restaurantDetails: {
                               ...Resource.restaurantDetails,

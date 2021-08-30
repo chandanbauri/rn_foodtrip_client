@@ -111,20 +111,34 @@ function CartInfo() {
       <FilledButton
         text="Proceed"
         onPress={() => {
-          if (totalCost >= 150)
-            navigation.navigate('Proceed', {
-              grandTotal: totalCost,
-              address: orderAddress,
-              alternatePhone:
-                alternatePhone?.length == 10 ? alternatePhone : null,
-            });
-          else
-            Alert.alert('The minimum order price is ₹ 150 INR', '', [
+          if (Auth?.user) {
+            if (totalCost >= 150)
+              navigation.navigate('Proceed', {
+                grandTotal: totalCost,
+                address: orderAddress,
+                alternatePhone:
+                  alternatePhone?.length == 10 ? alternatePhone : null,
+              });
+            else
+              Alert.alert('The minimum order price is ₹ 150 INR', '', [
+                {
+                  text: 'Ok',
+                  onPress: () => {},
+                },
+              ]);
+          } else {
+            Alert.alert('To place an Order you need to login first', '', [
               {
-                text: 'Ok',
-                onPress: () => {},
+                text: 'OK',
+                onPress: () => {
+                  Resource?.EmptyCart();
+                  navigation.navigate('TabNav', {
+                    screen: 'Account',
+                  });
+                },
               },
             ]);
+          }
         }}
       />
     </View>

@@ -7,6 +7,7 @@ import {
   TextInput,
   Alert,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
@@ -21,16 +22,20 @@ import {colors, getValue} from '../../utilities';
 import {foodObj} from '../../contexts/resource';
 import firestore from '@react-native-firebase/firestore';
 import {Picker} from '@react-native-picker/picker';
+import auth from '@react-native-firebase/auth';
+import {useIsFocused} from '@react-navigation/native';
+import {cancelOrder} from '../../utilities/cloud/functions';
 // import auth from '@react-native-firebase/auth';
 
 const usersCollection = firestore().collection('Users');
 export default function Account({navigation, route}: AccountScreenProps) {
+  let isFocused = useIsFocused();
   const [addresses, setAddresses] = React.useState<Array<any>>([]);
   const Auth = React.useContext(AuthContext);
   const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   const [states, setStates] = React.useState<Array<any>>([]);
-  const [initializing, setInitializing] = React.useState<boolean>(false);
+  const [initializing, setInitializing] = React.useState<boolean>(true);
   // variables
   const snapPoints = React.useMemo(() => ['1%', '80%'], []);
 
@@ -71,6 +76,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
   };
 
   const getUserDetails = async () => {
+    setInitializing(true);
     try {
       let list = await usersCollection
         .doc(Auth?.user?.uid)
@@ -119,27 +125,33 @@ export default function Account({navigation, route}: AccountScreenProps) {
     return;
   }, [Auth?.user]);
   React.useEffect(() => {
-    getData()
-      .then(value => {
-        if (value != null) {
-          setData(value);
-        }
-      })
-      .catch(error => {
-        throw error;
-      });
+    if (isFocused) {
+      getData()
+        .then(value => {
+          if (value != null) {
+            setData(value);
+          }
+          setInitializing(false);
+        })
+        .catch(error => {
+          setInitializing(false);
+          throw error;
+        });
+    } else {
+      setInitializing(true);
+    }
     return;
-  }, [Auth?.user]);
-  React.useEffect(() => {
-    fetchStatesDetails()
-      .then(res => {
-        setStates(res);
-      })
-      .catch(error => {
-        throw error;
-      });
-    return;
-  }, [Auth?.user]);
+  }, [isFocused]);
+  // React.useEffect(() => {
+  //   fetchStatesDetails()
+  //     .then(res => {
+  //       setStates(res);
+  //     })
+  //     .catch(error => {
+  //       throw error;
+  //     });
+  //   return;
+  // }, [Auth?.user]);
   let initDetails = {
     name: '',
     email: '',
@@ -157,11 +169,17 @@ export default function Account({navigation, route}: AccountScreenProps) {
       <View style={styles.titleBox}>
         <View>
           <Text style={styles.userName}>
-            {Auth?.user.displayName ? Auth?.user?.displayName : 'User Name'}
+            {auth().currentUser?.displayName
+              ? auth().currentUser?.displayName
+              : 'User Name'}
           </Text>
-          <Text style={styles.phoneNumber}>{`${Auth?.user.phoneNumber}`}</Text>
-          {Auth?.user?.email && (
-            <Text style={styles.phoneNumber}>{`${Auth?.user?.email}`}</Text>
+          <Text style={styles.phoneNumber}>{`${
+            auth().currentUser?.phoneNumber
+          }`}</Text>
+          {auth().currentUser?.email && (
+            <Text style={styles.phoneNumber}>{`${
+              auth().currentUser?.email
+            }`}</Text>
           )}
         </View>
         {/* <Pressable
@@ -188,7 +206,12 @@ export default function Account({navigation, route}: AccountScreenProps) {
       <Text style={[styles.sectionTitle, {marginTop: 20}]}>My Orders</Text>
     </>
   );
-
+  if (initializing)
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={colors.brown} size="large" />
+      </View>
+    );
   if (Auth?.user !== null)
     return (
       <View style={styles.root}>
@@ -204,56 +227,122 @@ export default function Account({navigation, route}: AccountScreenProps) {
             renderItem={({item, index}) => (
               <View
                 style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 10,
-                  marginVertical: 5,
-                  backgroundColor: colors.white,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}>
-                <Text
+                <View
                   style={{
-                    fontSize: 14,
-                    color: colors.brown,
-                  }}>{`Order Id: ${item.id}`}</Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.brown,
-                    marginTop: 5,
-                  }}>{`Cost : ${getTotalCost(item.items)}`}</Text>
-                {item.isPending && (
+                    paddingVertical: 10,
+                    paddingHorizontal: 10,
+                    marginVertical: 5,
+                    backgroundColor: colors.white,
+                  }}>
                   <Text
                     style={{
                       fontSize: 14,
                       color: colors.brown,
-                    }}>{`Order is Pending`}</Text>
-                )}
-                {item.isRejected && (
+                    }}>{`Order Id: ${item.id}`}</Text>
                   <Text
                     style={{
                       fontSize: 14,
                       color: colors.brown,
-                    }}>{`Order was Rejected`}</Text>
-                )}
-                {item.isCanceled && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.brown,
-                    }}>{`Order is Canceled`}</Text>
-                )}
-                {item.isOnGoing && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.brown,
-                    }}>{`Order is On the way`}</Text>
-                )}
-                {item.isDelivered && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.brown,
-                    }}>{`Order was Delivered`}</Text>
+                      marginTop: 5,
+                    }}>{`Cost : ${getTotalCost(item.items)}`}</Text>
+                  {item.isPending && (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.brown,
+                      }}>{`Order is Pending`}</Text>
+                  )}
+                  {item.isRejected && (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.brown,
+                      }}>{`Order was Rejected`}</Text>
+                  )}
+                  {item.isCanceled && (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.brown,
+                      }}>{`Order is Canceled`}</Text>
+                  )}
+                  {item.isOnGoing && (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.brown,
+                      }}>{`Order is On the way`}</Text>
+                  )}
+                  {item.isDelivered && (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.brown,
+                      }}>{`Order was Delivered`}</Text>
+                  )}
+                </View>
+                {!item.isCanceled && (
+                  <View>
+                    <Pressable
+                      style={{
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        backgroundColor: colors.error,
+                        borderRadius: 4,
+                      }}
+                      onPress={async () => {
+                        setInitializing(true);
+                        try {
+                          let res = await cancelOrder({orderID: item.id});
+                          let response = JSON.parse(res.data);
+                          if (response.success) {
+                            setInitializing(false);
+                            Alert.alert(
+                              'Order Cancelation request added successfully',
+                              '',
+                              [
+                                {
+                                  text: 'Ok',
+                                  onPress: () => {},
+                                },
+                              ],
+                            );
+                          } else {
+                            setInitializing(false);
+                            Alert.alert(
+                              'There is some issue please try again later',
+                              '',
+                              [
+                                {
+                                  text: 'Ok',
+                                  onPress: () => {},
+                                },
+                              ],
+                            );
+                          }
+                        } catch (error) {
+                          setInitializing(false);
+                          Alert.alert(
+                            'There is some issue please try again later',
+                            '',
+                            [
+                              {
+                                text: 'Ok',
+                                onPress: () => {},
+                              },
+                            ],
+                          );
+                        }
+                      }}>
+                      <Text style={{color: colors.white, fontSize: 12}}>
+                        Cancel
+                      </Text>
+                    </Pressable>
+                  </View>
                 )}
               </View>
             )}
@@ -269,7 +358,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
         </View>
         <BottomSheet
           ref={bottomSheetRef}
-          index={Auth?.user.displayName ? -1 : 1}
+          index={auth().currentUser?.displayName ? -1 : 1}
           snapPoints={snapPoints}
           onAnimate={handleSheetChanges}
           keyboardBehavior="fullScreen"
@@ -358,7 +447,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
                 color: colors.brown,
               }}
               onChangeText={handleTextInput('state')}
-              keyboardType="number-pad"
             />
 
             {/* <View
@@ -389,6 +477,13 @@ export default function Account({navigation, route}: AccountScreenProps) {
               onPress={async () => {
                 setInitializing(true);
                 if (!Auth?.user?.displayName || !addresses.length) {
+                  if (details.name.length > 0)
+                    auth().currentUser?.updateProfile({
+                      displayName: details.name,
+                    });
+                  if (details.email.length > 0) {
+                    auth().currentUser?.updateEmail(details.email);
+                  }
                   try {
                     await usersCollection
                       .doc(Auth?.user?.uid)
