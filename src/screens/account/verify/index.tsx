@@ -1,7 +1,9 @@
 import {useIsFocused} from '@react-navigation/native';
 import * as React from 'react';
+import {Alert} from 'react-native';
 import {View, Text, StyleSheet, TextInput, Pressable} from 'react-native';
 import VerifyForm from '../../../components/forms/verify';
+import Loader from '../../../components/loader/loader';
 import {AuthContext} from '../../../contexts/Auth';
 import {VerifyScreenProps} from '../../../navigation/authNavigator/types';
 import {colors} from '../../../utilities';
@@ -11,6 +13,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   const isFocused = useIsFocused();
   const [value, setValue] = React.useState('');
   const [Error, setError] = React.useState<string>('');
+  const [initializing, setInitializing] = React.useState<boolean>(false);
   const decreaseCounter = () => {
     let timer = setInterval(() => {
       if (isFocused)
@@ -25,21 +28,47 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
     return;
   };
   const Auth = React.useContext(AuthContext);
-  const onVrify = () => {
-    Auth?.verifyPhone(
-      value,
-      () => {
-        // navigation.navigate('Home');
-      },
-      () => {
-        setError('Please Enter a valid Verification code');
-      },
-    );
+  const onVrify = async () => {
+    setInitializing(true);
+    await Auth?.verifyPhone(value)
+      .then(() => {
+        setInitializing(false);
+        navigation.navigate('Main', {
+          // On Verification navigate to the Profile page
+          screen: 'TabNav',
+          params: {
+            screen: 'Account',
+          },
+        });
+      })
+      .catch(() => {
+        setInitializing(false);
+        Alert.alert(
+          'Not a Valid Verification code !!',
+          'Try to login once again',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.navigate('Main', {
+                  //if Failed navigate to the SignIn page
+                  screen: 'TabNav',
+                  params: {
+                    screen: 'Account',
+                  },
+                });
+              },
+            },
+          ],
+        );
+      });
   };
   React.useEffect(() => {
     if (isFocused) decreaseCounter();
     return;
   }, []);
+
+  if (initializing) return <Loader />;
   return (
     <View style={styles.root}>
       <Text style={styles.titleText}>Verify Code</Text>

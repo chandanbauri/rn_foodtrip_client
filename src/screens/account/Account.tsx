@@ -25,6 +25,7 @@ import {Picker} from '@react-native-picker/picker';
 import auth from '@react-native-firebase/auth';
 import {useIsFocused} from '@react-navigation/native';
 import {cancelOrder} from '../../utilities/cloud/functions';
+import Loader from '../../components/loader/loader';
 // import auth from '@react-native-firebase/auth';
 
 const usersCollection = firestore().collection('Users');
@@ -206,12 +207,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       <Text style={[styles.sectionTitle, {marginTop: 20}]}>My Orders</Text>
     </>
   );
-  if (initializing)
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator color={colors.brown} size="large" />
-      </View>
-    );
+  if (initializing) return <Loader />;
   if (Auth?.user !== null)
     return (
       <View style={styles.root}>
@@ -285,7 +281,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                       }}>{`Order was Delivered`}</Text>
                   )}
                 </View>
-                {!item.isCanceled && (
+                {!item.isCanceled && item.isPending && (
                   <View>
                     <Pressable
                       style={{

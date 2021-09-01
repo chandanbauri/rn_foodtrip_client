@@ -15,6 +15,7 @@ import auth from '@react-native-firebase/auth';
 import {Picker} from '@react-native-picker/picker';
 import {stat} from 'fs';
 import {AddNewAddressScreenProps} from '../../../navigation/homeScreenStackNavigator/types';
+import Loader from '../../../components/loader/loader';
 
 export default function AddNewAddress({
   navigation,
@@ -27,7 +28,7 @@ export default function AddNewAddress({
     area: '',
     landmark: '',
     city: '',
-    state: 'westbengal',
+    state: '',
   };
 
   const [state, setState] = React.useState(initState);
@@ -35,33 +36,36 @@ export default function AddNewAddress({
     setState(prev => ({...prev, [name]: text}));
   };
   const usersCollection = firestore().collection('Users');
-  const [states, setStates] = React.useState<Array<any>>([]);
-  const fetchStatesDetails = async () => {
-    // try {
-    //   let states = await getDBdata({collection: 'resouce', fieldName: 'state'});
-    // } catch (error) {
-    //   throw error
-    // }
-    return [
-      {
-        label: 'West Bengal',
-        value: 'westbengal',
-      },
-      {
-        label: 'Jharkhand',
-        value: 'jharkhand',
-      },
-    ];
-  };
-  React.useEffect(() => {
-    fetchStatesDetails()
-      .then(res => {
-        setStates(res);
-      })
-      .catch(error => {
-        throw error;
-      });
-  }, []);
+  const [initializing, setInitializing] = React.useState<boolean>(false);
+  // const [states, setStates] = React.useState<Array<any>>([]);
+  // const fetchStatesDetails = async () => {
+  //   // try {
+  //   //   let states = await getDBdata({collection: 'resouce', fieldName: 'state'});
+  //   // } catch (error) {
+  //   //   throw error
+  //   // }
+  //   return [
+  //     {
+  //       label: 'West Bengal',
+  //       value: 'westbengal',
+  //     },
+  //     {
+  //       label: 'Jharkhand',
+  //       value: 'jharkhand',
+  //     },
+  //   ];
+  // };
+  // React.useEffect(() => {
+  //   fetchStatesDetails()
+  //     .then(res => {
+  //       setStates(res);
+  //     })
+  //     .catch(error => {
+  //       throw error;
+  //     });
+  // }, []);
+
+  if (initializing) return <Loader />;
   return (
     <ScrollView>
       <View style={styles.root}>
@@ -162,7 +166,6 @@ export default function AddNewAddress({
                 state.landmark == '' ||
                 state.pincode == '' ||
                 state.state == '' ||
-                '' ||
                 state.tag == ''
               ) {
                 Alert.alert(
@@ -175,47 +178,52 @@ export default function AddNewAddress({
                     },
                   ],
                 );
-                return;
-              }
-              try {
-                let address = await usersCollection
-                  .doc(auth().currentUser?.uid)
-                  .collection('addresses')
-                  .where('tag', '==', `${state.tag}`)
-                  .get();
-                if (address.size) {
-                  Alert.alert('Please Use A Different Tag Name ', '', [
-                    {
-                      text: 'Ok',
-                      onPress: () => {
-                        setState(initState);
-                      },
-                    },
-                  ]);
-                } else {
-                  await usersCollection
+              } else {
+                // console.log(state);
+                setInitializing(true);
+                try {
+                  let address = await usersCollection
                     .doc(auth().currentUser?.uid)
                     .collection('addresses')
-                    .add({
-                      tag: state.tag,
-                      pincode: state.pincode,
-                      home: state.home,
-                      area: state.area,
-                      landmark: state.landmark,
-                      city: state.city,
-                      state: state.state,
-                    });
-                  Alert.alert('Address is Saved successfully', '', [
-                    {
-                      text: 'Ok',
-                      onPress: () => {
-                        setState(initState);
+                    .where('tag', '==', `${state.tag}`)
+                    .get();
+                  if (address.size) {
+                    setInitializing(false);
+                    Alert.alert('Please Use A Different Tag Name ', '', [
+                      {
+                        text: 'Ok',
+                        onPress: () => {
+                          setState(initState);
+                        },
                       },
-                    },
-                  ]);
+                    ]);
+                  } else {
+                    await usersCollection
+                      .doc(auth().currentUser?.uid)
+                      .collection('addresses')
+                      .add({
+                        tag: state.tag,
+                        pincode: state.pincode,
+                        home: state.home,
+                        area: state.area,
+                        landmark: state.landmark,
+                        city: state.city,
+                        state: state.state,
+                      });
+                    setInitializing(false);
+                    Alert.alert('Address is Saved successfully', '', [
+                      {
+                        text: 'Ok',
+                        onPress: () => {
+                          setState(initState);
+                        },
+                      },
+                    ]);
+                  }
+                } catch (error) {
+                  setInitializing(false);
+                  throw error;
                 }
-              } catch (error) {
-                throw error;
               }
             }}
           />

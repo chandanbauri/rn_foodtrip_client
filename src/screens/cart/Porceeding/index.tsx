@@ -21,6 +21,7 @@ import {
 import {config} from '../../../utilities/razorpay';
 import RazorpayCheckout from 'react-native-razorpay';
 import auth from '@react-native-firebase/auth';
+import Loader from '../../../components/loader/loader';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({
@@ -30,6 +31,7 @@ export default function ProceedingScreen({
   const {grandTotal, alternatePhone, address} = route.params;
   const [isCOD, setIsCOD] = React.useState<boolean>(false);
   const [isOnline, setIsOnline] = React.useState<boolean>(true);
+  const [initializing, setInitializing] = React.useState<boolean>(false);
   const Resource = React.useContext(ResourceContext);
 
   // React.useEffect(() => {
@@ -37,6 +39,7 @@ export default function ProceedingScreen({
   //     navigation.navigate('Home');
   //   }
   // });
+  if (initializing) return <Loader />;
   if (Resource?.cart.length)
     return (
       <View style={styles.root}>
@@ -75,6 +78,7 @@ export default function ProceedingScreen({
             <FilledButton
               text="Book Now"
               onPress={async () => {
+                setInitializing(true);
                 if (isCOD && !isOnline) {
                   let OrderList: Array<any> = [];
                   //setValue(null, 'orders');
@@ -122,6 +126,7 @@ export default function ProceedingScreen({
                     try {
                       let res = await createOrder({order: ORDER});
                       let response = JSON.parse(res.data);
+                      setInitializing(false);
                       if (response.success) {
                         Alert.alert('Order is Placed successfully', '', [
                           {
@@ -142,6 +147,7 @@ export default function ProceedingScreen({
                         ]);
                       }
                     } catch (error) {
+                      setInitializing(false);
                       Alert.alert('Sorry Can not place order right now', '', [
                         {
                           text: 'OK',
@@ -177,7 +183,7 @@ export default function ProceedingScreen({
                     });
                     let data = JSON.parse(res.data);
                     var options = {
-                      name: 'some prod',
+                      name: 'Adda Food',
                       image: '',
                       description: 'some desc',
                       order_id: data.data.id,
@@ -229,6 +235,7 @@ export default function ProceedingScreen({
                           try {
                             let res = await createOrder({order: ORDER});
                             let response = JSON.parse(res.data);
+                            setInitializing(false);
                             if (response.success) {
                               Alert.alert('Order is Placed successfully', '', [
                                 {
@@ -276,6 +283,7 @@ export default function ProceedingScreen({
                         ]);
                       });
                   } catch (error) {
+                    setInitializing(false);
                     Alert.alert('Sorry Can not place order right now', '', [
                       {
                         text: 'OK',
@@ -285,6 +293,7 @@ export default function ProceedingScreen({
                     throw error;
                   }
                 } else if (!isCOD && !isOnline) {
+                  setInitializing(false);
                   Alert.alert('Please slecet a valid payment Method', '', [
                     {
                       text: 'OK',

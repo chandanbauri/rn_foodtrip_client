@@ -91,18 +91,18 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   const ListHeader = () => (
     <>
       <View style={styles.categoryListContainer}>
-        <View style={styles.categoryListHeaderContainer}>
+        {/* <View style={styles.categoryListHeaderContainer}>
           <Text style={styles.categoryListHeader}>Categories</Text>
-        </View>
+        </View> */}
         <View style={styles.categoryList}>
-          <FlatList
+          {/* <FlatList
             horizontal={true}
             keyExtractor={(item, index) => `${index}`}
             data={Resource?.menuList}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             renderItem={({item}) => <CategoryCard name={item.name} />}
-          />
+          /> */}
         </View>
       </View>
       <View style={styles.ListHeader}>

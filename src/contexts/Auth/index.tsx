@@ -1,17 +1,12 @@
 import * as React from 'react';
 import auth from '@react-native-firebase/auth';
 
-
 type contextProps = {
   user: any;
   guest: string | null;
   setUser: React.Dispatch<React.SetStateAction<any>>;
   phoneAuth: (phone: string) => void;
-  verifyPhone: (
-    code: string,
-    callBack: () => void,
-    failure: () => void,
-  ) => Promise<void>;
+  verifyPhone: (code: string) => Promise<void>;
   resendVerificationCode: (phone: string | null) => void;
   signOut: () => void;
 };

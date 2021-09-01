@@ -20,7 +20,9 @@ import {colors} from '../../utilities';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {ResourceContext, useResource} from '../../contexts/resource';
 import {getFoodList} from '../../utilities/cloud/functions';
+import Entypo from 'react-native-vector-icons/Entypo';
 const {height, width} = Dimensions.get('window');
+
 const foodObj = [
   {
     categoryName: 'Pizza',
@@ -116,32 +118,62 @@ function Loader() {
 }
 
 const y = new Value<number>(0);
-const MAX_SCOLL_OFFSET = height * 0.1;
-let h = y.interpolate({
-  inputRange: [0, MAX_SCOLL_OFFSET],
-  outputRange: [height * 0.5, MAX_SCOLL_OFFSET],
-  extrapolate: Extrapolate.CLAMP,
-});
-let scale = y.interpolate({
-  inputRange: [0, MAX_SCOLL_OFFSET],
-  outputRange: [2.5, 1],
-  extrapolate: Extrapolate.CLAMP,
-});
-let coverOpacity = y.interpolate({
-  inputRange: [0, MAX_SCOLL_OFFSET],
-  outputRange: [1, 0],
-  extrapolate: Extrapolate.CLAMP,
-});
-let OverLayOpacity = y.interpolate({
-  inputRange: [0, MAX_SCOLL_OFFSET],
-  outputRange: [1, 0],
-  extrapolate: Extrapolate.CLAMP,
-});
-let titleColor = interpolateColors(y, {
-  inputRange: [0, MAX_SCOLL_OFFSET],
-  outputColorRange: [colors.white, colors.brown],
-});
+// const MAX_SCOLL_OFFSET = height * 0.1;
+// let h = y.interpolate({
+//   inputRange: [0, MAX_SCOLL_OFFSET],
+//   outputRange: [height * 0.5, MAX_SCOLL_OFFSET],
+//   extrapolate: Extrapolate.CLAMP,
+// });
+// let scale = y.interpolate({
+//   inputRange: [0, MAX_SCOLL_OFFSET],
+//   outputRange: [2.5, 1],
+//   extrapolate: Extrapolate.CLAMP,
+// });
+// let coverOpacity = y.interpolate({
+//   inputRange: [0, MAX_SCOLL_OFFSET],
+//   outputRange: [1, 0],
+//   extrapolate: Extrapolate.CLAMP,
+// });
+// let OverLayOpacity = y.interpolate({
+//   inputRange: [0, MAX_SCOLL_OFFSET],
+//   outputRange: [1, 0],
+//   extrapolate: Extrapolate.CLAMP,
+// });
+// let titleColor = interpolateColors(y, {
+//   inputRange: [0, MAX_SCOLL_OFFSET],
+//   outputColorRange: [colors.white, colors.brown],
+// });
+
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
+  const MainHeader = ({title}: any) => (
+    <View
+      style={{
+        height: height * 0.1,
+        width: width,
+        backgroundColor: colors.white,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+      }}>
+      <Pressable
+        onPress={() => {
+          goBack();
+        }}>
+        <View style={{paddingRight: 5, paddingVertical: 5}}>
+          <Entypo name="chevron-left" size={24} color={colors.brown} />
+        </View>
+      </Pressable>
+      <Text
+        style={{
+          color: colors.brown,
+          fontSize: 22,
+          marginLeft: 20,
+          fontWeight: '700',
+        }}>
+        {title}
+      </Text>
+    </View>
+  );
   const [initializing, setInitializing] = React.useState<boolean>(true);
   let trigger = React.useRef(false);
   let Resouce = useResource();
@@ -201,17 +233,18 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         ])}
         data={foodList}
         ListHeaderComponent={() => (
-          <AnimatedHeader
-            animatedHeight={{height: h}}
-            coverScale={scale}
-            coverOpacity={coverOpacity}
-            OverLayOpacity={OverLayOpacity}
-            titleColor={titleColor}
-            title={name}
-            goBack={() => {
-              goBack();
-            }}
-          />
+          // <AnimatedHeader
+          //   animatedHeight={{height: h}}
+          //   coverScale={scale}
+          //   coverOpacity={coverOpacity}
+          //   OverLayOpacity={OverLayOpacity}
+          //   titleColor={titleColor}
+          //   title={name}
+          //   goBack={() => {
+          //     goBack();
+          //   }}
+          // />
+          <MainHeader title={name} />
         )}
         keyExtractor={(item: any) => item?.id}
         renderItem={({item}: any) => (
