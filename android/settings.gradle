@@ -1,5 +1,5 @@
 include ':app'
 include ':react-native-razorpay'
-rootProject.name = 'foodtrip'
+rootProject.name = 'fooddhaba'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 project(':react-native-razorpay').projectDir = new File(rootProject.projectDir,   '../node_modules/react-native-razorpay/android')

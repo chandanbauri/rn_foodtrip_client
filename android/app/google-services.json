@@ -7,12 +7,57 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:766705208966:android:ccc7ec99347eca9d714b07",
+        "mobilesdk_app_id": "1:766705208966:android:c55eece864f5a1ef714b07",
         "android_client_info": {
-          "package_name": "com.foodtrip"
+          "package_name": "com.fooddhaba"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "766705208966-pgom5e6s9q99t575qgfljrdqmr2sn3c9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fooddhaba",
+            "certificate_hash": "28635c7474946aefe1ba21391575351ffa7c2eba"
+          }
+        },
+        {
+          "client_id": "766705208966-1d67455mnr65rcofgbp7gom3n2bqavi8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDReGLqb50cAoTVcpPoR3IrzmoA-1dwXaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "766705208966-1d67455mnr65rcofgbp7gom3n2bqavi8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766705208966:android:ccc7ec99347eca9d714b07",
+        "android_client_info": {
+          "package_name": "com.fooddhaba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "766705208966-s027hnd2usjen3h203k7i7ucg4gtgp54.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fooddhaba",
+            "certificate_hash": "28635c7474946aefe1ba21391575351ffa7c2eba"
+          }
+        },
         {
           "client_id": "766705208966-1d67455mnr65rcofgbp7gom3n2bqavi8.apps.googleusercontent.com",
           "client_type": 3

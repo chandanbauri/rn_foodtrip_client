@@ -37,7 +37,7 @@ const BottomNavigator = () => {
         name="Home"
         component={Home}
         options={{
-          headerTitle: `Food Adda`,
+          headerTitle: `Food Dhaba`,
           headerTitleStyle: {
             color: colors.brown,
             fontFamily: 'OpenSans-SemiBold',

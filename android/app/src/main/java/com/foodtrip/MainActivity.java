@@ -1,4 +1,4 @@
-package com.foodtrip;
+package com.fooddhaba;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.zoontek.rnbootsplash.RNBootSplash;
@@ -15,6 +15,6 @@ public class MainActivity extends ReactActivity {
   }
   @Override
   protected String getMainComponentName() {
-    return "foodtrip";
+    return "fooddhaba";
   }
 }
