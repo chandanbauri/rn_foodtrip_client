@@ -77,10 +77,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   activeItemText: {
-    color: colors.green,
+    color: colors.brown,
   },
   activeItemIndicator: {
-    backgroundColor: colors.green,
+    backgroundColor: colors.brown,
     width: (width * 22) / 100,
     height: 3,
   },

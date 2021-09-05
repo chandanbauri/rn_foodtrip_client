@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
 } from 'react-native';
 import {ProceedScreenProps} from '../../../navigation/BookOrder/types';
 import {colors, getValue, setValue} from '../../../utilities';
@@ -22,6 +23,8 @@ import {config} from '../../../utilities/razorpay';
 import RazorpayCheckout from 'react-native-razorpay';
 import auth from '@react-native-firebase/auth';
 import Loader from '../../../components/loader/loader';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FocusedStatusBar from '../../../components/statusBar';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({
@@ -40,9 +43,37 @@ export default function ProceedingScreen({
   //   }
   // });
   if (initializing) return <Loader />;
-  if (Resource?.cart.length)
+  if (!Resource?.cart.length) {
+    navigation.goBack();
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={colors.brown} size="large" />
+      </View>
+    );
+  } else
     return (
       <View style={styles.root}>
+        <FocusedStatusBar backgroundColor={colors.logoBg} />
+        <View
+          style={{
+            height: height * 0.5,
+            width: '100%',
+            // flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            backgroundColor: colors.logoBg,
+          }}>
+          <Image
+            source={require('../../../assets/logo.png')}
+            style={{
+              width: 200,
+              height: 200,
+              borderRadius: 10,
+            }}
+          />
+        </View>
         <View style={styles.content}>
           <View style={styles.detailsSection}>
             <Text style={styles.textContent}>{`Grand Total`}</Text>
@@ -307,19 +338,14 @@ export default function ProceedingScreen({
         </View>
       </View>
     );
-  else
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator color={colors.brown} size="large" />
-      </View>
-    );
 }
 
 const styles = StyleSheet.create({
   root: {
     height: height,
     width: width,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    backgroundColor: colors.white,
   },
   container: {
     marginTop: 10,

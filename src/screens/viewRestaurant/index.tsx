@@ -21,6 +21,7 @@ import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {ResourceContext, useResource} from '../../contexts/resource';
 import {getFoodList} from '../../utilities/cloud/functions';
 import Entypo from 'react-native-vector-icons/Entypo';
+import FoodCategoryHeader from '../../components/header/foodCategory';
 const {height, width} = Dimensions.get('window');
 
 const foodObj = [
@@ -146,33 +147,36 @@ const y = new Value<number>(0);
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const MainHeader = ({title}: any) => (
-    <View
-      style={{
-        height: height * 0.1,
-        width: width,
-        backgroundColor: colors.white,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 14,
-      }}>
-      <Pressable
-        onPress={() => {
-          goBack();
-        }}>
-        <View style={{paddingRight: 5, paddingVertical: 5}}>
-          <Entypo name="chevron-left" size={24} color={colors.brown} />
-        </View>
-      </Pressable>
-      <Text
+    <>
+      <View
         style={{
-          color: colors.brown,
-          fontSize: 22,
-          marginLeft: 20,
-          fontWeight: '700',
+          height: height * 0.1,
+          width: width,
+          backgroundColor: colors.white,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 14,
         }}>
-        {title}
-      </Text>
-    </View>
+        <Pressable
+          onPress={() => {
+            goBack();
+          }}>
+          <View style={{paddingRight: 5, paddingVertical: 5}}>
+            <Entypo name="chevron-left" size={24} color={colors.brown} />
+          </View>
+        </Pressable>
+        <Text
+          style={{
+            color: colors.brown,
+            fontSize: 22,
+            marginLeft: 20,
+            fontWeight: '700',
+          }}>
+          {title}
+        </Text>
+      </View>
+      <FoodCategoryHeader onOptionClick={() => {}} />
+    </>
   );
   const [initializing, setInitializing] = React.useState<boolean>(true);
   let trigger = React.useRef(false);
@@ -321,10 +325,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           </Pressable>
         </View>
         <View style={styles.bottomTextContainer}>
-          <Text
-            style={
-              styles.bottomText
-            }>{`Minimum order is For 150 for one`}</Text>
+          <Text style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
         </View>
       </View>
     </View>

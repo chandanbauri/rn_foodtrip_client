@@ -154,6 +154,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
   //   return;
   // }, [Auth?.user]);
   let initDetails = {
+    tag: '',
     name: '',
     email: '',
     pincode: '',
@@ -163,6 +164,20 @@ export default function Account({navigation, route}: AccountScreenProps) {
     city: '',
     state: '',
   };
+  let tags = [
+    {
+      label: 'Office',
+      value: 'office',
+    },
+    {
+      label: 'Home',
+      value: 'home',
+    },
+    {
+      label: 'Others',
+      value: 'others',
+    },
+  ];
   const [details, setDetails] = React.useState(initDetails);
 
   const Header = () => (
@@ -226,58 +241,59 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  backgroundColor: `${colors.brown}20`,
+                  marginVertical: 10,
+                  paddingHorizontal: 10,
                 }}>
                 <View
                   style={{
                     paddingVertical: 10,
-                    paddingHorizontal: 10,
                     marginVertical: 5,
-                    backgroundColor: colors.white,
                   }}>
                   <Text
                     style={{
                       fontSize: 14,
-                      color: colors.brown,
+                      color: colors.black,
                     }}>{`Order Id: ${item.id}`}</Text>
                   <Text
                     style={{
                       fontSize: 14,
-                      color: colors.brown,
+                      color: colors.black,
                       marginTop: 5,
-                    }}>{`Cost : ${getTotalCost(item.items)}`}</Text>
+                    }}>{`Cost : ₹ ${getTotalCost(item.items)}`}</Text>
                   {item.isPending && (
                     <Text
                       style={{
                         fontSize: 14,
-                        color: colors.brown,
+                        color: colors.black,
                       }}>{`Order is Pending`}</Text>
                   )}
                   {item.isRejected && (
                     <Text
                       style={{
                         fontSize: 14,
-                        color: colors.brown,
+                        color: colors.black,
                       }}>{`Order was Rejected`}</Text>
                   )}
                   {item.isCanceled && (
                     <Text
                       style={{
                         fontSize: 14,
-                        color: colors.brown,
+                        color: colors.black,
                       }}>{`Order is Canceled`}</Text>
                   )}
                   {item.isOnGoing && (
                     <Text
                       style={{
                         fontSize: 14,
-                        color: colors.brown,
+                        color: colors.black,
                       }}>{`Order is On the way`}</Text>
                   )}
                   {item.isDelivered && (
                     <Text
                       style={{
                         fontSize: 14,
-                        color: colors.brown,
+                        color: colors.black,
                       }}>{`Order was Delivered`}</Text>
                   )}
                 </View>
@@ -343,12 +359,26 @@ export default function Account({navigation, route}: AccountScreenProps) {
               </View>
             )}
             ListFooterComponent={
-              <FilledButton
-                text="Log out"
-                onPress={() => {
-                  Auth?.signOut();
-                }}
-              />
+              <View style={styles.footerComponent}>
+                <View style={{marginTop: 10}}>
+                  <Pressable style={{marginVertical: 5}}>
+                    <Text style={{color: '#AAA', fontSize: 14}}>
+                      Terms & Condintions
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{marginVertical: 5}}>
+                    <Text style={{color: '#AAA', fontSize: 14}}>
+                      About Company
+                    </Text>
+                  </Pressable>
+                </View>
+                <FilledButton
+                  text="Log out"
+                  onPress={() => {
+                    Auth?.signOut();
+                  }}
+                />
+              </View>
             }
           />
         </View>
@@ -361,7 +391,28 @@ export default function Account({navigation, route}: AccountScreenProps) {
           keyboardBlurBehavior="restore">
           <View style={styles.bottomSheet}>
             <Text style={styles.sectionTitle}>Edit your profile</Text>
-
+            <View
+              style={{
+                borderBottomColor: colors.brown,
+                borderBottomWidth: 1,
+              }}>
+              <Picker
+                selectedValue={details.tag}
+                onValueChange={(itemValue, itemIndex) => {
+                  setDetails(prev => ({...prev, tag: itemValue}));
+                }}
+                style={{
+                  color: colors.brown,
+                }}>
+                {tags.map((item, index: number) => (
+                  <Picker.Item
+                    label={item.label}
+                    value={item.value}
+                    key={index}
+                  />
+                ))}
+              </Picker>
+            </View>
             <TextInput
               placeholder="Name"
               placeholderTextColor={colors.brown}
@@ -520,7 +571,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                       .collection('addresses')
                       .doc(home.docs[0].id)
                       .update({
-                        tag: 'Home',
+                        tag: details.tag,
                         pincode: details.pincode,
                         home: details.home,
                         area: details.area,
@@ -633,5 +684,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  footerComponent: {
+    width: '100%',
   },
 });

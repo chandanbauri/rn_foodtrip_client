@@ -2,11 +2,12 @@ import {useNavigation} from '@react-navigation/native';
 import * as React from 'react';
 import {Dimensions} from 'react-native';
 import {Pressable, StyleSheet, Text, View, TextInput} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../../../contexts/Auth';
 import {CombinedNavigationProp} from '../../../navigation/types';
 import {colors, validatePhoneNo} from '../../../utilities';
 
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const PhoneAuthForm: React.FunctionComponent = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
@@ -33,6 +34,46 @@ const PhoneAuthForm: React.FunctionComponent = () => {
   //+-555-521-5554
   return (
     <View style={styles.root}>
+      <View
+        style={{
+          // height: height * 0.5,
+          // width: '100%',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'row',
+          backgroundColor: colors.white,
+        }}>
+        <Ionicons name="fast-food" size={60} color={colors.brown} />
+        <View
+          style={{
+            padding: 10,
+            borderLeftColor: colors.brown,
+            borderLeftWidth: 2,
+            flexDirection: 'column',
+            marginLeft: 10,
+          }}>
+          <Text
+            style={{
+              color: colors.brown,
+              fontWeight: 'bold',
+              fontFamily: 'Opensans',
+              fontSize: 20,
+            }}>
+            Count Memories
+          </Text>
+          <Text
+            style={{
+              color: colors.brown,
+              fontWeight: 'bold',
+              fontFamily: 'Opensans',
+              fontSize: 14,
+            }}>
+            Not Calories
+          </Text>
+        </View>
+      </View>
       <View style={styles.guestUserContainer}>
         <Text style={styles.guestUserTitle}>{`FOOD DELIVERY ACCOUNT`}</Text>
         <Text
@@ -75,8 +116,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   guestUserContainer: {
-    position: 'absolute',
-    bottom: 0,
+    height: 290,
     backgroundColor: '#FFFFFF',
     width: width,
     paddingHorizontal: 14,

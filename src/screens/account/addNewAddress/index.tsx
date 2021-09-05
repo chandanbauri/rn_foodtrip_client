@@ -22,7 +22,7 @@ export default function AddNewAddress({
   route,
 }: AddNewAddressScreenProps) {
   let initState = {
-    tag: '',
+    tag: 'office',
     pincode: '',
     home: '',
     area: '',
@@ -64,6 +64,20 @@ export default function AddNewAddress({
   //       throw error;
   //     });
   // }, []);
+  let tags = [
+    {
+      label: 'Office',
+      value: 'office',
+    },
+    {
+      label: 'Home',
+      value: 'home',
+    },
+    {
+      label: 'Others',
+      value: 'others',
+    },
+  ];
 
   if (initializing) return <Loader />;
   return (
@@ -71,7 +85,7 @@ export default function AddNewAddress({
       <View style={styles.root}>
         <Text style={styles.title}>Add New Address</Text>
         <View>
-          <TextInput
+          {/* <TextInput
             placeholder="Tag"
             value={state.tag}
             placeholderTextColor={colors.brown}
@@ -82,7 +96,29 @@ export default function AddNewAddress({
               marginVertical: 15,
             }}
             onChangeText={handleTextInput('tag')}
-          />
+          /> */}
+          <View
+            style={{
+              borderBottomColor: colors.brown,
+              borderBottomWidth: 1,
+            }}>
+            <Picker
+              selectedValue={state.tag}
+              onValueChange={(itemValue, itemIndex) => {
+                setState(prev => ({...prev, tag: itemValue}));
+              }}
+              style={{
+                color: colors.brown,
+              }}>
+              {tags.map((item, index: number) => (
+                <Picker.Item
+                  label={item.label}
+                  value={item.value}
+                  key={index}
+                />
+              ))}
+            </Picker>
+          </View>
           <TextInput
             placeholder="House no. , Flat, Building, Company, Apartment"
             placeholderTextColor={colors.brown}
