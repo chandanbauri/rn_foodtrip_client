@@ -12,6 +12,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Picker} from '@react-native-picker/picker';
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../../contexts/Auth';
+import {getFeatures} from '../../../utilities/cloud/functions';
+import Loader from '../../loader/loader';
 function CartInfo() {
   const usersCollection = firestore().collection('Users');
   const [orderAddress, setOrderAddress] = React.useState('');
@@ -20,8 +22,10 @@ function CartInfo() {
   );
   const Resource = React.useContext(ResourceContext);
   const Auth = React.useContext(AuthContext);
+  const [features, setFeature] = React.useState<any>();
   const [totalCost, setTotalCost] = React.useState<number>(0);
   const [addresses, setAddresses] = React.useState<Array<any>>([]);
+  const [initializing, setInitializing] = React.useState<boolean>(false);
   const getUserDetails = async () => {
     try {
       let list = await usersCollection
@@ -44,6 +48,20 @@ function CartInfo() {
       throw error;
     }
   };
+  const fetchFeatures = async () => {
+    try {
+      setInitializing(true);
+      let res = await getFeatures();
+      if (res) {
+        let data = res.data;
+        setFeature(data);
+        setInitializing(false);
+      }
+    } catch (error) {
+      setInitializing(false);
+      throw error;
+    }
+  };
   React.useEffect(() => {
     if (Resource?.cart.length) {
       let total = 0;
@@ -60,7 +78,13 @@ function CartInfo() {
     });
     return;
   }, []);
+  React.useEffect(() => {
+    fetchFeatures().catch(error => {
+      throw error;
+    });
+  }, []);
   const navigation = useNavigation<CombinedNavigationProp>();
+  if (initializing) return <Loader />;
   return (
     <View style={styles.root}>
       <View style={{marginTop: 20}}>
@@ -104,17 +128,39 @@ function CartInfo() {
           />
         </View>
       </View>
-      <View style={styles.costSection}>
-        <Text style={styles.text}>Total cost</Text>
-        <Text style={styles.text}>{`₹ ${totalCost}`}</Text>
-      </View>
+      {features && (
+        <>
+          <View style={styles.costSection}>
+            <Text style={styles.text}>gst</Text>
+            <Text style={styles.text}>{`₹ ${
+              (parseInt(features.gst) * totalCost) / 100
+            } %`}</Text>
+          </View>
+          <View style={styles.costSection}>
+            <Text style={styles.text}>delivery charge</Text>
+            <Text style={styles.text}>{`₹ ${features.delivery_charge}`}</Text>
+          </View>
+          <View style={styles.costSection}>
+            <Text style={styles.text}>Total cost</Text>
+            <Text style={styles.text}>{`₹ ${
+              totalCost +
+              parseInt(features.delivery_charge) +
+              (parseInt(features.gst) * totalCost) / 100
+            }`}</Text>
+          </View>
+        </>
+      )}
+
       <FilledButton
         text="Proceed"
         onPress={() => {
           if (Auth?.user) {
             if (totalCost >= 150)
               navigation.navigate('Proceed', {
-                grandTotal: totalCost,
+                grandTotal:
+                  totalCost +
+                  parseInt(features.delivery_charge) +
+                  (parseInt(features.gst) * totalCost) / 100,
                 address: orderAddress,
                 alternatePhone:
                   alternatePhone?.length == 10 ? alternatePhone : null,

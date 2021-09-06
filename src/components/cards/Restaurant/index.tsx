@@ -50,9 +50,13 @@ const Restaurant = ({onClick, values}: props) => {
           />
         </View>
         <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTitle}>{values.restaurantName}</Text>
+          <Text style={styles.detailsTitle}>
+            {values.restaurantName.slice(0, 15)}
+          </Text>
           {values.tags && (
-            <Text style={styles.detailsText}>{values.tags.join(' . ')}</Text>
+            <Text style={styles.detailsText}>
+              {values.tags.slice(0, 2).join(' . ')}
+            </Text>
           )}
           <Text style={styles.detailsText}>{`${
             values.preparationDuration

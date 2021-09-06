@@ -143,7 +143,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             marginLeft: 20,
             fontWeight: '700',
           }}>
-          {title}
+          {title.slice(0, 18)}
         </Text>
       </View>
       <FoodCategoryHeader

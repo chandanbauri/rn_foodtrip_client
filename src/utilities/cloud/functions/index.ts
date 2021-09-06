@@ -12,3 +12,4 @@ export let verifyPaymentRazorPay = functions().httpsCallable(
 export let getDBdata = functions().httpsCallable('getDBdata'); // some parameters required
 export let getFoodList = functions().httpsCallable('getFoodList');
 export let generateFCMToken = messaging().getToken();
+export let getFeatures = functions().httpsCallable('getFeatures');
