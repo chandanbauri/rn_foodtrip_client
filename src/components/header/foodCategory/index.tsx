@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import * as React from 'react';
 import {
   View,
   Text,
@@ -12,21 +12,20 @@ import Food from '../../cards/food';
 const {height, width} = Dimensions.get('window');
 
 type props = {
-  onOptionClick: (title: string) => void;
+  onOptionClick: (title: string, index: number) => void;
+  categories: Array<any>;
+  activeTab: number;
 };
 
-const FoodCategoryHeader = ({onOptionClick}: props) => {
-  const [activeTab, setActiveTab] = useState(1);
-
-  const HeaderItem = ({item}: any) => {
-    const isActive = activeTab === item.index;
+const FoodCategoryHeader = ({onOptionClick, categories, activeTab}: props) => {
+  const HeaderItem = ({item, index}: any) => {
+    const isActive = activeTab === index;
     return (
       <TouchableOpacity
         style={{alignItems: 'center'}}
         onPress={() => {
-          //setApp(prev => ({...prev, activeTabIndex: item.index}));
-          onOptionClick(item.title);
-          setActiveTab(prev => item.index);
+          //setApp(prev => ({...prev, activeTabIndex: index}));
+          onOptionClick(item.text, index);
         }}>
         <View style={styles.itemRoot}>
           <Text
@@ -34,7 +33,7 @@ const FoodCategoryHeader = ({onOptionClick}: props) => {
               styles.itemText,
               isActive ? styles.activeItemText : styles.inactiveText,
             ]}>
-            {item.title}
+            {item.text}
           </Text>
         </View>
         <View style={isActive ? styles.activeItemIndicator : {}} />
@@ -45,9 +44,11 @@ const FoodCategoryHeader = ({onOptionClick}: props) => {
     <View style={styles.root}>
       <FlatList
         horizontal={true}
-        data={itemList}
-        renderItem={HeaderItem}
-        keyExtractor={item => item.id.toString()}
+        data={categories}
+        renderItem={({item, index}) => (
+          <HeaderItem item={{text: item}} index={index} />
+        )}
+        keyExtractor={(item, index) => `${index}`}
         showsHorizontalScrollIndicator={false}
       />
     </View>

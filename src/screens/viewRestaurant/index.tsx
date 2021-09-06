@@ -22,93 +22,8 @@ import {ResourceContext, useResource} from '../../contexts/resource';
 import {getFoodList} from '../../utilities/cloud/functions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FoodCategoryHeader from '../../components/header/foodCategory';
+import {useIsFocused} from '@react-navigation/core';
 const {height, width} = Dimensions.get('window');
-
-const foodObj = [
-  {
-    categoryName: 'Pizza',
-    itemlist: [
-      {
-        id: ' 1',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 2',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 3',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 4',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 5',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 6',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 7',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 8',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: ' 9',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-      {
-        id: '10',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-    ],
-  },
-  {
-    categoryName: 'Pizza1',
-    itemlist: [{id: '1', name: "M'Pepeporni", price: 350}],
-  },
-  {
-    categoryName: 'Pizza2',
-    itemlist: [
-      {
-        id: '1',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-    ],
-  },
-  {
-    categoryName: 'Pizza3',
-    itemlist: [
-      {
-        id: '1',
-        name: "M'Pepeporni",
-        price: 350,
-      },
-    ],
-  },
-  {
-    categoryName: 'Pizza4',
-    itemlist: [{id: '1', name: "M'Pepeporni", price: 350}],
-  },
-];
 
 function Loader() {
   return (
@@ -146,6 +61,62 @@ const y = new Value<number>(0);
 // });
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
+  const [initializing, setInitializing] = React.useState<boolean>(true);
+  const [categories, setCategories] = React.useState<Array<any>>([]);
+  const [activeTab, setActiveTab] = React.useState<number>(1);
+  let trigger = React.useRef(false);
+  let Resouce = useResource();
+  const [foodList, setFoodList] = React.useState<Array<any>>([]);
+  const [tabList, setTabList] = React.useState<Array<any>>([]);
+  const {collection, id, name, address} = route.params;
+  let isFocuses = useIsFocused();
+  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+  const openBottomSheet = () => {
+    trigger.current = true;
+  };
+  const closeBottomSheet = () => {
+    trigger.current = false;
+  };
+
+  const extractCategories = (list: Array<any>) => {
+    let raw = list.map(item => item.category);
+    return [...new Set(raw)];
+  };
+  const fetchFoodList = async () => {
+    try {
+      let res = await getFoodList({parentName: collection, parentID: id});
+      if (res.data) {
+        let list = await JSON.parse(res.data);
+        let catList = extractCategories(list);
+        setFoodList(list);
+        setCategories(catList);
+        let items = list.filter((item:any)=> item.category == catList[0]);
+        setActiveTab(0);
+        setTabList(items);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const onCategoryClick = (categoryName: string, index: number) => {
+    let list = foodList.filter(item => item.category == categoryName);
+    setActiveTab(index);
+    setTabList(list);
+  };
+
+  React.useEffect(() => {
+    fetchFoodList().catch(error => {
+      throw error;
+    });
+    setInitializing(false);
+    return;
+    // return clearTimeout(timeOut);
+  }, []);
   const MainHeader = ({title}: any) => (
     <>
       <View
@@ -175,47 +146,15 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           {title}
         </Text>
       </View>
-      <FoodCategoryHeader onOptionClick={() => {}} />
+      <FoodCategoryHeader
+        categories={categories}
+        onOptionClick={(title, index) => {
+          onCategoryClick(title, index);
+        }}
+        activeTab={activeTab}
+      />
     </>
   );
-  const [initializing, setInitializing] = React.useState<boolean>(true);
-  let trigger = React.useRef(false);
-  let Resouce = useResource();
-  const [foodList, setFoodList] = React.useState<Array<any>>([]);
-  let list = React.useRef<Array<any>>([]);
-  const {collection, id, name, address} = route.params;
-  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
-  const goBack = () => {
-    navigation.goBack();
-  };
-
-  const openBottomSheet = () => {
-    trigger.current = true;
-  };
-  const closeBottomSheet = () => {
-    trigger.current = false;
-  };
-
-  const fetchFoodList = async () => {
-    try {
-      let res = await getFoodList({parentName: collection, parentID: id});
-      if (res.data) {
-        list.current = JSON.parse(res.data);
-        setFoodList(list.current);
-        setInitializing(false);
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  React.useEffect(() => {
-    fetchFoodList().catch(error => {
-      throw error;
-    });
-    return;
-    // return clearTimeout(timeOut);
-  }, []);
   if (initializing) return <Loader />;
   return (
     <View style={styles.root}>
@@ -235,7 +174,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             },
           },
         ])}
-        data={foodList}
+        data={tabList}
         ListHeaderComponent={() => (
           // <AnimatedHeader
           //   animatedHeight={{height: h}}
@@ -283,22 +222,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         stickyHeaderIndices={[0]}
         style={{flex: 1}}
       />
-      {/* <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        // onAnimate={handleSheetChanges}
-        keyboardBehavior="fullScreen"
-        keyboardBlurBehavior="restore"
-        backdropComponent={props => <BottomSheetBackdrop {...props} />}>
-        <View
-          style={{
-            flex: 1,
-            paddingHorizontal: 10,
-          }}>
-          
-        </View>
-      </BottomSheet> */}
       <View
         style={{
           width: '100%',
