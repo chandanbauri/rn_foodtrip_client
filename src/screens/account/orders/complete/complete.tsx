@@ -24,7 +24,6 @@ export default function CompleteOrdersScreen() {
           id: item.id,
           ...item.data(),
         }));
-        console.log(allOrders[0].isOnGoing);
         setData(allOrders.filter((item: any) => item.isDelivered == true));
       } else {
         setData([]);
@@ -39,7 +38,6 @@ export default function CompleteOrdersScreen() {
       getData()
         .then(value => {
           if (value != null) {
-            console.log('ORDERs', value);
             setData(value);
           }
           setInitializing(false);

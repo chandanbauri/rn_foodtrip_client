@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {StyleSheet, Text, View} from 'react-native';
 import {foodObj, ResourceContext} from '../../../contexts/resource';
 import {colors} from '../../../utilities';
@@ -15,6 +15,7 @@ import {AuthContext} from '../../../contexts/Auth';
 import {getFeatures} from '../../../utilities/cloud/functions';
 import Loader from '../../loader/loader';
 function CartInfo() {
+  const isFocused = useIsFocused();
   const usersCollection = firestore().collection('Users');
   const [orderAddress, setOrderAddress] = React.useState('');
   const [alternatePhone, setAlternatePhone] = React.useState<string | null>(
@@ -49,17 +50,19 @@ function CartInfo() {
     }
   };
   const fetchFeatures = async () => {
-    try {
-      setInitializing(true);
-      let res = await getFeatures();
-      if (res) {
-        let data = res.data;
-        setFeature(data);
+    if (isFocused) {
+      try {
+        setInitializing(true);
+        let res = await getFeatures();
+        if (res) {
+          let data = res.data;
+          setFeature(data);
+          setInitializing(false);
+        }
+      } catch (error) {
         setInitializing(false);
+        throw error;
       }
-    } catch (error) {
-      setInitializing(false);
-      throw error;
     }
   };
   React.useEffect(() => {
@@ -82,6 +85,7 @@ function CartInfo() {
     fetchFeatures().catch(error => {
       throw error;
     });
+    return;
   }, []);
   const navigation = useNavigation<CombinedNavigationProp>();
   if (initializing) return <Loader />;

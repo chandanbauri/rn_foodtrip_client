@@ -23,15 +23,16 @@ import {getFoodList} from '../../utilities/cloud/functions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FoodCategoryHeader from '../../components/header/foodCategory';
 import {useIsFocused} from '@react-navigation/core';
+import Loader from '../../components/loader/loader';
 const {height, width} = Dimensions.get('window');
 
-function Loader() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <ActivityIndicator size={80} color={colors.brown} />
-    </View>
-  );
-}
+// function Loader() {
+//   return (
+//     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+//       <ActivityIndicator size={80} color={colors.brown} />
+//     </View>
+//   );
+// }
 
 const y = new Value<number>(0);
 // const MAX_SCOLL_OFFSET = height * 0.1;
@@ -94,9 +95,10 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         let catList = extractCategories(list);
         setFoodList(list);
         setCategories(catList);
-        let items = list.filter((item:any)=> item.category == catList[0]);
+        let items = list.filter((item: any) => item.category == catList[0]);
         setActiveTab(0);
         setTabList(items);
+        setInitializing(false);
       }
     } catch (error) {
       throw error;
@@ -110,10 +112,10 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   };
 
   React.useEffect(() => {
-    fetchFoodList().catch(error => {
-      throw error;
-    });
-    setInitializing(false);
+    if (isFocuses)
+      fetchFoodList().catch(error => {
+        throw error;
+      });
     return;
     // return clearTimeout(timeOut);
   }, []);
@@ -157,101 +159,103 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   );
   if (initializing) return <Loader />;
   return (
-    <View style={styles.root}>
+    <>
       <FocusedStatusBar
-        animated={true}
-        translucent={true}
         backgroundColor="transparent"
-        barStyle="light-content"
+        barStyle="dark-content"
+        translucent={true}
       />
-      <AnimatedFlatList
-        onScroll={Animated.event([
-          {
-            nativeEvent: {
-              contentOffset: {
-                y: y,
+      <View style={styles.root}>
+        <AnimatedFlatList
+          onScroll={Animated.event([
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: y,
+                },
               },
             },
-          },
-        ])}
-        data={tabList}
-        ListHeaderComponent={() => (
-          // <AnimatedHeader
-          //   animatedHeight={{height: h}}
-          //   coverScale={scale}
-          //   coverOpacity={coverOpacity}
-          //   OverLayOpacity={OverLayOpacity}
-          //   titleColor={titleColor}
-          //   title={name}
-          //   goBack={() => {
-          //     goBack();
-          //   }}
-          // />
-          <MainHeader title={name} />
-        )}
-        keyExtractor={(item: any) => item?.id}
-        renderItem={({item}: any) => (
-          <Food
-            id={id}
-            item={item}
-            addToCardAction={() => {
-              if (!Resouce?.restaurantDetails) {
-                Resouce?.saveRestaurantDetils({id, name, address});
-                openBottomSheet();
-              } else {
-                if (
-                  Resouce?.restaurantDetails &&
-                  Resouce.restaurantDetails?.id == id
-                ) {
+          ])}
+          data={tabList}
+          ListHeaderComponent={() => (
+            // <AnimatedHeader
+            //   animatedHeight={{height: h}}
+            //   coverScale={scale}
+            //   coverOpacity={coverOpacity}
+            //   OverLayOpacity={OverLayOpacity}
+            //   titleColor={titleColor}
+            //   title={name}
+            //   goBack={() => {
+            //     goBack();
+            //   }}
+            // />
+            <MainHeader title={name} />
+          )}
+          keyExtractor={(item: any) => item?.id}
+          renderItem={({item}: any) => (
+            <Food
+              id={id}
+              item={item}
+              addToCardAction={() => {
+                if (!Resouce?.restaurantDetails) {
+                  Resouce?.saveRestaurantDetils({id, name, address});
                   openBottomSheet();
                 } else {
-                  Alert.alert(
-                    'You can only order from one Restaurant at a time',
-                    '',
-                    [{text: 'OK', onPress: () => {}}],
-                  );
+                  if (
+                    Resouce?.restaurantDetails &&
+                    Resouce.restaurantDetails?.id == id
+                  ) {
+                    openBottomSheet();
+                  } else {
+                    Alert.alert(
+                      'You can only order from one Restaurant at a time',
+                      '',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
                 }
-              }
-            }}
-            removeFromCardAction={() => {
-              Resouce?.saveRestaurantDetils(null);
-              closeBottomSheet();
-            }}
-          />
-        )}
-        stickyHeaderIndices={[0]}
-        style={{flex: 1}}
-      />
-      <View
-        style={{
-          width: '100%',
-          backgroundColor: colors.white,
-          position: 'absolute',
-          bottom: 0,
-          paddingTop: 20,
-        }}>
-        <View style={{width: '100%', paddingHorizontal: 14}}>
-          <Pressable
-            style={{}}
-            onPress={() => {
-              if (trigger.current) navigation.navigate('BookOrder');
-            }}>
-            <View style={styles.gotoCartButton}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: colors.white,
-                }}>
-                Proceed
-              </Text>
-            </View>
-          </Pressable>
-        </View>
-        <View style={styles.bottomTextContainer}>
-          <Text style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
+              }}
+              removeFromCardAction={() => {
+                Resouce?.saveRestaurantDetils(null);
+                closeBottomSheet();
+              }}
+            />
+          )}
+          stickyHeaderIndices={[0]}
+          style={{flex: 1}}
+        />
+        <View
+          style={{
+            width: '100%',
+            backgroundColor: colors.white,
+            position: 'absolute',
+            bottom: 0,
+            paddingTop: 20,
+          }}>
+          <View style={{width: '100%', paddingHorizontal: 14}}>
+            <Pressable
+              style={{}}
+              onPress={() => {
+                if (trigger.current) navigation.navigate('BookOrder');
+              }}>
+              <View style={styles.gotoCartButton}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: colors.white,
+                  }}>
+                  Proceed
+                </Text>
+              </View>
+            </Pressable>
+          </View>
+          <View style={styles.bottomTextContainer}>
+            <Text
+              style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -262,6 +266,7 @@ const styles = StyleSheet.create({
     // height: height,
     // width: width,
     flex: 1,
+    marginTop: 10,
   },
   bottomTextContainer: {
     marginTop: 10,

@@ -90,23 +90,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       }
     } catch (error) {}
   };
-  const fetchStatesDetails = async () => {
-    // try {
-    //   let states = await getDBdata({collection: 'resouce', fieldName: 'state'});
-    // } catch (error) {
-    //   throw error
-    // }
-    return [
-      {
-        label: 'West Bengal',
-        value: 'westbengal',
-      },
-      {
-        label: 'Jharkhand',
-        value: 'jharkhand',
-      },
-    ];
-  };
+ 
   React.useEffect(() => {
     if (Auth?.user) {
       getUserDetails().catch(error => {
@@ -123,7 +107,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
       getData()
         .then(value => {
           if (value != null) {
-            console.log('ORDERs', value);
             setData(value);
           }
           setInitializing(false);
@@ -192,34 +175,8 @@ export default function Account({navigation, route}: AccountScreenProps) {
             }`}</Text>
           )}
         </View>
-        {/* <Pressable
-          onPress={() => {
-            OpenBottomSheet();
-          }}>
-          <Text style={{color: colors.brown, fontWeight: '700'}}>EDIT</Text>
-        </Pressable> */}
       </View>
       <Text style={styles.sectionTitle}>Address</Text>
-      <FlatList
-        data={addresses}
-        keyExtractor={(item, index) => `${index}`}
-        renderItem={({item, index}) => (
-          <AddressCard {...item} isInProfile={true} isDefault={true} />
-        )}
-      />
-      <FilledButton
-        text="Add New"
-        onPress={() => {
-          navigation.navigate('AddNewAddress');
-        }}
-      />
-      <FilledButton
-        text="My Orders"
-        onPress={() => {
-          navigation.navigate('Orders');
-        }}
-      />
-      <Text style={[styles.sectionTitle, {marginTop: 20}]}>My Orders</Text>
     </>
   );
   if (initializing) return <Loader />;
@@ -234,161 +191,49 @@ export default function Account({navigation, route}: AccountScreenProps) {
         <View style={styles.root}>
           <View style={styles.subContainer}>
             <FlatList
-              data={data}
-              ListHeaderComponent={() => <Header />}
-              keyExtractor={(item, index: number) => {
-                return `${index}`;
-              }}
+              ListHeaderComponent={<Header />}
+              data={addresses}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => `${index}`}
               renderItem={({item, index}) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: `${colors.brown}20`,
-                    marginVertical: 10,
-                    paddingHorizontal: 10,
-                  }}>
-                  <View
-                    style={{
-                      paddingVertical: 10,
-                      marginVertical: 5,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.black,
-                      }}>{`Order Id: ${item.id}`}</Text>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.black,
-                        marginTop: 5,
-                      }}>{`Cost : ₹ ${
-                      getTotalCost(item.items) +
-                      parseInt(item.deliveryCharge ?? 0) +
-                      parseFloat(item.gst ?? 0)
-                    }`}</Text>
-                    {item.isPending && (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black,
-                        }}>{`Order is Pending`}</Text>
-                    )}
-                    {item.isRejected && (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black,
-                        }}>{`Order was Rejected`}</Text>
-                    )}
-                    {item.isCanceled && (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black,
-                        }}>{`Order is Canceled`}</Text>
-                    )}
-                    {item.isOnGoing && (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black,
-                        }}>{`Order is On the way`}</Text>
-                    )}
-                    {item.isDelivered && (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black,
-                        }}>{`Order was Delivered`}</Text>
-                    )}
-                  </View>
-                  {!item.isCanceled && item.isPending && (
-                    <View>
-                      <Pressable
-                        style={{
-                          paddingHorizontal: 10,
-                          paddingVertical: 4,
-                          backgroundColor: colors.error,
-                          borderRadius: 4,
-                        }}
-                        onPress={async () => {
-                          setInitializing(true);
-                          try {
-                            let res = await cancelOrder({orderID: item.id});
-                            let response = JSON.parse(res.data);
-                            if (response.success) {
-                              setInitializing(false);
-                              Alert.alert(
-                                'Order Cancelation request added successfully',
-                                '',
-                                [
-                                  {
-                                    text: 'Ok',
-                                    onPress: () => {},
-                                  },
-                                ],
-                              );
-                            } else {
-                              setInitializing(false);
-                              Alert.alert(
-                                'There is some issue please try again later',
-                                '',
-                                [
-                                  {
-                                    text: 'Ok',
-                                    onPress: () => {},
-                                  },
-                                ],
-                              );
-                            }
-                          } catch (error) {
-                            setInitializing(false);
-                            Alert.alert(
-                              'There is some issue please try again later',
-                              '',
-                              [
-                                {
-                                  text: 'Ok',
-                                  onPress: () => {},
-                                },
-                              ],
-                            );
-                          }
-                        }}>
-                        <Text style={{color: colors.white, fontSize: 12}}>
-                          Cancel
+                <AddressCard {...item} isInProfile={true} isDefault={true} />
+              )}
+              ListFooterComponent={
+                <>
+                  <FilledButton
+                    text="Add New"
+                    onPress={() => {
+                      navigation.navigate('AddNewAddress');
+                    }}
+                  />
+                  <FilledButton
+                    text="My Orders"
+                    onPress={() => {
+                      navigation.navigate('Orders');
+                    }}
+                  />
+                  <View style={styles.footerComponent}>
+                    <View style={{marginTop: 10}}>
+                      <Pressable style={{marginVertical: 5}}>
+                        <Text style={{color: '#AAA', fontSize: 14}}>
+                          Terms & Condintions
+                        </Text>
+                      </Pressable>
+                      <Pressable style={{marginVertical: 5}}>
+                        <Text style={{color: '#AAA', fontSize: 14}}>
+                          About Company
                         </Text>
                       </Pressable>
                     </View>
-                  )}
-                </View>
-              )}
-              ListFooterComponent={
-                <View style={styles.footerComponent}>
-                  <View style={{marginTop: 10}}>
-                    <Pressable style={{marginVertical: 5}}>
-                      <Text style={{color: '#AAA', fontSize: 14}}>
-                        Terms & Condintions
-                      </Text>
-                    </Pressable>
-                    <Pressable style={{marginVertical: 5}}>
-                      <Text style={{color: '#AAA', fontSize: 14}}>
-                        About Company
-                      </Text>
-                    </Pressable>
+                    <FilledButton
+                      text="Log out"
+                      onPress={() => {
+                        Auth?.signOut();
+                      }}
+                    />
                   </View>
-                  <FilledButton
-                    text="Log out"
-                    onPress={() => {
-                      Auth?.signOut();
-                    }}
-                  />
-                </View>
+                </>
               }
             />
           </View>
