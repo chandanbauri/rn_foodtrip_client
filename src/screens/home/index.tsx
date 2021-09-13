@@ -65,22 +65,23 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   // }); // An Intital check for The Location
 
   const getList = async () => {
-    try {
-      let res = await getRestaurantList();
-      let menuRes = await getMenuList();
-      let menu = JSON.parse(menuRes.data);
-      let restaurants = JSON.parse(res.data);
+    if (isFocused)
+      try {
+        let res = await getRestaurantList();
+        let menuRes = await getMenuList();
+        let menu = JSON.parse(menuRes.data);
+        let restaurants = JSON.parse(res.data);
 
-      if (restaurants.length) {
-        Resource?.setRestaurants(restaurants);
+        if (restaurants.length) {
+          Resource?.setRestaurants(restaurants);
+        }
+        if (menu.length) {
+          Resource?.setMenu(menu);
+        }
+        setInitializing(false);
+      } catch (error) {
+        throw error;
       }
-      if (menu.length) {
-        Resource?.setMenu(menu);
-      }
-      setInitializing(false);
-    } catch (error) {
-      throw error;
-    }
   };
   React.useEffect(() => {
     if (isFocused)
