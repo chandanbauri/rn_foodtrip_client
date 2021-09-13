@@ -13,6 +13,7 @@ import {CartScreenProps} from '../../navigation/BookOrder/types';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {colors} from '../../utilities';
 import CartInfo from '../../components/bottomSheet/cart';
+import FocusedStatusBar from '../../components/statusBar';
 
 const {height, width} = Dimensions.get('window');
 function Cart({navigation}: CartScreenProps) {
@@ -23,6 +24,11 @@ function Cart({navigation}: CartScreenProps) {
   if (Auth?.cart.length) {
     return (
       <>
+        <FocusedStatusBar
+          backgroundColor="transparent"
+          barStyle="dark-content"
+          translucent={true}
+        />
         <View style={styles.root}>
           <FlatList
             data={Auth?.cart}
@@ -48,13 +54,20 @@ function Cart({navigation}: CartScreenProps) {
     );
   }
   return (
-    <View style={styles.root}>
-      <EmptyCart
-        onClick={() => {
-          navigation.navigate('Home');
-        }}
+    <>
+      <FocusedStatusBar
+        backgroundColor="transparent"
+        barStyle="dark-content"
+        translucent={true}
       />
-    </View>
+      <View style={styles.root}>
+        <EmptyCart
+          onClick={() => {
+            navigation.navigate('Home');
+          }}
+        />
+      </View>
+    </>
   );
 }
 

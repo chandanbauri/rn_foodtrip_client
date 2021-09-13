@@ -5,14 +5,16 @@ import FocusedStatusBar from '../statusBar';
 
 export default function Loader() {
   return (
-    <View style={styles.root}>
+    <>
       <FocusedStatusBar
         backgroundColor="transparent"
         barStyle="dark-content"
         translucent={true}
       />
-      <ActivityIndicator color={colors.brown} size={50} />
-    </View>
+      <View style={styles.root}>
+        <ActivityIndicator color={colors.brown} size={50} />
+      </View>
+    </>
   );
 }
 

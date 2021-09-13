@@ -134,7 +134,7 @@ function CartInfo() {
             <Text style={styles.text}>gst</Text>
             <Text style={styles.text}>{`₹ ${
               (parseInt(features.gst) * totalCost) / 100
-            } %`}</Text>
+            }`}</Text>
           </View>
           <View style={styles.costSection}>
             <Text style={styles.text}>delivery charge</Text>
@@ -162,6 +162,8 @@ function CartInfo() {
                   parseInt(features.delivery_charge) +
                   (parseInt(features.gst) * totalCost) / 100,
                 address: orderAddress,
+                gst: (parseInt(features.gst) * totalCost) / 100,
+                deliveryCharge: features.delivery_charge,
                 alternatePhone:
                   alternatePhone?.length == 10 ? alternatePhone : null,
               });

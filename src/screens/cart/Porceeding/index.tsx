@@ -31,7 +31,8 @@ export default function ProceedingScreen({
   navigation,
   route,
 }: ProceedScreenProps) {
-  const {grandTotal, alternatePhone, address} = route.params;
+  const {grandTotal, alternatePhone, address, gst, deliveryCharge} =
+    route.params;
   const [isCOD, setIsCOD] = React.useState<boolean>(false);
   const [isOnline, setIsOnline] = React.useState<boolean>(true);
   const [initializing, setInitializing] = React.useState<boolean>(false);
@@ -137,6 +138,8 @@ export default function ProceedingScreen({
                       amountPaid: false,
                       razorpayDetails: null,
                       items: Resource?.cart,
+                      gst: gst,
+                      deliveryCharge: deliveryCharge,
                       userDetails: {
                         deliveryAddress: address,
                         phone: auth().currentUser?.phoneNumber,
@@ -246,6 +249,8 @@ export default function ProceedingScreen({
                               id: data.data.id,
                             },
                             items: Resource?.cart,
+                            gst: gst,
+                            deliveryCharge: deliveryCharge,
                             userDetails: {
                               deliveryAddress: address,
                               phone: auth().currentUser?.phoneNumber,

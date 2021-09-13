@@ -17,8 +17,8 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
-import {AccountScreenProps} from '../../navigation/bottomTabNavigator/types';
-import {colors, getValue} from '../../utilities';
+
+import {colors, getTotalCost, getValue} from '../../utilities';
 import {foodObj} from '../../contexts/resource';
 import firestore from '@react-native-firebase/firestore';
 import {Picker} from '@react-native-picker/picker';
@@ -26,6 +26,8 @@ import auth from '@react-native-firebase/auth';
 import {useIsFocused} from '@react-navigation/native';
 import {cancelOrder} from '../../utilities/cloud/functions';
 import Loader from '../../components/loader/loader';
+import {AccountScreenProps} from '../../navigation/accountStackNavigator/account';
+import FocusedStatusBar from '../../components/statusBar';
 // import auth from '@react-native-firebase/auth';
 
 const usersCollection = firestore().collection('Users');
@@ -67,15 +69,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
       throw error;
     }
   };
-  const getTotalCost = (list: Array<any> | any) => {
-    let total = 0;
-    list.map((item: any) => {
-      if (item.count) total = total + item.cost * item.count;
-    });
-
-    return total;
-  };
-
   const getUserDetails = async () => {
     setInitializing(true);
     try {
@@ -130,6 +123,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       getData()
         .then(value => {
           if (value != null) {
+            console.log('ORDERs', value);
             setData(value);
           }
           setInitializing(false);
@@ -219,111 +213,140 @@ export default function Account({navigation, route}: AccountScreenProps) {
           navigation.navigate('AddNewAddress');
         }}
       />
+      <FilledButton
+        text="My Orders"
+        onPress={() => {
+          navigation.navigate('Orders');
+        }}
+      />
       <Text style={[styles.sectionTitle, {marginTop: 20}]}>My Orders</Text>
     </>
   );
   if (initializing) return <Loader />;
   if (Auth?.user !== null)
     return (
-      <View style={styles.root}>
-        <View style={styles.subContainer}>
-          <FlatList
-            data={data}
-            ListHeaderComponent={() => <Header />}
-            keyExtractor={(item, index: number) => {
-              return `${index}`;
-            }}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  backgroundColor: `${colors.brown}20`,
-                  marginVertical: 10,
-                  paddingHorizontal: 10,
-                }}>
+      <>
+        <FocusedStatusBar
+          backgroundColor="transparent"
+          barStyle="dark-content"
+          translucent={true}
+        />
+        <View style={styles.root}>
+          <View style={styles.subContainer}>
+            <FlatList
+              data={data}
+              ListHeaderComponent={() => <Header />}
+              keyExtractor={(item, index: number) => {
+                return `${index}`;
+              }}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({item, index}) => (
                 <View
                   style={{
-                    paddingVertical: 10,
-                    marginVertical: 5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: `${colors.brown}20`,
+                    marginVertical: 10,
+                    paddingHorizontal: 10,
                   }}>
-                  <Text
+                  <View
                     style={{
-                      fontSize: 14,
-                      color: colors.black,
-                    }}>{`Order Id: ${item.id}`}</Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.black,
-                      marginTop: 5,
-                    }}>{`Cost : ₹ ${getTotalCost(item.items)}`}</Text>
-                  {item.isPending && (
+                      paddingVertical: 10,
+                      marginVertical: 5,
+                    }}>
                     <Text
                       style={{
                         fontSize: 14,
                         color: colors.black,
-                      }}>{`Order is Pending`}</Text>
-                  )}
-                  {item.isRejected && (
+                      }}>{`Order Id: ${item.id}`}</Text>
                     <Text
                       style={{
                         fontSize: 14,
                         color: colors.black,
-                      }}>{`Order was Rejected`}</Text>
-                  )}
-                  {item.isCanceled && (
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.black,
-                      }}>{`Order is Canceled`}</Text>
-                  )}
-                  {item.isOnGoing && (
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.black,
-                      }}>{`Order is On the way`}</Text>
-                  )}
-                  {item.isDelivered && (
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.black,
-                      }}>{`Order was Delivered`}</Text>
-                  )}
-                </View>
-                {!item.isCanceled && item.isPending && (
-                  <View>
-                    <Pressable
-                      style={{
-                        paddingHorizontal: 10,
-                        paddingVertical: 4,
-                        backgroundColor: colors.error,
-                        borderRadius: 4,
-                      }}
-                      onPress={async () => {
-                        setInitializing(true);
-                        try {
-                          let res = await cancelOrder({orderID: item.id});
-                          let response = JSON.parse(res.data);
-                          if (response.success) {
-                            setInitializing(false);
-                            Alert.alert(
-                              'Order Cancelation request added successfully',
-                              '',
-                              [
-                                {
-                                  text: 'Ok',
-                                  onPress: () => {},
-                                },
-                              ],
-                            );
-                          } else {
+                        marginTop: 5,
+                      }}>{`Cost : ₹ ${
+                      getTotalCost(item.items) +
+                      parseInt(item.deliveryCharge ?? 0) +
+                      parseFloat(item.gst ?? 0)
+                    }`}</Text>
+                    {item.isPending && (
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colors.black,
+                        }}>{`Order is Pending`}</Text>
+                    )}
+                    {item.isRejected && (
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colors.black,
+                        }}>{`Order was Rejected`}</Text>
+                    )}
+                    {item.isCanceled && (
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colors.black,
+                        }}>{`Order is Canceled`}</Text>
+                    )}
+                    {item.isOnGoing && (
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colors.black,
+                        }}>{`Order is On the way`}</Text>
+                    )}
+                    {item.isDelivered && (
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colors.black,
+                        }}>{`Order was Delivered`}</Text>
+                    )}
+                  </View>
+                  {!item.isCanceled && item.isPending && (
+                    <View>
+                      <Pressable
+                        style={{
+                          paddingHorizontal: 10,
+                          paddingVertical: 4,
+                          backgroundColor: colors.error,
+                          borderRadius: 4,
+                        }}
+                        onPress={async () => {
+                          setInitializing(true);
+                          try {
+                            let res = await cancelOrder({orderID: item.id});
+                            let response = JSON.parse(res.data);
+                            if (response.success) {
+                              setInitializing(false);
+                              Alert.alert(
+                                'Order Cancelation request added successfully',
+                                '',
+                                [
+                                  {
+                                    text: 'Ok',
+                                    onPress: () => {},
+                                  },
+                                ],
+                              );
+                            } else {
+                              setInitializing(false);
+                              Alert.alert(
+                                'There is some issue please try again later',
+                                '',
+                                [
+                                  {
+                                    text: 'Ok',
+                                    onPress: () => {},
+                                  },
+                                ],
+                              );
+                            }
+                          } catch (error) {
                             setInitializing(false);
                             Alert.alert(
                               'There is some issue please try again later',
@@ -336,167 +359,154 @@ export default function Account({navigation, route}: AccountScreenProps) {
                               ],
                             );
                           }
-                        } catch (error) {
-                          setInitializing(false);
-                          Alert.alert(
-                            'There is some issue please try again later',
-                            '',
-                            [
-                              {
-                                text: 'Ok',
-                                onPress: () => {},
-                              },
-                            ],
-                          );
-                        }
-                      }}>
-                      <Text style={{color: colors.white, fontSize: 12}}>
-                        Cancel
+                        }}>
+                        <Text style={{color: colors.white, fontSize: 12}}>
+                          Cancel
+                        </Text>
+                      </Pressable>
+                    </View>
+                  )}
+                </View>
+              )}
+              ListFooterComponent={
+                <View style={styles.footerComponent}>
+                  <View style={{marginTop: 10}}>
+                    <Pressable style={{marginVertical: 5}}>
+                      <Text style={{color: '#AAA', fontSize: 14}}>
+                        Terms & Condintions
+                      </Text>
+                    </Pressable>
+                    <Pressable style={{marginVertical: 5}}>
+                      <Text style={{color: '#AAA', fontSize: 14}}>
+                        About Company
                       </Text>
                     </Pressable>
                   </View>
-                )}
-              </View>
-            )}
-            ListFooterComponent={
-              <View style={styles.footerComponent}>
-                <View style={{marginTop: 10}}>
-                  <Pressable style={{marginVertical: 5}}>
-                    <Text style={{color: '#AAA', fontSize: 14}}>
-                      Terms & Condintions
-                    </Text>
-                  </Pressable>
-                  <Pressable style={{marginVertical: 5}}>
-                    <Text style={{color: '#AAA', fontSize: 14}}>
-                      About Company
-                    </Text>
-                  </Pressable>
-                </View>
-                <FilledButton
-                  text="Log out"
-                  onPress={() => {
-                    Auth?.signOut();
-                  }}
-                />
-              </View>
-            }
-          />
-        </View>
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={auth().currentUser?.displayName ? -1 : 1}
-          snapPoints={snapPoints}
-          onAnimate={handleSheetChanges}
-          keyboardBehavior="fullScreen"
-          keyboardBlurBehavior="restore">
-          <View style={styles.bottomSheet}>
-            <Text style={styles.sectionTitle}>Edit your profile</Text>
-            <View
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-              }}>
-              <Picker
-                selectedValue={details.tag}
-                onValueChange={(itemValue, itemIndex) => {
-                  setDetails(prev => ({...prev, tag: itemValue}));
-                }}
-                style={{
-                  color: colors.brown,
-                }}>
-                {tags.map((item, index: number) => (
-                  <Picker.Item
-                    label={item.label}
-                    value={item.value}
-                    key={index}
+                  <FilledButton
+                    text="Log out"
+                    onPress={() => {
+                      Auth?.signOut();
+                    }}
                   />
-                ))}
-              </Picker>
-            </View>
-            <TextInput
-              placeholder="Name"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('name')}
+                </View>
+              }
             />
-            <TextInput
-              placeholder="email"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('email')}
-              keyboardType="email-address"
-            />
-            <TextInput
-              placeholder="House no. , Flat, Building, Company, Apartment"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('home')}
-            />
-            <TextInput
-              placeholder="Area, Street, Sector, Village"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('area')}
-            />
-            <TextInput
-              placeholder="Landmark"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('landmark')}
-            />
-            <TextInput
-              placeholder="Town/City"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('city')}
-            />
-            <TextInput
-              placeholder="Pincode"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('pincode')}
-              keyboardType="number-pad"
-            />
-            <TextInput
-              placeholder="State"
-              placeholderTextColor={colors.brown}
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-                color: colors.brown,
-              }}
-              onChangeText={handleTextInput('state')}
-            />
+          </View>
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={auth().currentUser?.displayName ? -1 : 1}
+            snapPoints={snapPoints}
+            onAnimate={handleSheetChanges}
+            keyboardBehavior="fullScreen"
+            keyboardBlurBehavior="restore">
+            <View style={styles.bottomSheet}>
+              <Text style={styles.sectionTitle}>Edit your profile</Text>
+              <View
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                }}>
+                <Picker
+                  selectedValue={details.tag}
+                  onValueChange={(itemValue, itemIndex) => {
+                    setDetails(prev => ({...prev, tag: itemValue}));
+                  }}
+                  style={{
+                    color: colors.brown,
+                  }}>
+                  {tags.map((item, index: number) => (
+                    <Picker.Item
+                      label={item.label}
+                      value={item.value}
+                      key={index}
+                    />
+                  ))}
+                </Picker>
+              </View>
+              <TextInput
+                placeholder="Name"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('name')}
+              />
+              <TextInput
+                placeholder="email"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('email')}
+                keyboardType="email-address"
+              />
+              <TextInput
+                placeholder="House no. , Flat, Building, Company, Apartment"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('home')}
+              />
+              <TextInput
+                placeholder="Area, Street, Sector, Village"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('area')}
+              />
+              <TextInput
+                placeholder="Landmark"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('landmark')}
+              />
+              <TextInput
+                placeholder="Town/City"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('city')}
+              />
+              <TextInput
+                placeholder="Pincode"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('pincode')}
+                keyboardType="number-pad"
+              />
+              <TextInput
+                placeholder="State"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('state')}
+              />
 
-            {/* <View
+              {/* <View
               style={{
                 borderBottomColor: colors.brown,
                 borderBottomWidth: 1,
@@ -519,87 +529,88 @@ export default function Account({navigation, route}: AccountScreenProps) {
               </Picker>
             </View> */}
 
-            <FilledButton
-              text="SAVE CHANGES"
-              onPress={async () => {
-                setInitializing(true);
-                if (!Auth?.user?.displayName || !addresses.length) {
-                  if (details.name.length > 0)
-                    auth().currentUser?.updateProfile({
-                      displayName: details.name,
-                    });
-                  if (details.email.length > 0) {
-                    auth().currentUser?.updateEmail(details.email);
-                  }
-                  try {
-                    await usersCollection
-                      .doc(Auth?.user?.uid)
-                      .collection('addresses')
-                      .add({
-                        tag: 'Home',
-                        pincode: details.pincode,
-                        home: details.home,
-                        area: details.area,
-                        landmark: details.landmark,
-                        city: details.city,
-                        state: details.state,
+              <FilledButton
+                text="SAVE CHANGES"
+                onPress={async () => {
+                  setInitializing(true);
+                  if (!Auth?.user?.displayName || !addresses.length) {
+                    if (details.name.length > 0)
+                      auth().currentUser?.updateProfile({
+                        displayName: details.name,
                       });
-                    setInitializing(false);
-                    Alert.alert(
-                      'Profile Saved',
-                      'Your Profile has been saved Successfully',
-                      [
-                        {
-                          text: 'Ok',
-                          onPress: () => bottomSheetRef.current?.close(),
-                        },
-                      ],
-                    );
-                    setDetails(initDetails);
-                  } catch (error) {
-                    throw error;
+                    if (details.email.length > 0) {
+                      auth().currentUser?.updateEmail(details.email);
+                    }
+                    try {
+                      await usersCollection
+                        .doc(Auth?.user?.uid)
+                        .collection('addresses')
+                        .add({
+                          tag: 'Home',
+                          pincode: details.pincode,
+                          home: details.home,
+                          area: details.area,
+                          landmark: details.landmark,
+                          city: details.city,
+                          state: details.state,
+                        });
+                      setInitializing(false);
+                      Alert.alert(
+                        'Profile Saved',
+                        'Your Profile has been saved Successfully',
+                        [
+                          {
+                            text: 'Ok',
+                            onPress: () => bottomSheetRef.current?.close(),
+                          },
+                        ],
+                      );
+                      setDetails(initDetails);
+                    } catch (error) {
+                      throw error;
+                    }
+                  } else {
+                    try {
+                      let home = await usersCollection
+                        .doc(Auth?.user?.uid)
+                        .collection('addresses')
+                        .where('tag', '==', 'Home')
+                        .get();
+                      await usersCollection
+                        .doc(Auth?.user?.uid)
+                        .collection('addresses')
+                        .doc(home.docs[0].id)
+                        .update({
+                          tag: details.tag,
+                          pincode: details.pincode,
+                          home: details.home,
+                          area: details.area,
+                          landmark: details.landmark,
+                          city: details.city,
+                          state: details.state,
+                        });
+                      setInitializing(false);
+                      Alert.alert(
+                        'Profile Saved',
+                        'Your Profile has been saved Successfully',
+                        [
+                          {
+                            text: 'Ok',
+                            onPress: () => bottomSheetRef.current?.close(),
+                          },
+                        ],
+                      );
+                      setDetails(initDetails);
+                    } catch (error) {
+                      throw error;
+                    }
                   }
-                } else {
-                  try {
-                    let home = await usersCollection
-                      .doc(Auth?.user?.uid)
-                      .collection('addresses')
-                      .where('tag', '==', 'Home')
-                      .get();
-                    await usersCollection
-                      .doc(Auth?.user?.uid)
-                      .collection('addresses')
-                      .doc(home.docs[0].id)
-                      .update({
-                        tag: details.tag,
-                        pincode: details.pincode,
-                        home: details.home,
-                        area: details.area,
-                        landmark: details.landmark,
-                        city: details.city,
-                        state: details.state,
-                      });
-                    setInitializing(false);
-                    Alert.alert(
-                      'Profile Saved',
-                      'Your Profile has been saved Successfully',
-                      [
-                        {
-                          text: 'Ok',
-                          onPress: () => bottomSheetRef.current?.close(),
-                        },
-                      ],
-                    );
-                    setDetails(initDetails);
-                  } catch (error) {
-                    throw error;
-                  }
-                }
-              }}
-            />
-          </View>
-        </BottomSheet>
-      </View>
+                }}
+              />
+            </View>
+          </BottomSheet>
+        </View>
+      </>
     );
   return <PhoneAuthForm />;
 }
@@ -607,6 +618,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    marginTop: 10,
     position: 'relative',
     backgroundColor: colors.white,
   },

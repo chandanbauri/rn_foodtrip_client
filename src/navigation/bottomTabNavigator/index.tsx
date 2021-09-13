@@ -11,6 +11,7 @@ import {RouteProp} from '@react-navigation/core';
 import {colors} from '../../utilities';
 import BookOrderNavigator from '../BookOrder';
 import Account from '../../screens/account/Account';
+import AccountNavigator from '../accountStackNavigator';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -57,7 +58,7 @@ const BottomNavigator = () => {
       />
       <BottomTab.Screen
         name="Account"
-        component={Account}
+        component={AccountNavigator}
         options={{headerShown: false}}
       />
     </BottomTab.Navigator>

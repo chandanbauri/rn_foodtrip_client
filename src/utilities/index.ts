@@ -30,3 +30,13 @@ export const getValue = async (key: string) => {
     // error reading value
   }
 };
+
+
+export const getTotalCost = (list: Array<any> | any) => {
+  let total = 0;
+  list.map((item: any) => {
+    if (item.count) total = total + item.cost * item.count;
+  });
+
+  return total;
+};

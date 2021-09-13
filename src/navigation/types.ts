@@ -5,14 +5,29 @@ import {AuthNavigatorParamList} from './authNavigator/types';
 import {BottomTabNavigatorParamList} from './bottomTabNavigator/types';
 import {HomeScreenStackParamList} from './homeScreenStackNavigator/types';
 import {BookOrderParamList} from './BookOrder/types';
+import {MaterialTopTabNavigationProp} from '@react-navigation/material-top-tabs';
+import {AccountNavigatorParamlist} from './accountStackNavigator/account';
+import {OrderScreenParamlist} from './orderNavigator/OrderNavigator';
 
 export type CombinedNavigationProp = CompositeNavigationProp<
   StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
   CompositeNavigationProp<
     CompositeNavigationProp<
-      BottomTabNavigationProp<
-        BottomTabNavigatorParamList,
-        keyof BottomTabNavigatorParamList
+      CompositeNavigationProp<
+        BottomTabNavigationProp<
+          BottomTabNavigatorParamList,
+          keyof BottomTabNavigatorParamList
+        >,
+        CompositeNavigationProp<
+          StackNavigationProp<
+            AccountNavigatorParamlist,
+            keyof AccountNavigatorParamlist
+          >,
+          MaterialTopTabNavigationProp<
+            OrderScreenParamlist,
+            keyof OrderScreenParamlist
+          >
+        >
       >,
       StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>
     >,

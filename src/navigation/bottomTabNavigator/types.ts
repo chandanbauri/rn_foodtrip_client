@@ -14,7 +14,3 @@ export type HomeScreenProps = {
 
 
 
-export type AccountScreenProps = {
-  navigation: CombinedNavigationProp;
-  route: RouteProp<BottomTabNavigatorParamList, 'Account'>;
-};

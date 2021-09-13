@@ -24,6 +24,8 @@ import {getMenuList, getRestaurantList} from '../../utilities/cloud/functions';
 import {ResourceContext} from '../../contexts/resource';
 import {CategoryCard} from '../../components/cards/category';
 import {useIsFocused} from '@react-navigation/native';
+import FocusedStatusBar from '../../components/statusBar';
+import Loader from '../../components/loader/loader';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
@@ -110,17 +112,16 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       </View>
     </>
   );
-  if (initializing)
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator color={colors.brown} size="large" />
-      </View>
-    );
+  if (initializing) return <Loader />;
   return (
-    <SafeAreaView style={styles.root}>
-      <StatusBar backgroundColor="#FFF" barStyle="dark-content" />
-
-      {/* <View style={styles.addressViewContainer}>
+    <>
+      <FocusedStatusBar
+        backgroundColor="transparent"
+        barStyle="dark-content"
+        translucent={true}
+      />
+      <SafeAreaView style={styles.root}>
+        {/* <View style={styles.addressViewContainer}>
         <TouchableOpacity
           style={styles.addressView}
           onPress={() => {
@@ -137,28 +138,28 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         </TouchableOpacity>
       </View> */}
 
-      <View style={styles.restaurantListContainer}>
-        <FlatList
-          data={Resource?.restaurantList}
-          keyExtractor={(item, index) => `${index}`}
-          ListHeaderComponent={<ListHeader />}
-          renderItem={({item, index: number}) => (
-            <Restaurant
-              onClick={() => {
-                navigation.navigate('Restaurant', {
-                  id: item.id,
-                  collection: 'restaurants',
-                  address: item.address,
-                  name: item.restaurantName,
-                });
-              }}
-              values={item}
-            />
-          )}
-        />
-      </View>
+        <View style={styles.restaurantListContainer}>
+          <FlatList
+            data={Resource?.restaurantList}
+            keyExtractor={(item, index) => `${index}`}
+            ListHeaderComponent={<ListHeader />}
+            renderItem={({item, index: number}) => (
+              <Restaurant
+                onClick={() => {
+                  navigation.navigate('Restaurant', {
+                    id: item.id,
+                    collection: 'restaurants',
+                    address: item.address,
+                    name: item.restaurantName,
+                  });
+                }}
+                values={item}
+              />
+            )}
+          />
+        </View>
 
-      {/* <BottomSheet
+        {/* <BottomSheet
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
@@ -170,7 +171,8 @@ const Home = ({navigation, route}: HomeScreenProps) => {
           <BSAddressComp />
         </BottomSheetScrollView>
       </BottomSheet> */}
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 

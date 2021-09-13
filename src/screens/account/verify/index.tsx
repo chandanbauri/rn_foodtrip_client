@@ -25,7 +25,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
           }
         });
     }, 1000);
-    return;
+    return clearInterval(timer);
   };
   const Auth = React.useContext(AuthContext);
   const onVrify = async () => {

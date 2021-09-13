@@ -6,6 +6,8 @@ export type BookOrderParamList = {
   Cart: undefined;
   Proceed: {
     grandTotal: number;
+    gst: number;
+    deliveryCharge: number;
     alternatePhone?: string | null;
     address: string;
   };
