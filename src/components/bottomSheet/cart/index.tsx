@@ -50,19 +50,18 @@ function CartInfo() {
     }
   };
   const fetchFeatures = async () => {
-    if (isFocused) {
-      try {
-        setInitializing(true);
-        let res = await getFeatures();
-        if (res) {
-          let data = res.data;
-          setFeature(data);
-          setInitializing(false);
-        }
-      } catch (error) {
+    try {
+      setInitializing(true);
+      let res = await getFeatures();
+      if (res) {
+        let data = res.data;
+        console.log(data);
+        setFeature(data);
         setInitializing(false);
-        throw error;
       }
+    } catch (error) {
+      setInitializing(false);
+      throw error;
     }
   };
   React.useEffect(() => {
@@ -82,11 +81,12 @@ function CartInfo() {
     return;
   }, []);
   React.useEffect(() => {
-    fetchFeatures().catch(error => {
-      throw error;
-    });
+    if (isFocused)
+      fetchFeatures().catch(error => {
+        throw error;
+      });
     return;
-  }, []);
+  }, [isFocused]);
   const navigation = useNavigation<CombinedNavigationProp>();
   if (initializing) return <Loader />;
   return (
@@ -160,24 +160,36 @@ function CartInfo() {
         onPress={() => {
           if (Auth?.user) {
             if (totalCost >= 150)
-              navigation.navigate('Proceed', {
-                grandTotal:
-                  totalCost +
-                  parseInt(features.delivery_charge) +
-                  (parseInt(features.gst) * totalCost) / 100,
-                address: orderAddress,
-                gst: (parseInt(features.gst) * totalCost) / 100,
-                deliveryCharge: features.delivery_charge,
-                alternatePhone:
-                  alternatePhone?.length == 10 ? alternatePhone : null,
-              });
-            else
-              Alert.alert('The minimum order price is ₹ 150 INR', '', [
+              if (addresses && addresses.length)
+                navigation.navigate('Proceed', {
+                  grandTotal:
+                    totalCost +
+                    parseInt(features.delivery_charge) +
+                    (parseInt(features.gst) * totalCost) / 100,
+                  address: orderAddress,
+                  gst: (parseInt(features.gst) * totalCost) / 100,
+                  deliveryCharge: features.delivery_charge,
+                  alternatePhone:
+                    alternatePhone?.length == 10 ? alternatePhone : null,
+                });
+              else
+              Alert.alert('Please provide a valid address', '', [
                 {
-                  text: 'Ok',
-                  onPress: () => {},
+                  text: 'OK',
+                  onPress: () => {
+                    navigation.navigate('TabNav', {
+                      screen: 'Account',
+                    });
+                  },
                 },
               ]);
+              else
+                Alert.alert('The minimum order price is ₹ 150 INR', '', [
+                  {
+                    text: 'Ok',
+                    onPress: () => {},
+                  },
+                ]);
           } else {
             Alert.alert('To place an Order you need to login first', '', [
               {

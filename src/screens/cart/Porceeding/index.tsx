@@ -25,6 +25,7 @@ import auth from '@react-native-firebase/auth';
 import Loader from '../../../components/loader/loader';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FocusedStatusBar from '../../../components/statusBar';
+import firestore from '@react-native-firebase/firestore';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({

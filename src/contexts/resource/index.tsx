@@ -22,6 +22,7 @@ interface contextProps {
   setMenu: (menuList: any) => void;
   EmptyCart: () => void;
   getTotalCost: () => void;
+  repeatOrder: (items: any) => void;
 }
 
 export const ResourceContext = React.createContext<contextProps | null>(null);
@@ -158,6 +159,10 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
       });
     }
   }
+  function repeatOrder(items: any) {
+    setCart(items);
+    saveCartToAsync(items);
+  }
   React.useEffect(() => {
     fetchLastSavedCartInfo().catch(error => {
       throw error;
@@ -180,6 +185,7 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
         setMenu,
         EmptyCart,
         getTotalCost,
+        repeatOrder,
       }}>
       {children}
     </ResourceContext.Provider>

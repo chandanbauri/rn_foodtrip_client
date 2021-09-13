@@ -37,10 +37,10 @@ export default function Account({navigation, route}: AccountScreenProps) {
   const Auth = React.useContext(AuthContext);
   const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
-  const [states, setStates] = React.useState<Array<any>>([]);
+  const [refresh, setRefresh] = React.useState<boolean>(false);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   // variables
-  const snapPoints = React.useMemo(() => ['1%', '80%'], []);
+  const snapPoints = React.useMemo(() => ['1%', '40%'], []);
 
   const handleSheetChanges = React.useCallback((fromIndex, toIndex) => {
     if (fromIndex == 1) bottomSheetRef.current?.close();
@@ -69,6 +69,35 @@ export default function Account({navigation, route}: AccountScreenProps) {
       throw error;
     }
   };
+  const EditAddress = async (address: any) => {
+    console.log(address);
+    navigation.navigate('AddNewAddress', {
+      isEditMode: true,
+      id: address.id,
+      tag: address.tag,
+      pincode: address.pincode,
+      home: address.home,
+      area: address.area,
+      landmark: address.landmark,
+      city: address.city,
+      state: address.state,
+    });
+  };
+  const DeleteAddress = async (id: string) => {
+    try {
+      setInitializing(true);
+      // setRefresh(true);
+      await usersCollection
+        .doc(Auth?.user?.uid)
+        .collection('addresses')
+        .doc(id)
+        .delete();
+      Alert.alert('Address Deleted', '');
+      setRefresh(prev => !prev);
+    } catch (error) {
+      throw error;
+    }
+  };
   const getUserDetails = async () => {
     setInitializing(true);
     try {
@@ -90,9 +119,9 @@ export default function Account({navigation, route}: AccountScreenProps) {
       }
     } catch (error) {}
   };
- 
+
   React.useEffect(() => {
-    if (Auth?.user) {
+    if (Auth?.user && isFocused) {
       getUserDetails().catch(error => {
         throw error;
       });
@@ -101,7 +130,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       setData([]);
     }
     return;
-  }, [Auth?.user]);
+  }, [Auth?.user, refresh, isFocused]);
   React.useEffect(() => {
     if (isFocused) {
       getData()
@@ -119,17 +148,8 @@ export default function Account({navigation, route}: AccountScreenProps) {
       setInitializing(true);
     }
     return;
-  }, [isFocused]);
-  // React.useEffect(() => {
-  //   fetchStatesDetails()
-  //     .then(res => {
-  //       setStates(res);
-  //     })
-  //     .catch(error => {
-  //       throw error;
-  //     });
-  //   return;
-  // }, [Auth?.user]);
+  }, [isFocused, refresh]);
+
   let initDetails = {
     tag: '',
     name: '',
@@ -140,6 +160,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
     landmark: '',
     city: '',
     state: '',
+    phoneNumber: '',
   };
   let tags = [
     {
@@ -175,6 +196,11 @@ export default function Account({navigation, route}: AccountScreenProps) {
             }`}</Text>
           )}
         </View>
+        <View>
+          <Pressable onPress={() => OpenBottomSheet()}>
+            <Text>Edit</Text>
+          </Pressable>
+        </View>
       </View>
       <Text style={styles.sectionTitle}>Address</Text>
     </>
@@ -197,14 +223,24 @@ export default function Account({navigation, route}: AccountScreenProps) {
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => `${index}`}
               renderItem={({item, index}) => (
-                <AddressCard {...item} isInProfile={true} isDefault={true} />
+                <AddressCard
+                  {...item}
+                  onEdit={() => {
+                    EditAddress(item);
+                  }}
+                  isInProfile={true}
+                  isDefault={true}
+                  onDelete={() => DeleteAddress(item.id)}
+                />
               )}
               ListFooterComponent={
                 <>
                   <FilledButton
                     text="Add New"
                     onPress={() => {
-                      navigation.navigate('AddNewAddress');
+                      navigation.navigate('AddNewAddress', {
+                        isEditMode: false,
+                      });
                     }}
                   />
                   <FilledButton
@@ -246,7 +282,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
             keyboardBlurBehavior="restore">
             <View style={styles.bottomSheet}>
               <Text style={styles.sectionTitle}>Edit your profile</Text>
-              <View
+              {/* <View
                 style={{
                   borderBottomColor: colors.brown,
                   borderBottomWidth: 1,
@@ -267,7 +303,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                     />
                   ))}
                 </Picker>
-              </View>
+              </View> */}
               <TextInput
                 placeholder="Name"
                 placeholderTextColor={colors.brown}
@@ -289,7 +325,18 @@ export default function Account({navigation, route}: AccountScreenProps) {
                 onChangeText={handleTextInput('email')}
                 keyboardType="email-address"
               />
-              <TextInput
+              {/* <TextInput
+                placeholder="phone"
+                placeholderTextColor={colors.brown}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                }}
+                onChangeText={handleTextInput('phoneNumber')}
+                keyboardType="number-pad"
+              /> */}
+              {/* <TextInput
                 placeholder="House no. , Flat, Building, Company, Apartment"
                 placeholderTextColor={colors.brown}
                 style={{
@@ -349,7 +396,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   color: colors.brown,
                 }}
                 onChangeText={handleTextInput('state')}
-              />
+              /> */}
 
               {/* <View
               style={{
@@ -378,62 +425,35 @@ export default function Account({navigation, route}: AccountScreenProps) {
                 text="SAVE CHANGES"
                 onPress={async () => {
                   setInitializing(true);
-                  if (!Auth?.user?.displayName || !addresses.length) {
-                    if (details.name.length > 0)
-                      auth().currentUser?.updateProfile({
-                        displayName: details.name,
-                      });
-                    if (details.email.length > 0) {
-                      auth().currentUser?.updateEmail(details.email);
-                    }
+                  if (Auth?.user?.displayName) {
                     try {
-                      await usersCollection
-                        .doc(Auth?.user?.uid)
-                        .collection('addresses')
-                        .add({
-                          tag: 'Home',
-                          pincode: details.pincode,
-                          home: details.home,
-                          area: details.area,
-                          landmark: details.landmark,
-                          city: details.city,
-                          state: details.state,
+                      if (details.name.length > 0)
+                        auth().currentUser?.updateProfile({
+                          displayName: details.name,
                         });
-                      setInitializing(false);
-                      Alert.alert(
-                        'Profile Saved',
-                        'Your Profile has been saved Successfully',
-                        [
-                          {
-                            text: 'Ok',
-                            onPress: () => bottomSheetRef.current?.close(),
-                          },
-                        ],
-                      );
-                      setDetails(initDetails);
-                    } catch (error) {
-                      throw error;
-                    }
-                  } else {
-                    try {
-                      let home = await usersCollection
-                        .doc(Auth?.user?.uid)
-                        .collection('addresses')
-                        .where('tag', '==', 'Home')
-                        .get();
-                      await usersCollection
-                        .doc(Auth?.user?.uid)
-                        .collection('addresses')
-                        .doc(home.docs[0].id)
-                        .update({
-                          tag: details.tag,
-                          pincode: details.pincode,
-                          home: details.home,
-                          area: details.area,
-                          landmark: details.landmark,
-                          city: details.city,
-                          state: details.state,
-                        });
+                      if (details.email.length > 0) {
+                        auth().currentUser?.updateEmail(details.email);
+                      }
+                      console.log(details.phoneNumber);
+                      // if (details.phoneNumber.length === 10) {
+                      //   auth().currentUser?.updatePhoneNumber(
+                      //     auth.PhoneAuthProvider.credential(
+                      //       `+91${details.phoneNumber}`,
+                      //     ),
+                      //   );
+                      // }
+                      // await usersCollection
+                      //   .doc(Auth?.user?.uid)
+                      //   .collection('addresses')
+                      //   .add({
+                      //     tag: 'Home',
+                      //     pincode: details.pincode,
+                      //     home: details.home,
+                      //     area: details.area,
+                      //     landmark: details.landmark,
+                      //     city: details.city,
+                      //     state: details.state,
+                      //   });
                       setInitializing(false);
                       Alert.alert(
                         'Profile Saved',

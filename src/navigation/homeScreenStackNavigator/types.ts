@@ -7,7 +7,17 @@ export type HomeScreenStackParamList = {
   TabNav: NavigatorScreenParams<BottomTabNavigatorParamList>;
   Search: undefined;
   Restaurant: {id: string; collection: string; name: string; address: string};
-  AddNewAddress: undefined;
+  AddNewAddress: {
+    id?: string;
+    tag?: string;
+    pincode?: string;
+    home?: string;
+    area?: string;
+    landmark?: string;
+    city?: string;
+    state?: string;
+    isEditMode: boolean;
+  };
 };
 
 // export type TabNavProps = {

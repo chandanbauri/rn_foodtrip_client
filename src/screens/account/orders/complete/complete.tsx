@@ -7,6 +7,7 @@ import {AuthContext} from '../../../../contexts/Auth';
 import firestore from '@react-native-firebase/firestore';
 import {colors, getTotalCost} from '../../../../utilities';
 import {cancelOrder} from '../../../../utilities/cloud/functions';
+import OrderCard from '../../../../components/cards/order';
 const usersCollection = firestore().collection('Users');
 export default function CompleteOrdersScreen() {
   const [data, setData] = React.useState<Array<any>>([]);
@@ -18,6 +19,7 @@ export default function CompleteOrdersScreen() {
       let myOrders = await usersCollection
         .doc(Auth?.user?.uid)
         .collection('orders')
+        .orderBy('createdAt', 'desc')
         .get();
       if (myOrders.size) {
         let allOrders: any = myOrders.docs.map((item: any, index) => ({
@@ -31,6 +33,40 @@ export default function CompleteOrdersScreen() {
     } catch (error) {
       setData([]);
       throw error;
+    }
+  };
+  const OnCancelOrder = async (item: any) => {
+    setInitializing(true);
+    try {
+      let res = await cancelOrder({orderID: item.id});
+      if (res) {
+        let response = JSON.parse(res.data);
+        if (response.success) {
+          setInitializing(false);
+          Alert.alert('Order Cancelation request added successfully', '', [
+            {
+              text: 'Ok',
+              onPress: () => {},
+            },
+          ]);
+        } else {
+          setInitializing(false);
+          Alert.alert('There is some issue please try again later', '', [
+            {
+              text: 'Ok',
+              onPress: () => {},
+            },
+          ]);
+        }
+      }
+    } catch (error) {
+      setInitializing(false);
+      Alert.alert('There is some issue please try again later', '', [
+        {
+          text: 'Ok',
+          onPress: () => {},
+        },
+      ]);
     }
   };
   React.useEffect(() => {
@@ -73,131 +109,12 @@ export default function CompleteOrdersScreen() {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           renderItem={({item, index}) => (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: `${colors.brown}20`,
-                marginVertical: 10,
-                paddingHorizontal: 10,
-              }}>
-              <View
-                style={{
-                  paddingVertical: 10,
-                  marginVertical: 5,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.black,
-                  }}>{`Order Id: ${item.id}`}</Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.black,
-                    marginTop: 5,
-                  }}>{`Cost : ₹ ${
-                  getTotalCost(item.items) +
-                  parseInt(item.deliveryCharge ?? 0) +
-                  parseFloat(item.gst ?? 0)
-                }`}</Text>
-                {item.isPending && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.black,
-                    }}>{`Order is Pending`}</Text>
-                )}
-                {item.isRejected && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.black,
-                    }}>{`Order was Rejected`}</Text>
-                )}
-                {item.isCanceled && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.black,
-                    }}>{`Order is Canceled`}</Text>
-                )}
-                {item.isOnGoing && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.black,
-                    }}>{`Order is On the way`}</Text>
-                )}
-                {item.isDelivered && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.black,
-                    }}>{`Order was Delivered`}</Text>
-                )}
-              </View>
-              {!item.isCanceled && item.isPending && (
-                <View>
-                  <Pressable
-                    style={{
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      backgroundColor: colors.error,
-                      borderRadius: 4,
-                    }}
-                    onPress={async () => {
-                      setInitializing(true);
-                      try {
-                        let res = await cancelOrder({orderID: item.id});
-                        let response = JSON.parse(res.data);
-                        if (response.success) {
-                          setInitializing(false);
-                          Alert.alert(
-                            'Order Cancelation request added successfully',
-                            '',
-                            [
-                              {
-                                text: 'Ok',
-                                onPress: () => {},
-                              },
-                            ],
-                          );
-                        } else {
-                          setInitializing(false);
-                          Alert.alert(
-                            'There is some issue please try again later',
-                            '',
-                            [
-                              {
-                                text: 'Ok',
-                                onPress: () => {},
-                              },
-                            ],
-                          );
-                        }
-                      } catch (error) {
-                        setInitializing(false);
-                        Alert.alert(
-                          'There is some issue please try again later',
-                          '',
-                          [
-                            {
-                              text: 'Ok',
-                              onPress: () => {},
-                            },
-                          ],
-                        );
-                      }
-                    }}>
-                    <Text style={{color: colors.white, fontSize: 12}}>
-                      Cancel
-                    </Text>
-                  </Pressable>
-                </View>
-              )}
-            </View>
+            <OrderCard
+              item={item}
+              onCancel={() => {
+                OnCancelOrder(item);
+              }}
+            />
           )}
         />
       </View>
