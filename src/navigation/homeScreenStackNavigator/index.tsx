@@ -10,10 +10,12 @@ import {HomeScreenStackParamList} from './types';
 import ViewRestaurant from '../../screens/viewRestaurant';
 import {CombinedNavigationProp} from '../types';
 import AddNewAddress from '../../screens/account/addNewAddress';
+import {useResource} from '../../contexts/resource';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
 const HomeScreenStack = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
   const Auth = React.useContext(AuthContext);
+  const Resource = useResource();
   const onAuthStateChnaged = (user: any) => {
     if (user !== null) {
       Auth?.setUser(user);
@@ -28,6 +30,19 @@ const HomeScreenStack = () => {
   React.useEffect(() => {
     const subscribe = auth().onAuthStateChanged(onAuthStateChnaged);
     return subscribe;
+  }, []);
+  let restore = async () => {
+    try {
+      if (Resource && Resource.fetchLastSavedCartInfo) {
+        console.log('hell');
+        await Resource.fetchLastSavedCartInfo();
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+  React.useEffect(() => {
+    restore();
   }, []);
   return (
     <Stack.Navigator initialRouteName="TabNav">

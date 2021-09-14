@@ -22,44 +22,10 @@ import {ResourceContext, useResource} from '../../contexts/resource';
 import {getFoodList} from '../../utilities/cloud/functions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FoodCategoryHeader from '../../components/header/foodCategory';
-import {useIsFocused} from '@react-navigation/core';
 import Loader from '../../components/loader/loader';
+import {useIsFocused} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 const {height, width} = Dimensions.get('window');
-
-// function Loader() {
-//   return (
-//     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-//       <ActivityIndicator size={80} color={colors.brown} />
-//     </View>
-//   );
-// }
-
-const y = new Value<number>(0);
-// const MAX_SCOLL_OFFSET = height * 0.1;
-// let h = y.interpolate({
-//   inputRange: [0, MAX_SCOLL_OFFSET],
-//   outputRange: [height * 0.5, MAX_SCOLL_OFFSET],
-//   extrapolate: Extrapolate.CLAMP,
-// });
-// let scale = y.interpolate({
-//   inputRange: [0, MAX_SCOLL_OFFSET],
-//   outputRange: [2.5, 1],
-//   extrapolate: Extrapolate.CLAMP,
-// });
-// let coverOpacity = y.interpolate({
-//   inputRange: [0, MAX_SCOLL_OFFSET],
-//   outputRange: [1, 0],
-//   extrapolate: Extrapolate.CLAMP,
-// });
-// let OverLayOpacity = y.interpolate({
-//   inputRange: [0, MAX_SCOLL_OFFSET],
-//   outputRange: [1, 0],
-//   extrapolate: Extrapolate.CLAMP,
-// });
-// let titleColor = interpolateColors(y, {
-//   inputRange: [0, MAX_SCOLL_OFFSET],
-//   outputColorRange: [colors.white, colors.brown],
-// });
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const [initializing, setInitializing] = React.useState<boolean>(true);
@@ -70,10 +36,9 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const [foodList, setFoodList] = React.useState<Array<any>>([]);
   const [tabList, setTabList] = React.useState<Array<any>>([]);
   const {collection, id, name, address} = route.params;
-  let isFocuses = useIsFocused();
-  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+  let isFocused = useIsFocused();
   const goBack = () => {
-    navigation.goBack();
+    navigation.navigate('Home');
   };
 
   const openBottomSheet = () => {
@@ -90,8 +55,9 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const fetchFoodList = async () => {
     try {
       let res = await getFoodList({parentName: collection, parentID: id});
-      if (res.data) {
-        let list = await JSON.parse(res.data);
+      if (res && res.data) {
+        console.log(res.data);
+        let list = JSON.parse(res.data);
         let catList = extractCategories(list);
         setFoodList(list);
         setCategories(catList);
@@ -101,7 +67,8 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         setInitializing(false);
       }
     } catch (error) {
-      throw error;
+      // throw error;
+      console.log(error);
     }
   };
 
@@ -112,12 +79,11 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   };
 
   React.useEffect(() => {
-    if (isFocuses)
+    if (isFocused)
       fetchFoodList().catch(error => {
         throw error;
       });
     return;
-    // return clearTimeout(timeOut);
   }, []);
   const MainHeader = ({title}: any) => (
     <>
@@ -150,47 +116,26 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
       </View>
       <FoodCategoryHeader
         categories={categories}
+        activeTab={activeTab}
         onOptionClick={(title, index) => {
           onCategoryClick(title, index);
         }}
-        activeTab={activeTab}
       />
     </>
   );
   if (initializing) return <Loader />;
   return (
-    <>
+    <SafeAreaView>
       <FocusedStatusBar
         backgroundColor="transparent"
         barStyle="dark-content"
         translucent={true}
       />
       <View style={styles.root}>
-        <AnimatedFlatList
-          onScroll={Animated.event([
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: y,
-                },
-              },
-            },
-          ])}
+        <FlatList
+          style={{flex: 1}}
           data={tabList}
-          ListHeaderComponent={() => (
-            // <AnimatedHeader
-            //   animatedHeight={{height: h}}
-            //   coverScale={scale}
-            //   coverOpacity={coverOpacity}
-            //   OverLayOpacity={OverLayOpacity}
-            //   titleColor={titleColor}
-            //   title={name}
-            //   goBack={() => {
-            //     goBack();
-            //   }}
-            // />
-            <MainHeader title={name} />
-          )}
+          ListHeaderComponent={() => <MainHeader title={name} />}
           keyExtractor={(item: any) => item?.id}
           renderItem={({item}: any) => (
             <Food
@@ -203,7 +148,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
                 } else {
                   if (
                     Resouce?.restaurantDetails &&
-                    Resouce.restaurantDetails?.id == id
+                    Resouce?.restaurantDetails?.id == id
                   ) {
                     openBottomSheet();
                   } else {
@@ -222,7 +167,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             />
           )}
           stickyHeaderIndices={[0]}
-          style={{flex: 1}}
         />
         <View
           style={{
@@ -255,7 +199,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           </View>
         </View>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
@@ -263,10 +207,8 @@ export default ViewRestaurant;
 
 const styles = StyleSheet.create({
   root: {
-    // height: height,
-    // width: width,
-    flex: 1,
-    marginTop: 10,
+    height: height,
+    width: width,
   },
   bottomTextContainer: {
     marginTop: 10,

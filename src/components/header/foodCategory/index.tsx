@@ -25,7 +25,7 @@ const FoodCategoryHeader = ({onOptionClick, categories, activeTab}: props) => {
         style={{alignItems: 'center'}}
         onPress={() => {
           //setApp(prev => ({...prev, activeTabIndex: index}));
-          onOptionClick(item.text, index);
+          if (onOptionClick) onOptionClick(item.text, index);
         }}>
         <View style={styles.itemRoot}>
           <Text

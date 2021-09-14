@@ -23,6 +23,7 @@ interface contextProps {
   EmptyCart: () => void;
   getTotalCost: () => void;
   repeatOrder: (items: any) => void;
+  fetchLastSavedCartInfo: () => Promise<void>;
 }
 
 export const ResourceContext = React.createContext<contextProps | null>(null);
@@ -37,7 +38,8 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
   let getPreviousCartValue = async () => {
     try {
       let res = await getValue('cart');
-      if (res !== null || res !== undefined) setCart(res);
+      if (res !== null) return res;
+      return [];
     } catch (error) {
       throw error;
     }
@@ -45,11 +47,13 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
 
   const fetchLastSavedCartInfo = async () => {
     try {
+      setCart(await getPreviousCartValue());
       let lastSavedRestaurant = await getValue('lastRestaurant');
-      if (lastSavedRestaurant !== null || lastSavedRestaurant !== undefined) {
+      if (lastSavedRestaurant !== null) {
         setRestaurantDetails(lastSavedRestaurant);
+      } else {
+        setRestaurantDetails(null);
       }
-      await getPreviousCartValue();
     } catch (error) {
       throw error;
     }
@@ -163,11 +167,11 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
     setCart(items);
     saveCartToAsync(items);
   }
-  React.useEffect(() => {
-    fetchLastSavedCartInfo().catch(error => {
-      throw error;
-    });
-  }, []);
+  // React.useEffect(() => {
+  //   fetchLastSavedCartInfo().catch(error => {
+  //     throw error;
+  //   });
+  // });
   return (
     <ResourceContext.Provider
       value={{
@@ -186,6 +190,7 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
         EmptyCart,
         getTotalCost,
         repeatOrder,
+        fetchLastSavedCartInfo,
       }}>
       {children}
     </ResourceContext.Provider>

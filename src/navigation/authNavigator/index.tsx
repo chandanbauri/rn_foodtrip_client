@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {ResourceProvider} from '../../contexts/resource';
+import {ResourceContext, ResourceProvider} from '../../contexts/resource';
 import HomeScreenStack from '../homeScreenStackNavigator';
 import {AuthContextProvider} from '../../contexts/Auth';
 import VerificationScreen from '../../screens/account/verify';
@@ -63,6 +63,7 @@ const AuthNavigator = () => {
         // setLoading(false);
       });
   }, []);
+
   if (initializing) return null;
   return (
     <AuthContextProvider>

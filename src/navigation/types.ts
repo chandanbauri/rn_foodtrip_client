@@ -9,31 +9,47 @@ import {MaterialTopTabNavigationProp} from '@react-navigation/material-top-tabs'
 import {AccountNavigatorParamlist} from './accountStackNavigator/account';
 import {OrderScreenParamlist} from './orderNavigator/OrderNavigator';
 
-export type CombinedNavigationProp = CompositeNavigationProp<
-  StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
+// export type CombinedNavigationProp = CompositeNavigationProp<
+//   StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
+//   CompositeNavigationProp<
+//     CompositeNavigationProp<
+//       CompositeNavigationProp<
+//         BottomTabNavigationProp<
+//           BottomTabNavigatorParamList,
+//           keyof BottomTabNavigatorParamList
+//         >,
+//         CompositeNavigationProp<
+//           StackNavigationProp<
+//             AccountNavigatorParamlist,
+//             keyof AccountNavigatorParamlist
+//           >,
+//           MaterialTopTabNavigationProp<
+//             OrderScreenParamlist,
+//             keyof OrderScreenParamlist
+//           >
+//         >
+//       >,
+//       StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>
+//     >,
+//     StackNavigationProp<
+//       HomeScreenStackParamList,
+//       keyof HomeScreenStackParamList
+//     >
+//   >
+// >;
+
+
+export type CombinedNavigationProp =
   CompositeNavigationProp<
+    StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
     CompositeNavigationProp<
+      StackNavigationProp<HomeScreenStackParamList, keyof HomeScreenStackParamList>,
       CompositeNavigationProp<
-        BottomTabNavigationProp<
-          BottomTabNavigatorParamList,
-          keyof BottomTabNavigatorParamList
-        >,
+        BottomTabNavigationProp<BottomTabNavigatorParamList, keyof BottomTabNavigatorParamList>,
         CompositeNavigationProp<
-          StackNavigationProp<
-            AccountNavigatorParamlist,
-            keyof AccountNavigatorParamlist
-          >,
-          MaterialTopTabNavigationProp<
-            OrderScreenParamlist,
-            keyof OrderScreenParamlist
-          >
-        >
-      >,
-      StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>
-    >,
-    StackNavigationProp<
-      HomeScreenStackParamList,
-      keyof HomeScreenStackParamList
+          StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>,
+          CompositeNavigationProp<
+            StackNavigationProp<AccountNavigatorParamlist, keyof AccountNavigatorParamlist>,
+            MaterialTopTabNavigationProp<OrderScreenParamlist , keyof OrderScreenParamlist> > > > 
     >
   >
->;

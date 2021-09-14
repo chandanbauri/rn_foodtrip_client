@@ -21,7 +21,7 @@ function Cart({navigation}: CartScreenProps) {
   const snapPoints = React.useMemo(() => [150, 200], []);
   const Auth = React.useContext(ResourceContext);
 
-  if (Auth?.cart.length) {
+  if (Auth?.cart && Auth?.cart?.length) {
     return (
       <>
         <FocusedStatusBar
