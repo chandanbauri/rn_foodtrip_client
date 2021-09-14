@@ -34,7 +34,6 @@ const HomeScreenStack = () => {
   let restore = async () => {
     try {
       if (Resource && Resource.fetchLastSavedCartInfo) {
-        console.log('hell');
         await Resource.fetchLastSavedCartInfo();
       }
     } catch (error) {
