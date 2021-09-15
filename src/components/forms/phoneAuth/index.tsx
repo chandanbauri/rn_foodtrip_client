@@ -108,8 +108,26 @@ const PhoneAuthForm: React.FunctionComponent = () => {
           <Pressable style={styles.filledLoginButton} onPress={handleSubmit}>
             <Text style={styles.filledLoginButtonText}>Login</Text>
           </Pressable>
-          <Text style={styles.guestUserText}>{`Privacy Policy`}</Text>
-          <Text style={styles.guestUserText}>{`Help`}</Text>
+          <Pressable
+            style={{marginVertical: 5}}
+            onPress={() => {
+              navigation.navigate('Main', {
+                screen: 'Terms',
+              });
+            }}>
+            <Text style={{color: '#AAA', fontSize: 14}}>
+              Terms & Condintions
+            </Text>
+          </Pressable>
+          <Pressable
+            style={{marginVertical: 5}}
+            onPress={() => {
+              navigation.navigate('Main', {
+                screen: 'AboutUs',
+              });
+            }}>
+            <Text style={{color: '#AAA', fontSize: 14}}>About Company</Text>
+          </Pressable>
         </View>
       </View>
     </>

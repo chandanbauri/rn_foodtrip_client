@@ -24,12 +24,10 @@ const HomeScreenStack = () => {
   const onAuthStateChnaged = (user: any) => {
     if (user !== null) {
       Auth?.setUser(user);
-      // navigation.navigate('TabNav', {
-      //   screen: 'Account',
-      // });
+      navigation.navigate('Home');
     } else {
       Auth?.setUser(null);
-      // navigation.navigate('Home');
+      navigation.navigate('Home');
     }
   };
   React.useEffect(() => {

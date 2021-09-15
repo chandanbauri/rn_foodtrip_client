@@ -21,7 +21,7 @@ interface contextProps {
   menuList: any;
   setMenu: (menuList: any) => void;
   EmptyCart: () => void;
-  getTotalCost: () => void;
+  getTotalCost: () => number;
   repeatOrder: (items: any) => void;
   fetchLastSavedCartInfo: () => Promise<void>;
 }
@@ -35,6 +35,7 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
   const [resource, setResource] = React.useState<any>(null);
   const [restaurantList, setRestaurantList] = React.useState<any>(null);
   const [menuList, setMenuList] = React.useState<any>(null);
+  let totalCost = React.useRef<number>(0);
   let getPreviousCartValue = async () => {
     try {
       let res = await getValue('cart');
@@ -75,7 +76,15 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
         saveCartToAsync([...otherProducts, item]).catch(error => {
           throw error;
         });
-        setCart(prev => [...otherProducts, item]);
+        setCart(prev => {
+          let total: number = 0;
+          [...otherProducts, item].forEach((val: any) => {
+            total = total + val.cost * val.count;
+          });
+          // console.log(total);
+          totalCost.current = total;
+          return [...otherProducts, item];
+        });
       }
     } catch (error) {
       throw error;
@@ -91,11 +100,16 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
         //   return tmp;
         // });
         setCart(prev => {
+          let total = 0;
           let current = [
             ...prev.slice(0, product),
             {...props},
             ...prev.slice(product + 1),
           ];
+          current.map((val: any) => {
+            total = total + val.cost * val.count;
+          });
+          totalCost.current = total;
           saveCartToAsync(current).catch(error => {
             throw error;
           });
@@ -112,7 +126,13 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
       const productIndex = cart.findIndex(el => el.id === id);
       if (productIndex === 0) {
         setCart(prev => {
+          let total = 0;
           let current = [...prev.slice(productIndex + 1)];
+          current.map((val: any) => {
+            console.log(val);
+            total = total + val.cost * val.count;
+          });
+          totalCost.current = total;
           saveCartToAsync(current).catch(error => {
             throw error;
           });
@@ -120,10 +140,16 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
         });
       } else {
         setCart(prev => {
+          let total = 0;
           let current = [
             ...prev.slice(0, productIndex),
             ...prev.slice(productIndex + 1),
           ];
+          current.map((item: any) => {
+            console.log(item);
+            total = total + item.cost * item.count;
+          });
+          totalCost.current = total;
           saveCartToAsync(current).catch(error => {
             throw error;
           });
@@ -155,14 +181,7 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
     });
   };
 
-  function getTotalCost() {
-    let total: number;
-    if (cart.length) {
-      cart.map((item: foodObj) => {
-        if (item.count) total = total + item.price * item.count;
-      });
-    }
-  }
+  const getTotalCost = () => totalCost.current;
   function repeatOrder(items: any) {
     setCart(items);
     saveCartToAsync(items);
