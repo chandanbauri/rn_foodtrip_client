@@ -9,6 +9,8 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
+  Image,
+  Pressable,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,18 +22,50 @@ import {LocationContext} from '../../contexts/location';
 import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
 import {colors} from '../../utilities';
 import functions from '@react-native-firebase/functions';
-import {getMenuList, getRestaurantList} from '../../utilities/cloud/functions';
+import {
+  fetchBanner,
+  getMenuList,
+  getRestaurantList,
+} from '../../utilities/cloud/functions';
 import {ResourceContext} from '../../contexts/resource';
 import {CategoryCard} from '../../components/cards/category';
 import {useIsFocused} from '@react-navigation/native';
 import FocusedStatusBar from '../../components/statusBar';
 import Loader from '../../components/loader/loader';
+import Carousel from 'react-native-snap-carousel';
+import {cos} from 'react-native-reanimated';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
   let isFocused = useIsFocused();
   const Resource = React.useContext(ResourceContext);
   const [initializing, setInitializing] = React.useState<boolean>(true);
+  const [banners, setBanners] = React.useState<any>([]);
+  const ref = React.useRef(null);
+  const getPromotionBanners = async () => {
+    try {
+      let res = await fetchBanner();
+      if (res) {
+        let parseddata = JSON.parse(res.data);
+        let {files} = parseddata;
+        let bannerLinks = files[0].map((item: any, index: number) => {
+          // for (let key in item.metadata) {
+          //   console.log('META DATA', key, ' : ', item.metadata[key]);
+          // }
+          // // 'https://firebasestorage.googleapis.com/v0/b/foodadda3-3aeca.appspot.com/o/promotions%2Flogo.png?alt=media&token=aa253456-7767-4c0d-a709-3c76761ebc6d'
+          // console.log('FILE', index);
+          return `https://firebasestorage.googleapis.com/v0/b/${
+            item.metadata.bucket
+          }/o/${item.metadata.name.replace('/', '%2F')}?alt=media&token=${
+            item.metadata.metadata.firebaseStorageDownloadTokens
+          }`;
+        });
+        setBanners(bannerLinks);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
   // const MAX_BOTTOMSHEET_HEIGHT = 480;
   // React.useLayoutEffect(() => {
   //   navigation.setOptions({
@@ -90,7 +124,28 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       });
     return;
   }, []);
-  let category = [1, 2, 3, 4, 5, 6, 7, 6, 7];
+  React.useEffect(() => {
+    if (isFocused)
+      getPromotionBanners().catch(error => {
+        throw error;
+      });
+    return;
+  }, []);
+  const Banner = ({url}: any) => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          overflow: 'hidden',
+          paddingHorizontal: 14,
+        }}>
+        <Image
+          source={{uri: url}}
+          style={{width: '100%', height: 200, borderRadius: 10}}
+        />
+      </View>
+    );
+  };
   const ListHeader = () => (
     <>
       <View style={styles.categoryListContainer}>
@@ -106,8 +161,22 @@ const Home = ({navigation, route}: HomeScreenProps) => {
             showsHorizontalScrollIndicator={false}
             renderItem={({item}) => <CategoryCard name={item.name} />}
           /> */}
+
+          <Carousel
+            ref={ref}
+            data={banners}
+            renderItem={({item, index}) => <Banner url={item} />}
+            horizontal={true}
+            windowSize={width}
+            itemWidth={width}
+            autoplayDelay={2000}
+            autoplay={true}
+            maxToRenderPerBatch={1}
+            sliderWidth={width}
+          />
         </View>
       </View>
+
       <View style={styles.ListHeader}>
         <Text style={styles.ListHeaderTitle}>Restaurants Around You</Text>
       </View>

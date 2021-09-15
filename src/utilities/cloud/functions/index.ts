@@ -13,3 +13,4 @@ export let getDBdata = functions().httpsCallable('getDBdata'); // some parameter
 export let getFoodList = functions().httpsCallable('getFoodList');
 export let generateFCMToken = messaging().getToken();
 export let getFeatures = functions().httpsCallable('getFeatures');
+export let fetchBanner = functions().httpsCallable('fetchBanner');
