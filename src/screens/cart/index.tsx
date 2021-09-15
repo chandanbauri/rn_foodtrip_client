@@ -14,6 +14,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import {colors} from '../../utilities';
 import CartInfo from '../../components/bottomSheet/cart';
 import FocusedStatusBar from '../../components/statusBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const {height, width} = Dimensions.get('window');
 function Cart({navigation}: CartScreenProps) {
@@ -29,27 +30,31 @@ function Cart({navigation}: CartScreenProps) {
           barStyle="dark-content"
           translucent={true}
         />
-        <View style={styles.root}>
-          <FlatList
-            data={Auth?.cart}
-            ListHeaderComponent={() => <Header />}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => <Food item={item} isInCartView={true} />}
-            ListFooterComponent={() => (
-              <View>
-                <CartInfo />
-              </View>
-            )}
-          />
-        </View>
-        {/* <BottomSheet
+        <SafeAreaView style={{flex: 1}}>
+          <View style={styles.root}>
+            <FlatList
+              data={Auth?.cart}
+              ListHeaderComponent={() => <Header />}
+              keyExtractor={item => item.id}
+              renderItem={({item}) => <Food item={item} isInCartView={true} />}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              ListFooterComponent={() => (
+                <View>
+                  <CartInfo />
+                </View>
+              )}
+            />
+          </View>
+          {/* <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
           index={0}
           keyboardBehavior="fullScreen"
           keyboardBlurBehavior="restore">
-         
+          
         </BottomSheet> */}
+        </SafeAreaView>
       </>
     );
   }

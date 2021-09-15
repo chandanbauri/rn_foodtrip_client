@@ -4,6 +4,7 @@ import {Alert} from 'react-native';
 import {View, Text, StyleSheet, TextInput, Pressable} from 'react-native';
 import VerifyForm from '../../../components/forms/verify';
 import Loader from '../../../components/loader/loader';
+import FocusedStatusBar from '../../../components/statusBar';
 import {AuthContext} from '../../../contexts/Auth';
 import {VerifyScreenProps} from '../../../navigation/authNavigator/types';
 import {colors} from '../../../utilities';
@@ -70,46 +71,54 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
 
   if (initializing) return <Loader />;
   return (
-    <View style={styles.root}>
-      <Text style={styles.titleText}>Verify Code</Text>
-      <View style={{width: 200}}>
-        <Text
-          style={{
-            color: colors.brown,
-            textAlign: 'center',
-          }}>{`A code has been sent to  ${phone}  via SMS`}</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <VerifyForm value={value} setValue={setValue} />
-        <Pressable
-          onPress={() => {
-            if (counter == 0) {
-              setCounter(prev => 30);
-              decreaseCounter();
-              Auth?.resendVerificationCode(phone);
-            }
-          }}>
+    <>
+      <FocusedStatusBar
+        backgroundColor="transparent"
+        barStyle="dark-content"
+        translucent={true}
+      />
+      <View style={styles.root}>
+        <Text style={styles.titleText}>Verify Code</Text>
+        <View style={{width: 200}}>
           <Text
             style={{
-              textDecorationLine: 'underline',
-              textDecorationColor: colors.brown,
               color: colors.brown,
-            }}>{`Resend code ${counter}`}</Text>
-        </Pressable>
+              textAlign: 'center',
+            }}>{`A code has been sent to  ${phone}  via SMS`}</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <VerifyForm value={value} setValue={setValue} />
+          <Pressable
+            onPress={() => {
+              if (counter == 0) {
+                setCounter(prev => 30);
+                decreaseCounter();
+                Auth?.resendVerificationCode(phone);
+              }
+            }}>
+            <Text
+              style={{
+                textDecorationLine: 'underline',
+                textDecorationColor: colors.brown,
+                color: colors.brown,
+              }}>{`Resend code ${counter}`}</Text>
+          </Pressable>
+        </View>
+        <View style={{width: '100%', paddingHorizontal: 15}}>
+          <Pressable
+            style={styles.nextButton}
+            onPress={() => {
+              onVrify();
+              //navigation.navigate('tour_screen');
+            }}>
+            <Text
+              style={{fontSize: 20, fontWeight: '700', color: colors.white}}>
+              Verify
+            </Text>
+          </Pressable>
+        </View>
       </View>
-      <View style={{width: '100%', paddingHorizontal: 15}}>
-        <Pressable
-          style={styles.nextButton}
-          onPress={() => {
-            onVrify();
-            //navigation.navigate('tour_screen');
-          }}>
-          <Text style={{fontSize: 20, fontWeight: '700', color: colors.white}}>
-            Verify
-          </Text>
-        </Pressable>
-      </View>
-    </View>
+    </>
   );
 };
 const styles = StyleSheet.create({

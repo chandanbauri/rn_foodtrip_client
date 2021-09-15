@@ -11,6 +11,11 @@ import ViewRestaurant from '../../screens/viewRestaurant';
 import {CombinedNavigationProp} from '../types';
 import AddNewAddress from '../../screens/account/addNewAddress';
 import {useResource} from '../../contexts/resource';
+import TermsScreen from '../../screens/Terms';
+import AboutUsScreen from '../../screens/about/about';
+import {colors} from '../../utilities';
+import {Pressable} from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
 const HomeScreenStack = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
@@ -64,6 +69,50 @@ const HomeScreenStack = () => {
         name="AddNewAddress"
         component={AddNewAddress}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Terms"
+        component={TermsScreen}
+        options={{
+          headerShown: true,
+          headerTitleStyle: {
+            color: colors.brown,
+            fontWeight: 'bold',
+            fontStyle: 'italic',
+          },
+          headerTitle: 'TERMS & CONDITIONS',
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                navigation.navigate('Profile');
+              }}>
+              <Feather name="chevron-left" size={24} color={colors.brown} />
+            </Pressable>
+          ),
+          headerLeftContainerStyle: {marginLeft: 10},
+        }}
+      />
+      <Stack.Screen
+        name="AboutUs"
+        component={AboutUsScreen}
+        options={{
+          headerShown: true,
+          headerTitleStyle: {
+            color: colors.brown,
+            fontWeight: 'bold',
+            fontStyle: 'italic',
+          },
+          headerTitle: 'ABOUT COMPANY',
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                navigation.navigate('Profile');
+              }}>
+              <Feather name="chevron-left" size={24} color={colors.brown} />
+            </Pressable>
+          ),
+          headerLeftContainerStyle: {marginLeft: 10},
+        }}
       />
     </Stack.Navigator>
   );

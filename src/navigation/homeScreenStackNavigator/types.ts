@@ -18,6 +18,8 @@ export type HomeScreenStackParamList = {
     state?: string;
     isEditMode: boolean;
   };
+  Terms: undefined;
+  AboutUs: undefined;
 };
 
 // export type TabNavProps = {
@@ -37,4 +39,13 @@ export type RestaurantScreenProps = {
 export type AddNewAddressScreenProps = {
   navigation: CombinedNavigationProp;
   route: RouteProp<HomeScreenStackParamList, 'AddNewAddress'>;
+};
+
+export type TermsScreenProps = {
+  navigation: CombinedNavigationProp;
+  route: RouteProp<HomeScreenStackParamList, 'Terms'>;
+};
+export type AboutUsScreenProps = {
+  navigation: CombinedNavigationProp;
+  route: RouteProp<HomeScreenStackParamList, 'AboutUs'>;
 };

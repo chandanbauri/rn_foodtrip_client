@@ -251,12 +251,24 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   />
                   <View style={styles.footerComponent}>
                     <View style={{marginTop: 10}}>
-                      <Pressable style={{marginVertical: 5}}>
+                      <Pressable
+                        style={{marginVertical: 5}}
+                        onPress={() => {
+                          navigation.navigate('Main', {
+                            screen: 'Terms',
+                          });
+                        }}>
                         <Text style={{color: '#AAA', fontSize: 14}}>
                           Terms & Condintions
                         </Text>
                       </Pressable>
-                      <Pressable style={{marginVertical: 5}}>
+                      <Pressable
+                        style={{marginVertical: 5}}
+                        onPress={() => {
+                          navigation.navigate('Main', {
+                            screen: 'AboutUs',
+                          });
+                        }}>
                         <Text style={{color: '#AAA', fontSize: 14}}>
                           About Company
                         </Text>
@@ -483,7 +495,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    marginTop: 10,
+    paddingTop: 10,
     position: 'relative',
     backgroundColor: colors.white,
   },
