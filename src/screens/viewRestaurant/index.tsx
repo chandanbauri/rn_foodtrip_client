@@ -180,7 +180,12 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             <Pressable
               style={{}}
               onPress={() => {
-                if (trigger.current) navigation.navigate('BookOrder');
+                if (
+                  trigger.current &&
+                  Resouce &&
+                  Resouce?.getTotalCost() >= 150
+                )
+                  navigation.navigate('BookOrder');
               }}>
               <View style={styles.gotoCartButton}>
                 <Text
