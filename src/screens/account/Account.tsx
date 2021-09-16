@@ -265,6 +265,17 @@ export default function Account({navigation, route}: AccountScreenProps) {
                         style={{marginVertical: 5}}
                         onPress={() => {
                           navigation.navigate('Main', {
+                            screen: 'Refund',
+                          });
+                        }}>
+                        <Text style={{color: '#AAA', fontSize: 14}}>
+                          Refund Policy
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        style={{marginVertical: 5}}
+                        onPress={() => {
+                          navigation.navigate('Main', {
                             screen: 'AboutUs',
                           });
                         }}>

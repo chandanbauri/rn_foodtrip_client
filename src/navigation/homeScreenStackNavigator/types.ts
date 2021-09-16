@@ -20,6 +20,7 @@ export type HomeScreenStackParamList = {
   };
   Terms: undefined;
   AboutUs: undefined;
+  Refund: undefined;
 };
 
 // export type TabNavProps = {

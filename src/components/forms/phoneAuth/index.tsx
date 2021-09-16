@@ -123,6 +123,15 @@ const PhoneAuthForm: React.FunctionComponent = () => {
             style={{marginVertical: 5}}
             onPress={() => {
               navigation.navigate('Main', {
+                screen: 'Refund',
+              });
+            }}>
+            <Text style={{color: '#AAA', fontSize: 14}}>Refund Policy</Text>
+          </Pressable>
+          <Pressable
+            style={{marginVertical: 5}}
+            onPress={() => {
+              navigation.navigate('Main', {
                 screen: 'AboutUs',
               });
             }}>
@@ -142,7 +151,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   guestUserContainer: {
-    height: 290,
+    height: 315,
     backgroundColor: '#FFFFFF',
     width: width,
     paddingHorizontal: 14,

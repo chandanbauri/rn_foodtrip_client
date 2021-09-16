@@ -16,6 +16,7 @@ import AboutUsScreen from '../../screens/about/about';
 import {colors} from '../../utilities';
 import {Pressable} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import RefundScreen from '../../screens/refund';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
 const HomeScreenStack = () => {
   const navigation = useNavigation<CombinedNavigationProp>();
@@ -79,6 +80,28 @@ const HomeScreenStack = () => {
             fontStyle: 'italic',
           },
           headerTitle: 'TERMS & CONDITIONS',
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                navigation.navigate('Profile');
+              }}>
+              <Feather name="chevron-left" size={24} color={colors.brown} />
+            </Pressable>
+          ),
+          headerLeftContainerStyle: {marginLeft: 10},
+        }}
+      />
+      <Stack.Screen
+        name="Refund"
+        component={RefundScreen}
+        options={{
+          headerShown: true,
+          headerTitleStyle: {
+            color: colors.brown,
+            fontWeight: 'bold',
+            fontStyle: 'italic',
+          },
+          headerTitle: 'REFUND POLICY',
           headerLeft: () => (
             <Pressable
               onPress={() => {

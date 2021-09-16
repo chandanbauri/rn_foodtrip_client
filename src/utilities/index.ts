@@ -41,20 +41,18 @@ export const getTotalCost = (list: Array<any> | any) => {
 };
 
 export const isAvailable = (before: string, after: string) => {
-  let format = 'hh:mm';
+  let format = 'HH:mm';
   let d = new Date();
   let hour = d.getHours();
   let minute = d.getMinutes();
-  var time = moment(
-      `${hour.toString().length == 1 ? '0' + hour : hour}:${minute}`,
-      format,
-    ),
-    beforeTime = moment(before, format),
-    afterTime = moment(after, format);
-
+  var time = moment([hour, minute], format),
+    beforeTime = moment(before.split(':'), format),
+    afterTime = moment(after.split(':'), format);
   if (time.isBetween(beforeTime, afterTime)) {
+    console.log('TRUE');
     return true;
   } else {
+    console.log('FALSE');
     return false;
   }
 };

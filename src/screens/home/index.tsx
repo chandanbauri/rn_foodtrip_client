@@ -218,7 +218,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
             renderItem={({item, index: number}) => (
               <Restaurant
                 onClick={() => {
-                  if (!item.opening && !isAvailable(item.opening, item.closing))
+                  if (item.opening && isAvailable(item.opening, item.closing))
                     navigation.navigate('Restaurant', {
                       id: item.id,
                       collection: 'restaurants',

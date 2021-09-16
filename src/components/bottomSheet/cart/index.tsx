@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {foodObj, ResourceContext} from '../../../contexts/resource';
 import {colors} from '../../../utilities';
 import FilledButton from '../../buttons/filled';
@@ -22,6 +22,7 @@ function CartInfo() {
   const [alternatePhone, setAlternatePhone] = React.useState<string | null>(
     null,
   );
+  const pickerRef = React.createRef<Picker<string>>();
   const Resource = React.useContext(ResourceContext);
   const Auth = React.useContext(AuthContext);
   const [features, setFeature] = React.useState<any>();
@@ -58,7 +59,7 @@ function CartInfo() {
       let res = await getFeatures();
       if (res) {
         let data = res.data;
-        console.log(data);
+        // console.log(data);
         setFeature(data);
         setInitializing(false);
       }
@@ -67,6 +68,14 @@ function CartInfo() {
       throw error;
     }
   };
+
+  function open() {
+    if (pickerRef && pickerRef.current) pickerRef.current.focus();
+  }
+
+  function close() {
+    if (pickerRef && pickerRef.current) pickerRef.current.blur();
+  }
   React.useEffect(() => {
     if (Resource && Resource?.cart.length) {
       let total = 0;
@@ -96,23 +105,39 @@ function CartInfo() {
     <View style={styles.root}>
       <View style={{marginTop: 20}}>
         <Text style={[styles.text, {fontSize: 14}]}>Delivery address</Text>
+        <View style={{height: 50, width: '100%', position: 'relative'}}>
+          <Picker
+            selectedValue={orderAddress}
+            onValueChange={(itemValue, itemIndex) => {
+              setOrderAddress(prev => itemValue);
+            }}
+            ref={pickerRef}
+            style={{
+              flex: 1,
+              color: colors.brown,
+            }}>
+            {addresses.map((item, index) => (
+              <Picker.Item
+                key={index}
+                label={item.tag}
+                value={`${item.home}, ${item.area}, ${item.landmark}, ${item.city}, ${item.state},${item.pincode}`}
+              />
+            ))}
+          </Picker>
+          <Pressable
+            onPress={() => {
+              open();
+            }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              // backgroundColor: colors.black,
+            }}></Pressable>
+        </View>
       </View>
-      <Picker
-        selectedValue={orderAddress}
-        onValueChange={(itemValue, itemIndex) => {
-          setOrderAddress(prev => itemValue);
-        }}
-        style={{
-          color: colors.brown,
-        }}>
-        {addresses.map((item, index) => (
-          <Picker.Item
-            key={index}
-            label={item.tag}
-            value={`${item.home}, ${item.area}, ${item.landmark}, ${item.city}, ${item.state},${item.pincode}`}
-          />
-        ))}
-      </Picker>
       <View
         style={{
           width: '100%',
