@@ -129,7 +129,6 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
           let total = 0;
           let current = [...prev.slice(productIndex + 1)];
           current.map((val: any) => {
-            console.log(val);
             total = total + val.cost * val.count;
           });
           totalCost.current = total;
@@ -146,7 +145,6 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
             ...prev.slice(productIndex + 1),
           ];
           current.map((item: any) => {
-            console.log(item);
             total = total + item.cost * item.count;
           });
           totalCost.current = total;

@@ -116,7 +116,7 @@ const PhoneAuthForm: React.FunctionComponent = () => {
               });
             }}>
             <Text style={{color: '#AAA', fontSize: 14}}>
-              Terms & Condintions
+              Terms & Conditions
             </Text>
           </Pressable>
           <Pressable

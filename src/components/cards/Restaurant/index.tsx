@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {colors} from '../../../utilities';
+import {colors, isAvailable} from '../../../utilities';
 
 type props = {
   onClick: () => void;
@@ -32,12 +32,14 @@ const Restaurant = ({onClick, values}: props) => {
     return (
       <Pressable style={styles.root} onPress={onClick}>
         <View style={{height: 100, width: 100}}>
-          <Image
-            source={{
-              uri: 'https://static.toiimg.com/thumb/56933159.cms?imgsize=686279&width=800&height=800',
-            }}
-            style={{flex: 1, resizeMode: 'cover'}}
-          />
+          {values.image && (
+            <Image
+              source={{
+                uri: values.image,
+              }}
+              style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
+            />
+          )}
           <View
             style={{
               position: 'absolute',
@@ -46,6 +48,7 @@ const Restaurant = ({onClick, values}: props) => {
               right: 0,
               bottom: 0,
               backgroundColor: '#00000020',
+              borderRadius: 10,
             }}
           />
         </View>
@@ -62,7 +65,11 @@ const Restaurant = ({onClick, values}: props) => {
             values.preparationDuration
           } . ${values.address.slice(0, 10)}...`}</Text>
           <Text style={[styles.detailsText, styles.ordeOnlineText]}>
-            Order online
+            {values.opening
+              ? isAvailable(values.opening, values.closing)
+                ? 'Order online'
+                : `Available from ${values.opening} - ${values.closing}`
+              : 'will be available soon'}
           </Text>
         </View>
       </Pressable>

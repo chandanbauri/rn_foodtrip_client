@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Alert,
   Dimensions,
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -40,6 +41,27 @@ function Food({
   }, [Resource?.cart]);
   return (
     <View style={styles.root}>
+      <View style={{height: 100, width: 100}}>
+        {item.image && (
+          <Image
+            source={{
+              uri: item.image,
+            }}
+            style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
+          />
+        )}
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#00000020',
+            borderRadius: 10,
+          }}
+        />
+      </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
         <Text style={styles.detailsText}>{`₹ ${
@@ -126,7 +148,7 @@ export default Food;
 
 const styles = StyleSheet.create({
   root: {
-    height: 80,
+    height: 120,
     width: width,
     backgroundColor: '#fff',
     paddingHorizontal: 14,

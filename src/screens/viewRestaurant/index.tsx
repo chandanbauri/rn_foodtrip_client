@@ -56,7 +56,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
     try {
       let res = await getFoodList({parentName: collection, parentID: id});
       if (res && res.data) {
-        console.log(res.data);
         let list = JSON.parse(res.data);
         let catList = extractCategories(list);
         setFoodList(list);

@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Image,
   Pressable,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,7 +21,7 @@ import BSAddressComp from '../../components/bottomSheet/addressComp';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {LocationContext} from '../../contexts/location';
 import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
-import {colors} from '../../utilities';
+import {colors, isAvailable} from '../../utilities';
 import functions from '@react-native-firebase/functions';
 import {
   fetchBanner,
@@ -60,7 +61,8 @@ const Home = ({navigation, route}: HomeScreenProps) => {
             item.metadata.metadata.firebaseStorageDownloadTokens
           }`;
         });
-        setBanners(bannerLinks);
+        let reg = new RegExp('promotions');
+        setBanners(bannerLinks.filter((item: string) => reg.test(item)));
       }
     } catch (error) {
       throw error;
@@ -216,12 +218,19 @@ const Home = ({navigation, route}: HomeScreenProps) => {
             renderItem={({item, index: number}) => (
               <Restaurant
                 onClick={() => {
-                  navigation.navigate('Restaurant', {
-                    id: item.id,
-                    collection: 'restaurants',
-                    address: item.address,
-                    name: item.restaurantName,
-                  });
+                  if (!item.opening && !isAvailable(item.opening, item.closing))
+                    navigation.navigate('Restaurant', {
+                      id: item.id,
+                      collection: 'restaurants',
+                      address: item.address,
+                      name: item.restaurantName,
+                    });
+                  else {
+                    Alert.alert(
+                      'Opps',
+                      'This Restaurant is not accepting Orders for now',
+                    );
+                  }
                 }}
                 values={item}
               />

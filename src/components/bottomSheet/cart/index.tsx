@@ -14,6 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../../contexts/Auth';
 import {getFeatures} from '../../../utilities/cloud/functions';
 import Loader from '../../loader/loader';
+import RNPickerSelect from 'react-native-picker-select';
 function CartInfo() {
   const isFocused = useIsFocused();
   const usersCollection = firestore().collection('Users');
@@ -28,25 +29,27 @@ function CartInfo() {
   const [addresses, setAddresses] = React.useState<Array<any>>([]);
   const [initializing, setInitializing] = React.useState<boolean>(false);
   const getUserDetails = async () => {
-    try {
-      let list = await usersCollection
-        .doc(Auth?.user?.uid)
-        .collection('addresses')
-        .get();
-      if (list.size) {
-        setAddresses(() => {
-          return list.docs.map((item, index) => ({
-            ...item.data(),
-            id: item.id,
-          }));
-        });
+    if (Auth && Auth.user) {
+      try {
+        let list = await usersCollection
+          .doc(Auth.user.uid)
+          .collection('addresses')
+          .get();
+        if (list.size) {
+          setAddresses(() => {
+            return list.docs.map((item, index) => ({
+              ...item.data(),
+              id: item.id,
+            }));
+          });
 
-        // );
-      } else {
-        setAddresses([]);
+          // );
+        } else {
+          setAddresses([]);
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
     }
   };
   const fetchFeatures = async () => {
@@ -65,7 +68,7 @@ function CartInfo() {
     }
   };
   React.useEffect(() => {
-    if (Resource?.cart.length) {
+    if (Resource && Resource?.cart.length) {
       let total = 0;
       Resource.cart.map((item: any) => {
         if (item.count) total = total + item.cost * item.count;
@@ -93,23 +96,23 @@ function CartInfo() {
     <View style={styles.root}>
       <View style={{marginTop: 20}}>
         <Text style={[styles.text, {fontSize: 14}]}>Delivery address</Text>
-        <Picker
-          selectedValue={orderAddress}
-          onValueChange={(itemValue, itemIndex) => {
-            setOrderAddress(prev => itemValue);
-          }}
-          style={{
-            color: colors.brown,
-          }}>
-          {addresses.map((item, index) => (
-            <Picker.Item
-              key={index}
-              label={item.tag}
-              value={`${item.home}, ${item.area}, ${item.landmark}, ${item.city}, ${item.state},${item.pincode}`}
-            />
-          ))}
-        </Picker>
       </View>
+      <Picker
+        selectedValue={orderAddress}
+        onValueChange={(itemValue, itemIndex) => {
+          setOrderAddress(prev => itemValue);
+        }}
+        style={{
+          color: colors.brown,
+        }}>
+        {addresses.map((item, index) => (
+          <Picker.Item
+            key={index}
+            label={item.tag}
+            value={`${item.home}, ${item.area}, ${item.landmark}, ${item.city}, ${item.state},${item.pincode}`}
+          />
+        ))}
+      </Picker>
       <View
         style={{
           width: '100%',
@@ -135,13 +138,13 @@ function CartInfo() {
       {features && (
         <>
           <View style={styles.costSection}>
-            <Text style={styles.text}>gst</Text>
+            <Text style={styles.text}>GST</Text>
             <Text style={styles.text}>{`₹ ${
               (parseInt(features.gst) * totalCost) / 100
             }`}</Text>
           </View>
           <View style={styles.costSection}>
-            <Text style={styles.text}>delivery charge</Text>
+            <Text style={styles.text}>Delivery Charge</Text>
             <Text style={styles.text}>{`₹ ${features.delivery_charge}`}</Text>
           </View>
           <View style={styles.costSection}>
@@ -173,23 +176,23 @@ function CartInfo() {
                     alternatePhone?.length == 10 ? alternatePhone : null,
                 });
               else
-              Alert.alert('Please provide a valid address', '', [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    navigation.navigate('TabNav', {
-                      screen: 'Account',
-                    });
-                  },
-                },
-              ]);
-              else
-                Alert.alert('The minimum order price is ₹ 150 INR', '', [
+                Alert.alert('Please provide a valid address', '', [
                   {
-                    text: 'Ok',
-                    onPress: () => {},
+                    text: 'OK',
+                    onPress: () => {
+                      navigation.navigate('TabNav', {
+                        screen: 'Account',
+                      });
+                    },
                   },
                 ]);
+            else
+              Alert.alert('The minimum order price is ₹ 150 INR', '', [
+                {
+                  text: 'Ok',
+                  onPress: () => {},
+                },
+              ]);
           } else {
             Alert.alert('To place an Order you need to login first', '', [
               {

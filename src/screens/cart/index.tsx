@@ -18,11 +18,11 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 const {height, width} = Dimensions.get('window');
 function Cart({navigation}: CartScreenProps) {
-  const bottomSheetRef = React.useRef<BottomSheet>(null);
-  const snapPoints = React.useMemo(() => [150, 200], []);
+  // const bottomSheetRef = React.useRef<BottomSheet>(null);
+  // const snapPoints = React.useMemo(() => [150, 200], []);
   const Auth = React.useContext(ResourceContext);
 
-  if (Auth?.cart && Auth?.cart?.length) {
+  if (Auth && Auth?.cart && Auth?.cart?.length) {
     return (
       <>
         <FocusedStatusBar
@@ -30,23 +30,23 @@ function Cart({navigation}: CartScreenProps) {
           barStyle="dark-content"
           translucent={true}
         />
-        <SafeAreaView style={{flex: 1}}>
-          <View style={styles.root}>
-            <FlatList
-              data={Auth?.cart}
-              ListHeaderComponent={() => <Header />}
-              keyExtractor={item => item.id}
-              renderItem={({item}) => <Food item={item} isInCartView={true} />}
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              ListFooterComponent={() => (
-                <View>
-                  <CartInfo />
-                </View>
-              )}
-            />
-          </View>
-          {/* <BottomSheet
+
+        <View style={styles.root}>
+          <FlatList
+            data={Auth?.cart}
+            ListHeaderComponent={() => <Header />}
+            keyExtractor={item => item.id}
+            renderItem={({item}) => <Food item={item} isInCartView={true} />}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={() => (
+              <View>
+                <CartInfo />
+              </View>
+            )}
+          />
+        </View>
+        {/* <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
           index={0}
@@ -54,7 +54,6 @@ function Cart({navigation}: CartScreenProps) {
           keyboardBlurBehavior="restore">
           
         </BottomSheet> */}
-        </SafeAreaView>
       </>
     );
   }

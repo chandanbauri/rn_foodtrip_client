@@ -8,7 +8,7 @@ import {AboutUsScreenProps} from '../../navigation/homeScreenStackNavigator/type
 const data = [
   {
     feild_title: 'ABOUT COMPANY',
-    main_Description: `Adda Food is a Sikkim restaurant aggregator and food delivery company founded by Sujit Rawat in 2021. Adda Food provides information, menus and user-reviews of restaurants as well as food delivery options from partner restaurants in selected cities.`,
+    main_Description: `Food Dhaba is a Sikkim restaurant aggregator and food delivery company founded in 2021. It provides information, menus and food delivery options from various partner restaurants in selected cities of Sikkim.`,
   },
 ];
 

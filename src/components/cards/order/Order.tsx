@@ -29,18 +29,11 @@ export default function OrderCard({item, onCancel, onRepeat}: props) {
   };
 
   const RepeatOrder = () => {
-    console.log(items);
     if (items && items.length) {
       Resource?.repeatOrder(items);
       Resource?.saveRestaurantDetils(restaurantDetails);
     }
   };
-  console.log('RESTAURANT DETAILS', restaurantDetails);
-  console.log('USER DETAILS', userDetails);
-  console.log('FOOD DETAILS', items);
-  console.log('DELIVERY PARTNER DETAILS', partner);
-  console.log('OTHER DETAILS', otherDetails);
-
   return (
     <View style={styles.root}>
       <View style={styles.elevatedContainer}>

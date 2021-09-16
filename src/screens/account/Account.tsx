@@ -70,7 +70,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
     }
   };
   const EditAddress = async (address: any) => {
-    console.log(address);
     navigation.navigate('AddNewAddress', {
       isEditMode: true,
       id: address.id,
@@ -259,7 +258,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                           });
                         }}>
                         <Text style={{color: '#AAA', fontSize: 14}}>
-                          Terms & Condintions
+                          Terms & Conditions
                         </Text>
                       </Pressable>
                       <Pressable
@@ -446,7 +445,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
                       if (details.email.length > 0) {
                         auth().currentUser?.updateEmail(details.email);
                       }
-                      console.log(details.phoneNumber);
                       // if (details.phoneNumber.length === 10) {
                       //   auth().currentUser?.updatePhoneNumber(
                       //     auth.PhoneAuthProvider.credential(

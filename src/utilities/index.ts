@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import moment from 'moment';
 export const validatePhoneNo = (phone = '') => phone.length == 10;
 
 export const colors = {
@@ -31,7 +31,6 @@ export const getValue = async (key: string) => {
   }
 };
 
-
 export const getTotalCost = (list: Array<any> | any) => {
   let total = 0;
   list.map((item: any) => {
@@ -39,4 +38,23 @@ export const getTotalCost = (list: Array<any> | any) => {
   });
 
   return total;
+};
+
+export const isAvailable = (before: string, after: string) => {
+  let format = 'hh:mm';
+  let d = new Date();
+  let hour = d.getHours();
+  let minute = d.getMinutes();
+  var time = moment(
+      `${hour.toString().length == 1 ? '0' + hour : hour}:${minute}`,
+      format,
+    ),
+    beforeTime = moment(before, format),
+    afterTime = moment(after, format);
+
+  if (time.isBetween(beforeTime, afterTime)) {
+    return true;
+  } else {
+    return false;
+  }
 };
