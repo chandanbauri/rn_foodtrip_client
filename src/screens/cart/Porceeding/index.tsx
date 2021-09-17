@@ -218,9 +218,9 @@ export default function ProceedingScreen({
                     });
                     let data = JSON.parse(res.data);
                     var options = {
-                      name: 'Adda Food',
+                      name: 'Food Dhaba',
                       image: '',
-                      description: 'some desc',
+                      description: '',
                       order_id: data.data.id,
                       amount: data.data.amount,
                       currency: data.data.currency,
