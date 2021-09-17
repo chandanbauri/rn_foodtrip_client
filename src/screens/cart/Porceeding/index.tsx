@@ -68,7 +68,7 @@ export default function ProceedingScreen({
             backgroundColor: colors.logoBg,
           }}>
           <Image
-            source={require('../../../assets/logo.png')}
+            source={require('../../../assets/logo.jpeg')}
             style={{
               width: 200,
               height: 200,

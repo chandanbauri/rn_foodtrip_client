@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Alert,
   Dimensions,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -18,6 +19,7 @@ import {AddNewAddressScreenProps} from '../../../navigation/homeScreenStackNavig
 import Loader from '../../../components/loader/loader';
 import FocusedStatusBar from '../../../components/statusBar';
 
+const {height, width} = Dimensions.get('window');
 export default function AddNewAddress({
   navigation,
   route,
@@ -33,13 +35,20 @@ export default function AddNewAddress({
     city: city ?? '',
     state: state ?? '',
   };
-
+  const pickerRef = React.createRef<Picker<string>>();
   const [appState, setState] = React.useState(initState);
   const handleTextInput = (name: string) => (text: string) => {
     setState(prev => ({...prev, [name]: text}));
   };
   const usersCollection = firestore().collection('Users');
   const [initializing, setInitializing] = React.useState<boolean>(false);
+  function open() {
+    if (pickerRef && pickerRef.current) pickerRef.current.focus();
+  }
+
+  function close() {
+    if (pickerRef && pickerRef.current) pickerRef.current.blur();
+  }
   // const [states, setStates] = React.useState<Array<any>>([]);
   // const fetchStatesDetails = async () => {
   //   // try {
@@ -171,9 +180,11 @@ export default function AddNewAddress({
       />
       <ScrollView>
         <View style={styles.root}>
-          <Text style={styles.title}>
-            {isEditMode ? `Edit address` : `Add New Address`}
-          </Text>
+          <View style={styles.header}>
+            <Text style={styles.title}>
+              {isEditMode ? `Edit address` : `Add New Address`}
+            </Text>
+          </View>
           <View>
             {/* <TextInput
             placeholder="Tag"
@@ -191,13 +202,18 @@ export default function AddNewAddress({
               style={{
                 borderBottomColor: colors.brown,
                 borderBottomWidth: 1,
+                height: 50,
+                width: '100%',
+                position: 'relative',
               }}>
               <Picker
                 selectedValue={appState.tag}
                 onValueChange={(itemValue, itemIndex) => {
                   setState(prev => ({...prev, tag: itemValue}));
                 }}
+                ref={pickerRef}
                 style={{
+                  flex: 1,
                   color: colors.brown,
                 }}>
                 {tags.map((item, index: number) => (
@@ -208,6 +224,17 @@ export default function AddNewAddress({
                   />
                 ))}
               </Picker>
+              <Pressable
+                onPress={() => {
+                  open();
+                }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}></Pressable>
             </View>
             <TextInput
               placeholder="House no. , Flat, Building, Company, Apartment"
@@ -337,12 +364,21 @@ export default function AddNewAddress({
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
-    backgroundColor: colors.white,
+    height: height,
+    width: width,
+    // backgroundColor: colors.white,
     paddingHorizontal: 14,
     paddingBottom: 30,
-    justifyContent: 'space-around',
+    justifyContent: 'flex-end',
     paddingTop: 14,
+  },
+  header: {
+    height: height * 0.1,
+    width: '100%',
+    position: 'absolute',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    top: 20,
   },
   title: {
     fontSize: 24,
