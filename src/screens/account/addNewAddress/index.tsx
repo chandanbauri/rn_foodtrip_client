@@ -314,6 +314,7 @@ export default function AddNewAddress({
             <FilledButton
               text="save"
               onPress={async () => {
+                setInitializing(true);
                 if (
                   appState.area == '' ||
                   appState.city == '' ||
@@ -340,7 +341,7 @@ export default function AddNewAddress({
                     await SaveNew();
                   }
                   // console.log(state);
-                  setInitializing(true);
+                  setInitializing(false);
                 }
               }}
             />

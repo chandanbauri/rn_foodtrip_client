@@ -41,32 +41,39 @@ function Food({
   }, [Resource?.cart]);
   return (
     <View style={styles.root}>
-      <View style={{height: 100, width: 100}}>
-        {item.image && (
-          <Image
-            source={{
-              uri: item.image,
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <View style={{height: 100, width: 100}}>
+          {item.image && (
+            <Image
+              source={{
+                uri: item.image,
+              }}
+              style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
+            />
+          )}
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: '#00000020',
+              borderRadius: 10,
             }}
-            style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
           />
-        )}
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: '#00000020',
-            borderRadius: 10,
-          }}
-        />
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
-        <Text style={styles.detailsText}>{`₹ ${
-          isInCartView ? item.cost * counter : item.cost
-        }`}</Text>
+        </View>
+        <View style={styles.detailsContainer}>
+          <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
+          <Text style={styles.detailsText}>{`₹ ${
+            isInCartView ? item.cost * counter : item.cost
+          }`}</Text>
+        </View>
       </View>
       {Resource?.findItemInTheCart(item.id) ? (
         <View style={styles.controllButtonsContainer}>
@@ -161,6 +168,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'space-around',
+    marginLeft: 10,
   },
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',

@@ -124,7 +124,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   );
   if (initializing) return <Loader />;
   return (
-    <SafeAreaView>
+    <>
       <FocusedStatusBar
         backgroundColor="transparent"
         barStyle="dark-content"
@@ -132,7 +132,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
       />
       <View style={styles.root}>
         <FlatList
-          style={{flex: 1}}
           data={tabList}
           ListHeaderComponent={() => <MainHeader title={name} />}
           keyExtractor={(item: any) => item?.id}
@@ -166,6 +165,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             />
           )}
           stickyHeaderIndices={[0]}
+          ListFooterComponent={<View style={{paddingBottom: 120}} />}
         />
         <View
           style={{
@@ -203,7 +203,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </>
   );
 }
 
@@ -211,8 +211,10 @@ export default ViewRestaurant;
 
 const styles = StyleSheet.create({
   root: {
-    height: height,
-    width: width,
+    // height: height,
+    // width: width,
+    paddingTop: 20,
+    flex: 1,
   },
   bottomTextContainer: {
     marginTop: 10,
