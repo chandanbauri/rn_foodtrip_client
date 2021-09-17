@@ -26,7 +26,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
           }
         });
     }, 1000);
-    return clearInterval(timer);
+    // return clearInterval(timer);
   };
   const Auth = React.useContext(AuthContext);
   const onVrify = async () => {
@@ -66,6 +66,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   };
   React.useEffect(() => {
     if (isFocused) decreaseCounter();
+    // decreaseCounter();
     return;
   }, []);
 

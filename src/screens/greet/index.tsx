@@ -3,52 +3,60 @@ import {Dimensions} from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FilledButton from '../../components/buttons/filled';
+import FocusedStatusBar from '../../components/statusBar';
 import {GreetScreenProps} from '../../navigation/authNavigator/types';
 import {colors} from '../../utilities';
 
 const {height, width} = Dimensions.get('window');
 export default function GreetScreen({navigation, route}: GreetScreenProps) {
   return (
-    <View style={styles.root}>
-      <View
-        style={{
-          justifyContent: 'center',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        <Ionicons name="fast-food" size={50} color={colors.brown} />
+    <>
+      <FocusedStatusBar
+        backgroundColor="transparent"
+        barStyle="dark-content"
+        translucent={true}
+      />
+      <View style={styles.root}>
         <View
           style={{
-            marginLeft: 10,
-            borderLeftColor: colors.brown,
-            borderLeftWidth: 1,
-            paddingLeft: 10,
+            justifyContent: 'center',
+            flexDirection: 'row',
+            alignItems: 'center',
           }}>
-          <Text style={styles.text}>Order</Text>
-          <Text style={styles.text}>your favourite food</Text>
-          <Text style={styles.text}>online</Text>
+          <Ionicons name="fast-food" size={50} color={colors.brown} />
+          <View
+            style={{
+              marginLeft: 10,
+              borderLeftColor: colors.brown,
+              borderLeftWidth: 1,
+              paddingLeft: 10,
+            }}>
+            <Text style={styles.text}>Order</Text>
+            <Text style={styles.text}>your favourite food</Text>
+            <Text style={styles.text}>online</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            paddingHorizontal: 14,
+            position: 'absolute',
+            bottom: height * 0.05,
+          }}>
+          <FilledButton
+            text="Explore"
+            onPress={() => {
+              navigation.navigate('Main', {
+                screen: 'TabNav',
+                params: {
+                  screen: 'Home',
+                },
+              });
+            }}
+          />
         </View>
       </View>
-      <View
-        style={{
-          width: '100%',
-          paddingHorizontal: 14,
-          position: 'absolute',
-          bottom: height * 0.05,
-        }}>
-        <FilledButton
-          text="Explore"
-          onPress={() => {
-            navigation.navigate('Main', {
-              screen: 'TabNav',
-              params: {
-                screen: 'Home',
-              },
-            });
-          }}
-        />
-      </View>
-    </View>
+    </>
   );
 }
 
