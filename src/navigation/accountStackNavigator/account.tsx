@@ -39,6 +39,10 @@ export default function AccountNavigator() {
             </Pressable>
           ),
           headerLeftContainerStyle: {marginLeft: 10},
+          headerTitle: 'My Orders',
+          headerStyle: {
+            elevation: 0,
+          },
         }}
       />
     </Stack.Navigator>

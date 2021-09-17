@@ -232,6 +232,13 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   onDelete={() => DeleteAddress(item.id)}
                 />
               )}
+              ListEmptyComponent={
+                <View>
+                  <Text style={{fontStyle: 'italic'}}>
+                    *You do not have any saved address
+                  </Text>
+                </View>
+              }
               ListFooterComponent={
                 <>
                   <FilledButton
@@ -301,7 +308,8 @@ export default function Account({navigation, route}: AccountScreenProps) {
             snapPoints={snapPoints}
             onAnimate={handleSheetChanges}
             keyboardBehavior="fullScreen"
-            keyboardBlurBehavior="restore">
+            keyboardBlurBehavior="restore"
+            backdropComponent={BottomSheetBackdrop}>
             <View style={styles.bottomSheet}>
               <Text style={styles.sectionTitle}>Edit your profile</Text>
               {/* <View
@@ -347,152 +355,69 @@ export default function Account({navigation, route}: AccountScreenProps) {
                 onChangeText={handleTextInput('email')}
                 keyboardType="email-address"
               />
-              {/* <TextInput
-                placeholder="phone"
-                placeholderTextColor={colors.brown}
+              <View
                 style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('phoneNumber')}
-                keyboardType="number-pad"
-              /> */}
-              {/* <TextInput
-                placeholder="House no. , Flat, Building, Company, Apartment"
-                placeholderTextColor={colors.brown}
-                style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('home')}
-              />
-              <TextInput
-                placeholder="Area, Street, Sector, Village"
-                placeholderTextColor={colors.brown}
-                style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('area')}
-              />
-              <TextInput
-                placeholder="Landmark"
-                placeholderTextColor={colors.brown}
-                style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('landmark')}
-              />
-              <TextInput
-                placeholder="Town/City"
-                placeholderTextColor={colors.brown}
-                style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('city')}
-              />
-              <TextInput
-                placeholder="Pincode"
-                placeholderTextColor={colors.brown}
-                style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('pincode')}
-                keyboardType="number-pad"
-              />
-              <TextInput
-                placeholder="State"
-                placeholderTextColor={colors.brown}
-                style={{
-                  borderBottomColor: colors.brown,
-                  borderBottomWidth: 1,
-                  color: colors.brown,
-                }}
-                onChangeText={handleTextInput('state')}
-              /> */}
-
-              {/* <View
-              style={{
-                borderBottomColor: colors.brown,
-                borderBottomWidth: 1,
-              }}>
-              <Picker
-                selectedValue={details.state}
-                onValueChange={(itemValue, itemIndex) => {
-                  setDetails(prev => ({...prev, state: itemValue}));
-                }}
-                style={{
-                  color: colors.brown,
+                  position: 'absolute',
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
+                  paddingHorizontal: 14,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
                 }}>
-                {states.map((item, index: number) => (
-                  <Picker.Item
-                    label={item.label}
-                    value={item.value}
-                    key={index}
-                  />
-                ))}
-              </Picker>
-            </View> */}
-
-              <FilledButton
-                text="SAVE CHANGES"
-                onPress={async () => {
-                  setInitializing(true);
-                  if (Auth?.user?.displayName) {
-                    try {
-                      if (details.name.length > 0)
-                        auth().currentUser?.updateProfile({
-                          displayName: details.name,
-                        });
-                      if (details.email.length > 0) {
-                        auth().currentUser?.updateEmail(details.email);
+                <View style={{width: '100%'}}>
+                  <FilledButton
+                    text="SAVE CHANGES"
+                    onPress={async () => {
+                      setInitializing(true);
+                      if (Auth?.user?.displayName) {
+                        try {
+                          if (details.name.length > 0)
+                            auth().currentUser?.updateProfile({
+                              displayName: details.name,
+                            });
+                          if (details.email.length > 0) {
+                            auth().currentUser?.updateEmail(details.email);
+                          }
+                          // if (details.phoneNumber.length === 10) {
+                          //   auth().currentUser?.updatePhoneNumber(
+                          //     auth.PhoneAuthProvider.credential(
+                          //       `+91${details.phoneNumber}`,
+                          //     ),
+                          //   );
+                          // }
+                          // await usersCollection
+                          //   .doc(Auth?.user?.uid)
+                          //   .collection('addresses')
+                          //   .add({
+                          //     tag: 'Home',
+                          //     pincode: details.pincode,
+                          //     home: details.home,
+                          //     area: details.area,
+                          //     landmark: details.landmark,
+                          //     city: details.city,
+                          //     state: details.state,
+                          //   });
+                          setInitializing(false);
+                          Alert.alert(
+                            'Profile Saved',
+                            'Your Profile has been saved Successfully',
+                            [
+                              {
+                                text: 'Ok',
+                                onPress: () => bottomSheetRef.current?.close(),
+                              },
+                            ],
+                          );
+                          setDetails(initDetails);
+                        } catch (error) {
+                          throw error;
+                        }
                       }
-                      // if (details.phoneNumber.length === 10) {
-                      //   auth().currentUser?.updatePhoneNumber(
-                      //     auth.PhoneAuthProvider.credential(
-                      //       `+91${details.phoneNumber}`,
-                      //     ),
-                      //   );
-                      // }
-                      // await usersCollection
-                      //   .doc(Auth?.user?.uid)
-                      //   .collection('addresses')
-                      //   .add({
-                      //     tag: 'Home',
-                      //     pincode: details.pincode,
-                      //     home: details.home,
-                      //     area: details.area,
-                      //     landmark: details.landmark,
-                      //     city: details.city,
-                      //     state: details.state,
-                      //   });
-                      setInitializing(false);
-                      Alert.alert(
-                        'Profile Saved',
-                        'Your Profile has been saved Successfully',
-                        [
-                          {
-                            text: 'Ok',
-                            onPress: () => bottomSheetRef.current?.close(),
-                          },
-                        ],
-                      );
-                      setDetails(initDetails);
-                    } catch (error) {
-                      throw error;
-                    }
-                  }
-                }}
-              />
+                    }}
+                  />
+                </View>
+              </View>
             </View>
           </BottomSheet>
         </View>
@@ -573,6 +498,7 @@ const styles = StyleSheet.create({
   },
 
   bottomSheet: {
+    flex: 1,
     paddingTop: 10,
     paddingHorizontal: 10,
   },

@@ -4,37 +4,25 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity,
-  StatusBar,
   Dimensions,
   FlatList,
-  ActivityIndicator,
   Image,
-  Pressable,
   Alert,
 } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Restaurant from '../../components/cards/Restaurant';
-import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-import BSAddressComp from '../../components/bottomSheet/addressComp';
-import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import {LocationContext} from '../../contexts/location';
 import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
 import {colors, isAvailable} from '../../utilities';
-import functions from '@react-native-firebase/functions';
 import {
   fetchBanner,
   getMenuList,
   getRestaurantList,
 } from '../../utilities/cloud/functions';
 import {ResourceContext} from '../../contexts/resource';
-import {CategoryCard} from '../../components/cards/category';
 import {useIsFocused} from '@react-navigation/native';
 import FocusedStatusBar from '../../components/statusBar';
 import Loader from '../../components/loader/loader';
 import Carousel from 'react-native-snap-carousel';
-import {cos} from 'react-native-reanimated';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
@@ -68,37 +56,6 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       throw error;
     }
   };
-  // const MAX_BOTTOMSHEET_HEIGHT = 480;
-  // React.useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerRight: () => (
-  //       <TouchableOpacity
-  //         style={styles.searchButton}
-  //         onPress={() => {
-  //           navigation.navigate('Search');
-  //         }}>
-  //         <Feather name="search" size={25} color={colors.brown} />
-  //       </TouchableOpacity>
-  //     ),
-  //   });
-  // });
-
-  // const bottomSheetRef = React.useRef<BottomSheet>(null);
-  // const snapPoints = React.useMemo(
-  //   () => [height * 0.25, MAX_BOTTOMSHEET_HEIGHT],
-  //   [],
-  // );
-
-  // const handleSheetChanges = React.useCallback(
-  //   (fromIndex, toIndex) => fromIndex == 1 && bottomSheetRef.current?.close(),
-  //   [],
-  // );
-
-  // const OpenBottomSheet = () => bottomSheetRef.current?.expand();
-
-  // React.useEffect(() => {
-  //   Location?.currentLocation == null && OpenBottomSheet();
-  // }); // An Intital check for The Location
 
   const getList = async () => {
     if (isFocused)
@@ -211,45 +168,69 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       </View> */}
 
         <View style={styles.restaurantListContainer}>
-          <FlatList
-            data={Resource?.restaurantList}
-            keyExtractor={(item, index) => `${index}`}
-            ListHeaderComponent={<ListHeader />}
-            renderItem={({item, index: number}) => (
-              <Restaurant
-                onClick={() => {
-                  if (item.opening && isAvailable(item.opening, item.closing))
-                    navigation.navigate('Restaurant', {
-                      id: item.id,
-                      collection: 'restaurants',
-                      address: item.address,
-                      name: item.restaurantName,
-                    });
-                  else {
-                    Alert.alert(
-                      'Opps',
-                      'This Restaurant is not accepting Orders for now',
-                    );
-                  }
-                }}
-                values={item}
-              />
-            )}
-          />
+          {Resource &&
+          Resource.restaurantList &&
+          Resource.restaurantList.length ? (
+            <FlatList
+              data={Resource?.restaurantList}
+              keyExtractor={(item, index) => `${index}`}
+              ListHeaderComponent={<ListHeader />}
+              renderItem={({item, index: number}) => (
+                <Restaurant
+                  onClick={() => {
+                    if (item.opening && isAvailable(item.opening, item.closing))
+                      navigation.navigate('Restaurant', {
+                        id: item.id,
+                        collection: 'restaurants',
+                        address: item.address,
+                        name: item.restaurantName,
+                      });
+                    else {
+                      Alert.alert(
+                        'Opps',
+                        'This Restaurant is not accepting Orders for now',
+                      );
+                    }
+                  }}
+                  values={item}
+                />
+              )}
+            />
+          ) : (
+            <View
+              style={{
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <View
+                style={{
+                  // height: height * 0.5,
+                  // width: '100%',
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  backgroundColor: colors.white,
+                }}>
+                <Ionicons name="fast-food" size={60} color={colors.brown} />
+                <View
+                  style={{
+                    padding: 10,
+                    borderLeftColor: colors.brown,
+                    borderLeftWidth: 2,
+                    flexDirection: 'column',
+                    marginLeft: 10,
+                  }}>
+                  <Text style={styles.emptyText}>Restaurants will</Text>
+                  <Text style={styles.emptyText}>be available</Text>
+                  <Text style={styles.emptyText}>shortly</Text>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
-
-        {/* <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        onAnimate={handleSheetChanges}
-        keyboardBehavior="fullScreen"
-        keyboardBlurBehavior="restore"
-        backdropComponent={props => <BottomSheetBackdrop {...props} />}>
-        <BottomSheetScrollView>
-          <BSAddressComp />
-        </BottomSheetScrollView>
-      </BottomSheet> */}
       </SafeAreaView>
     </>
   );
@@ -318,18 +299,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 20,
   },
-});
-
-const RestaurantList = [
-  {
-    Name: "Domino's",
-    tags: ['indian', 'Chinese'],
-    address: {
-      text: 'Road 5 , Dishergarh , Asansol , Barddhaman , 713333',
-      coords: {
-        lat: 82.332,
-        lng: 35.003,
-      },
-    },
+  emptyText: {
+    color: colors.brown,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-];
+});

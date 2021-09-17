@@ -105,38 +105,46 @@ function CartInfo() {
     <View style={styles.root}>
       <View style={{marginTop: 20}}>
         <Text style={[styles.text, {fontSize: 14}]}>Delivery address</Text>
-        <View style={{height: 50, width: '100%', position: 'relative'}}>
-          <Picker
-            selectedValue={orderAddress}
-            onValueChange={(itemValue, itemIndex) => {
-              setOrderAddress(prev => itemValue);
-            }}
-            ref={pickerRef}
-            style={{
-              flex: 1,
-              color: colors.brown,
-            }}>
-            {addresses.map((item, index) => (
-              <Picker.Item
-                key={index}
-                label={item.tag}
-                value={`${item.home}, ${item.area}, ${item.landmark}, ${item.city}, ${item.state},${item.pincode}`}
-              />
-            ))}
-          </Picker>
-          <Pressable
-            onPress={() => {
-              open();
-            }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              // backgroundColor: colors.black,
-            }}></Pressable>
-        </View>
+        {addresses.length ? (
+          <View style={{height: 50, width: '100%', position: 'relative'}}>
+            <Picker
+              selectedValue={orderAddress}
+              onValueChange={(itemValue, itemIndex) => {
+                setOrderAddress(prev => itemValue);
+              }}
+              ref={pickerRef}
+              style={{
+                flex: 1,
+                color: colors.brown,
+              }}>
+              {addresses.map((item, index) => (
+                <Picker.Item
+                  key={index}
+                  label={item.tag}
+                  value={`${item.home}, ${item.area}, ${item.landmark}, ${item.city}, ${item.state},${item.pincode}`}
+                />
+              ))}
+            </Picker>
+            <Pressable
+              onPress={() => {
+                open();
+              }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                // backgroundColor: colors.black,
+              }}></Pressable>
+          </View>
+        ) : (
+          <View style={{marginVertical: 20}}>
+            <Text style={{fontStyle: 'italic'}}>
+              *You do not have any saved address
+            </Text>
+          </View>
+        )}
       </View>
       <View
         style={{
