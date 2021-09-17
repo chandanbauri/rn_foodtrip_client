@@ -37,7 +37,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
   const Auth = React.useContext(AuthContext);
   const [data, setData] = React.useState<any>();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
-  const [refresh, setRefresh] = React.useState<boolean>(false);
+  const [refresh, setRefresh] = React.useState<number>(1);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   // variables
   const snapPoints = React.useMemo(() => ['1%', '40%'], []);
@@ -92,7 +92,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
         .doc(id)
         .delete();
       Alert.alert('Address Deleted', '');
-      setRefresh(prev => !prev);
+      setRefresh(prev => prev + 1);
     } catch (error) {
       throw error;
     }
@@ -370,49 +370,48 @@ export default function Account({navigation, route}: AccountScreenProps) {
                     text="SAVE CHANGES"
                     onPress={async () => {
                       setInitializing(true);
-                      if (Auth?.user?.displayName) {
-                        try {
-                          if (details.name.length > 0)
-                            auth().currentUser?.updateProfile({
-                              displayName: details.name,
-                            });
-                          if (details.email.length > 0) {
-                            auth().currentUser?.updateEmail(details.email);
-                          }
-                          // if (details.phoneNumber.length === 10) {
-                          //   auth().currentUser?.updatePhoneNumber(
-                          //     auth.PhoneAuthProvider.credential(
-                          //       `+91${details.phoneNumber}`,
-                          //     ),
-                          //   );
-                          // }
-                          // await usersCollection
-                          //   .doc(Auth?.user?.uid)
-                          //   .collection('addresses')
-                          //   .add({
-                          //     tag: 'Home',
-                          //     pincode: details.pincode,
-                          //     home: details.home,
-                          //     area: details.area,
-                          //     landmark: details.landmark,
-                          //     city: details.city,
-                          //     state: details.state,
-                          //   });
-                          setInitializing(false);
-                          Alert.alert(
-                            'Profile Saved',
-                            'Your Profile has been saved Successfully',
-                            [
-                              {
-                                text: 'Ok',
-                                onPress: () => bottomSheetRef.current?.close(),
-                              },
-                            ],
-                          );
-                          setDetails(initDetails);
-                        } catch (error) {
-                          throw error;
+                      try {
+                        if (details.name.length > 0)
+                          auth().currentUser?.updateProfile({
+                            displayName: details.name,
+                          });
+                        if (details.email.length > 0) {
+                          auth().currentUser?.updateEmail(details.email);
                         }
+                        // if (details.phoneNumber.length === 10) {
+                        //   auth().currentUser?.updatePhoneNumber(
+                        //     auth.PhoneAuthProvider.credential(
+                        //       `+91${details.phoneNumber}`,
+                        //     ),
+                        //   );
+                        // }
+                        // await usersCollection
+                        //   .doc(Auth?.user?.uid)
+                        //   .collection('addresses')
+                        //   .add({
+                        //     tag: 'Home',
+                        //     pincode: details.pincode,
+                        //     home: details.home,
+                        //     area: details.area,
+                        //     landmark: details.landmark,
+                        //     city: details.city,
+                        //     state: details.state,
+                        //   });
+                        setRefresh(prev => prev + 1);
+                        setInitializing(false);
+                        Alert.alert(
+                          'Profile Saved',
+                          'Your Profile has been saved Successfully',
+                          [
+                            {
+                              text: 'Ok',
+                              onPress: () => bottomSheetRef.current?.close(),
+                            },
+                          ],
+                        );
+                        setDetails(initDetails);
+                      } catch (error) {
+                        throw error;
                       }
                     }}
                   />
@@ -429,7 +428,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingTop: 10,
+    paddingTop: 20,
     position: 'relative',
     backgroundColor: colors.white,
   },
