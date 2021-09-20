@@ -73,7 +73,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         }
         setInitializing(false);
       } catch (error) {
-        throw error;
+        // console.log(error);
       }
   };
   React.useEffect(() => {
