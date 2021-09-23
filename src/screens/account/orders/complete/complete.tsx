@@ -96,7 +96,7 @@ export default function CompleteOrdersScreen() {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />

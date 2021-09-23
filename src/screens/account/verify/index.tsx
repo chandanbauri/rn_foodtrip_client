@@ -74,7 +74,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />

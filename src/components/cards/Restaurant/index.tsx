@@ -54,7 +54,7 @@ const Restaurant = ({onClick, values}: props) => {
         </View>
         <View style={styles.detailsContainer}>
           <Text style={styles.detailsTitle}>
-            {values.restaurantName.slice(0, 30)}
+            {values.restaurantName.slice(0, 40)}
           </Text>
           {values.tags && (
             <Text style={styles.detailsText}>
@@ -68,7 +68,7 @@ const Restaurant = ({onClick, values}: props) => {
             {values.opening
               ? isAvailable(values.opening, values.closing)
                 ? 'Order online'
-                : `Available from ${values.opening} - ${values.closing}`
+                : `Closed`
               : 'will be available soon'}
           </Text>
         </View>
@@ -103,7 +103,8 @@ const styles = StyleSheet.create({
   },
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
-    fontSize: 18,
+    fontSize: 15,
+    fontWeight: 'bold',
     color: colors.brown,
   },
   detailsText: {

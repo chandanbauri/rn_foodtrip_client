@@ -41,13 +41,13 @@ function Food({
   }, [Resource?.cart]);
   return (
     <View style={styles.root}>
-      <View
+      {/* <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-        }}>
-        <View style={{height: 100, width: 100}}>
+        }}> */}
+      {/* <View style={{height: 100, width: 100}}>
           {item.image && (
             <Image
               source={{
@@ -67,13 +67,13 @@ function Food({
               borderRadius: 10,
             }}
           />
-        </View>
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
-          <Text style={styles.detailsText}>{`₹ ${
-            isInCartView ? item.cost * counter : item.cost
-          }`}</Text>
-        </View>
+        </View> */}
+      <View style={styles.detailsContainer}>
+        <Text style={styles.detailsTitle}>{`${item.name}`}</Text>
+        <Text style={styles.detailsText}>{`₹ ${
+          isInCartView ? item.cost * counter : item.cost
+        }`}</Text>
+        {/* </View> */}
       </View>
       {Resource?.findItemInTheCart(item.id) ? (
         <View style={styles.controllButtonsContainer}>
@@ -155,7 +155,8 @@ export default Food;
 
 const styles = StyleSheet.create({
   root: {
-    height: 120,
+    // height: 120,
+    height: 80,
     width: width,
     backgroundColor: '#fff',
     paddingHorizontal: 14,

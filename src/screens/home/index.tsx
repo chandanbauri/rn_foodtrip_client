@@ -145,7 +145,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />

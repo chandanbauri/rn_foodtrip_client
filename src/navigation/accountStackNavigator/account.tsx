@@ -7,10 +7,16 @@ import {colors} from '../../utilities';
 import OrderNavigator from '../orderNavigator';
 import {CombinedNavigationProp} from '../types';
 import Feather from 'react-native-vector-icons/Feather';
+import EditProfileScreen from '../../screens/account/edit';
 export type AccountNavigatorParamlist = {
   Profile: undefined;
+  EditProfile: undefined;
 };
 export type AccountScreenProps = {
+  navigation: CombinedNavigationProp;
+  route: RouteProp<AccountNavigatorParamlist, 'Profile'>;
+};
+export type EditProfileProps = {
   navigation: CombinedNavigationProp;
   route: RouteProp<AccountNavigatorParamlist, 'Profile'>;
 };
@@ -44,6 +50,25 @@ export default function AccountNavigator() {
           },
         }}
       /> */}
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{
+          headerShown: true,
+          headerTitle: 'Edit Profile',
+          headerTitleStyle: {
+            color: colors.brown,
+          },
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                navigation.navigate('Profile');
+              }}>
+              <Feather name="chevron-left" size={24} color={colors.brown} />
+            </Pressable>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }

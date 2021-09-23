@@ -12,7 +12,7 @@ export default function GreetScreen({navigation, route}: GreetScreenProps) {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />

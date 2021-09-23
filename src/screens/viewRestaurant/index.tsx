@@ -106,11 +106,11 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         <Text
           style={{
             color: colors.brown,
-            fontSize: 22,
+            fontSize: 18,
             marginLeft: 20,
             fontWeight: '700',
           }}>
-          {title.slice(0, 18)}
+          {title.slice(0, 40)}
         </Text>
       </View>
       <FoodCategoryHeader
@@ -126,7 +126,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />

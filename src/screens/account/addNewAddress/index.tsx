@@ -174,7 +174,7 @@ export default function AddNewAddress({
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />
@@ -348,12 +348,7 @@ export default function AddNewAddress({
             <FilledButton
               text="Cancel"
               onPress={() => {
-                navigation.navigate('Main', {
-                  screen: 'TabNav',
-                  params: {
-                    screen: 'Home',
-                  },
-                });
+                navigation.goBack();
               }}
             />
           </View>

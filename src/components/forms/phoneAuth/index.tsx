@@ -36,7 +36,7 @@ const PhoneAuthForm: React.FunctionComponent = () => {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />

@@ -25,42 +25,34 @@ function Cart({navigation}: CartScreenProps) {
   if (Auth && Auth?.cart && Auth?.cart?.length) {
     return (
       <>
-        <FocusedStatusBar
-          backgroundColor="transparent"
-          barStyle="dark-content"
-          translucent={true}
-        />
-
-        <View style={styles.root}>
+        <SafeAreaView>
+          <FocusedStatusBar
+            backgroundColor="#FFF"
+            barStyle="dark-content"
+            translucent={true}
+          />
           <FlatList
             data={Auth?.cart}
-            ListHeaderComponent={() => <Header />}
+            ListHeaderComponent={Header}
             keyExtractor={item => item.id}
             renderItem={({item}) => <Food item={item} isInCartView={true} />}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={() => (
-              <View>
+              <View style={{paddingBottom: 20}}>
                 <CartInfo />
               </View>
             )}
+            stickyHeaderIndices={[0]}
           />
-        </View>
-        {/* <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={snapPoints}
-          index={0}
-          keyboardBehavior="fullScreen"
-          keyboardBlurBehavior="restore">
-          
-        </BottomSheet> */}
+        </SafeAreaView>
       </>
     );
   }
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />
@@ -79,7 +71,8 @@ export default Cart;
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
+    height: height,
+    width: width,
     backgroundColor: colors.white,
   },
 
@@ -107,15 +100,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cartHeader: {
-    height: height * 0.1,
+    height: height * 0.07,
     width: width,
     backgroundColor: colors.white,
-    elevation: 10,
+    elevation: 0,
     justifyContent: 'center',
     paddingLeft: 12,
+    // paddingTop: 15,
   },
   cartHeaderTitle: {
-    fontSize: 35,
+    fontSize: 25,
+    fontWeight: '300',
     color: colors.brown,
   },
 });

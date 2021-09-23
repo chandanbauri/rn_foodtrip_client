@@ -33,7 +33,7 @@ export default function AboutUsScreen({navigation, route}: AboutUsScreenProps) {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="transparent"
+        backgroundColor="#FFF"
         barStyle="dark-content"
         translucent={true}
       />
