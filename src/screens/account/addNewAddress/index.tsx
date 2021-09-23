@@ -146,6 +146,7 @@ export default function AddNewAddress({
             text: 'Ok',
             onPress: () => {
               setState(initState);
+              navigation.navigate('Account');
             },
           },
         ]);

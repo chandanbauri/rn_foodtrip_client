@@ -57,7 +57,19 @@ const HomeScreenStack = () => {
       <Stack.Screen
         name="Search"
         component={Search}
-        options={{headerTitle: ''}}
+        options={{
+          headerTitle: 'Search',
+          headerTitleStyle: {color: colors.brown},
+          headerLeft: () => (
+            <Pressable
+              style={{padding: 15}}
+              onPress={() => {
+                navigation.navigate('Home');
+              }}>
+              <Feather name="arrow-left" size={24} color={colors.brown} />
+            </Pressable>
+          ),
+        }}
       />
       <Stack.Screen
         name="Restaurant"

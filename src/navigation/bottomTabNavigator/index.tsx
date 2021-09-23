@@ -3,18 +3,19 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Cart from '../../screens/cart';
-import {Text} from 'react-native';
+import {Pressable, Text} from 'react-native';
 import {ResourceContext} from '../../contexts/resource';
 import Home from '../../screens/home';
 import {BottomTabNavigatorParamList} from './types';
-import {RouteProp} from '@react-navigation/core';
+import {RouteProp, useNavigation} from '@react-navigation/core';
 import {colors} from '../../utilities';
 import BookOrderNavigator from '../BookOrder';
 import Account from '../../screens/account/Account';
 import AccountNavigator from '../accountStackNavigator';
 import OrderNavigator from '../orderNavigator';
 import OrderStackNavigator from '../orderStack';
-
+import Feather from 'react-native-vector-icons/Feather';
+import {CombinedNavigationProp} from '../types';
 type TabBarIconProps = {
   focused: boolean;
   size: number;
@@ -24,6 +25,7 @@ const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
 const BottomNavigator = () => {
   const Resource = React.useContext(ResourceContext);
+  const navigation = useNavigation<CombinedNavigationProp>();
   return (
     <BottomTab.Navigator
       initialRouteName="Home"
@@ -45,6 +47,15 @@ const BottomNavigator = () => {
             color: colors.brown,
             fontFamily: 'OpenSans-SemiBold',
           },
+          headerRight: () => (
+            <Pressable
+              style={{padding: 15}}
+              onPress={() => {
+                navigation.navigate('Search');
+              }}>
+              <Feather name="search" size={24} color={colors.brown} />
+            </Pressable>
+          ),
         }}
       />
       <BottomTab.Screen
