@@ -8,6 +8,7 @@ import {BookOrderParamList} from './BookOrder/types';
 import {MaterialTopTabNavigationProp} from '@react-navigation/material-top-tabs';
 import {AccountNavigatorParamlist} from './accountStackNavigator/account';
 import {OrderScreenParamlist} from './orderNavigator/OrderNavigator';
+import {OrderStackParamlist} from './orderStack/orderStack';
 
 // export type CombinedNavigationProp = CompositeNavigationProp<
 //   StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
@@ -38,18 +39,34 @@ import {OrderScreenParamlist} from './orderNavigator/OrderNavigator';
 //   >
 // >;
 
-
-export type CombinedNavigationProp =
+export type CombinedNavigationProp = CompositeNavigationProp<
+  StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
   CompositeNavigationProp<
-    StackNavigationProp<AuthNavigatorParamList, keyof AuthNavigatorParamList>,
+    StackNavigationProp<
+      HomeScreenStackParamList,
+      keyof HomeScreenStackParamList
+    >,
     CompositeNavigationProp<
-      StackNavigationProp<HomeScreenStackParamList, keyof HomeScreenStackParamList>,
+      BottomTabNavigationProp<
+        BottomTabNavigatorParamList,
+        keyof BottomTabNavigatorParamList
+      >,
       CompositeNavigationProp<
-        BottomTabNavigationProp<BottomTabNavigatorParamList, keyof BottomTabNavigatorParamList>,
+        StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>,
         CompositeNavigationProp<
-          StackNavigationProp<BookOrderParamList, keyof BookOrderParamList>,
+          StackNavigationProp<
+            AccountNavigatorParamlist,
+            keyof AccountNavigatorParamlist
+          >,
           CompositeNavigationProp<
-            StackNavigationProp<AccountNavigatorParamlist, keyof AccountNavigatorParamlist>,
-            MaterialTopTabNavigationProp<OrderScreenParamlist , keyof OrderScreenParamlist> > > > 
+            StackNavigationProp<OrderStackParamlist, keyof OrderStackParamlist>,
+            MaterialTopTabNavigationProp<
+              OrderScreenParamlist,
+              keyof OrderScreenParamlist
+            >
+          >
+        >
+      >
     >
   >
+>;

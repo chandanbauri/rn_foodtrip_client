@@ -280,7 +280,9 @@ export default function ProceedingScreen({
                                   onPress: () => {
                                     Resource?.EmptyCart();
                                     Resource?.saveRestaurantDetils(null);
-                                    navigation.navigate('Account');
+                                    navigation.navigate('Orders', {
+                                      screen: 'pending',
+                                    });
                                   },
                                 },
                               ]);

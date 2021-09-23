@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
-    fontSize: 20,
+    fontSize: 18,
     color: colors.brown,
   },
   detailsText: {

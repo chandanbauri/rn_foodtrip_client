@@ -249,12 +249,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
                       });
                     }}
                   />
-                  <FilledButton
-                    text="My Orders"
-                    onPress={() => {
-                      navigation.navigate('Orders');
-                    }}
-                  />
                   <View style={styles.footerComponent}>
                     <View style={{marginTop: 10}}>
                       <Pressable

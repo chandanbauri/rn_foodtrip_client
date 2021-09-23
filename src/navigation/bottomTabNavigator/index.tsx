@@ -12,6 +12,8 @@ import {colors} from '../../utilities';
 import BookOrderNavigator from '../BookOrder';
 import Account from '../../screens/account/Account';
 import AccountNavigator from '../accountStackNavigator';
+import OrderNavigator from '../orderNavigator';
+import OrderStackNavigator from '../orderStack';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -61,6 +63,11 @@ const BottomNavigator = () => {
         component={AccountNavigator}
         options={{headerShown: false}}
       />
+      <BottomTab.Screen
+        name="MyOrder"
+        component={OrderStackNavigator}
+        options={{headerShown: false}}
+      />
     </BottomTab.Navigator>
   );
 };
@@ -105,6 +112,15 @@ const TabBarIcon =
             color={focused ? colors.brown : `${colors.brown}90`}
           />
         );
+      case 'MyOrder':
+        iconName = focused ? 'clipboard-list' : 'clipboard-list-outline';
+        return (
+          <MaterialCommunityIcons
+            name={iconName}
+            size={size}
+            color={focused ? colors.brown : `${colors.brown}90`}
+          />
+        );
     }
   };
 
@@ -126,6 +142,9 @@ const TabBarLabel =
         break;
       case 'Account':
         labelName = 'Account';
+        break;
+      case 'MyOrder':
+        labelName = 'My Orders';
         break;
     }
     return (

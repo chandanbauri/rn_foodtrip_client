@@ -47,6 +47,7 @@ export default function OrderNavigator() {
           borderColor: colors.brown,
           backgroundColor: colors.brown,
         },
+        tabBarBounces: true,
         tabBarAllowFontScaling: true,
       }}>
       <Tab.Screen name="ongoing" component={OnGoingOrdersScreen} />
