@@ -120,6 +120,24 @@ const Search = ({navigation}: SearchScreenProps) => {
                 values={item}
               />
             )}
+            ListEmptyComponent={() => (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                {textVal.current == '' ? (
+                  <Text style={{marginTop: 250, color: colors.brown}}>
+                    Search your favourite Restaurants
+                  </Text>
+                ) : (
+                  <Text style={{marginTop: 250, color: colors.brown}}>
+                    No results available
+                  </Text>
+                )}
+              </View>
+            )}
             ListFooterComponent={() => <View style={{paddingBottom: 120}} />}
           />
           <View
@@ -213,7 +231,7 @@ const styles = StyleSheet.create({
   },
   searchBarTextInput: {
     paddingLeft: 10,
-    color: colors.brown
+    color: colors.brown,
   },
   filterContainer: {
     marginTop: 20,
