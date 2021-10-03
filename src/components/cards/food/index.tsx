@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
   },
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
-    fontSize: 15,
-    fontWeight: '100',
+    fontSize: 12,
+    fontWeight: '700',
     color: colors.brown,
   },
   detailsText: {

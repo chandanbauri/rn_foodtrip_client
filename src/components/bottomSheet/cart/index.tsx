@@ -232,6 +232,7 @@ function CartInfo() {
                 text: 'OK',
                 onPress: () => {
                   Resource?.EmptyCart();
+                  Resource?.saveRestaurantDetils(null);
                   navigation.navigate('TabNav', {
                     screen: 'Account',
                   });

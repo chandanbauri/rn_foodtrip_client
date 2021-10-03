@@ -219,6 +219,7 @@ export default function ProceedingScreen({
                       currency: 'INR',
                     });
                     let data = JSON.parse(res.data);
+                    // //console.log('DATA',data.data.id)
                     var options = {
                       name: 'Food Dhaba',
                       image: '',
@@ -289,25 +290,29 @@ export default function ProceedingScreen({
                                 },
                               ]);
                             } else {
+                              //console.log('ERROR 1');
                               Alert.alert(
                                 'Sorry Can not place order right now',
                                 '',
                                 [
                                   {
                                     text: 'OK',
-                                    onPress: () => {},
+                                    onPress: () => {
+                                      navigation.navigate('Cart');
+                                    },
                                   },
                                 ],
                               );
                             }
                           } catch (error) {
+                            // console.error('LOG2', error);
                             Alert.alert(
                               'Sorry Can not place order right now',
                               '',
                               [
                                 {
                                   text: 'OK',
-                                  onPress: () => {},
+                                  onPress: () => {navigation.navigate('Cart');},
                                 },
                               ],
                             );
@@ -315,20 +320,22 @@ export default function ProceedingScreen({
                           }
                         }
                       })
-                      .catch(() => {
+                      .catch((error: any) => {
+                        // console.error('LOG3', JSON.parse(error.description));
                         Alert.alert('Sorry Can not place order right now', '', [
                           {
                             text: 'OK',
-                            onPress: () => {},
+                            onPress: () => {navigation.navigate('Cart');},
                           },
                         ]);
                       });
                   } catch (error) {
                     setInitializing(false);
+                    // console.error('LOG1 ', error);
                     Alert.alert('Sorry Can not place order right now', '', [
                       {
                         text: 'OK',
-                        onPress: () => {},
+                        onPress: () => {navigation.navigate('Cart');},
                       },
                     ]);
                     throw error;

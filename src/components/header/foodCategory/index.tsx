@@ -62,16 +62,20 @@ const styles = StyleSheet.create({
     height: 40,
     width: width,
     backgroundColor: '#FFFFFF',
-    marginVertical: 5,
+    borderBottomColor: `${colors.brown}40`,
+    borderBottomWidth: 2,
+    marginBottom: 10,
   },
   //Header Item
 
   itemRoot: {
     flex: 1,
-    width: (width * 25) / 100,
+    marginHorizontal: 10,
     paddingVertical: 4,
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.white,
   },
   itemText: {
     fontSize: 15,
@@ -82,7 +86,7 @@ const styles = StyleSheet.create({
   },
   activeItemIndicator: {
     backgroundColor: colors.brown,
-    width: (width * 22) / 100,
+    width: '100%',
     height: 3,
   },
   inactiveText: {

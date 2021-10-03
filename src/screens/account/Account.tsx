@@ -8,6 +8,7 @@ import {
   Alert,
   FlatList,
   ActivityIndicator,
+  SectionList,
 } from 'react-native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
@@ -178,7 +179,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
   ];
 
   const Header = () => (
-    <>
+    <View style={{backgroundColor: '#fff'}}>
       <View style={styles.titleBox}>
         <View>
           <Text style={styles.userName}>
@@ -201,8 +202,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
           </Pressable>
         </View>
       </View>
-      <Text style={styles.sectionTitle}>Address</Text>
-    </>
+    </View>
   );
   if (initializing) return <Loader />;
   if (Auth?.user !== null)
@@ -218,6 +218,12 @@ export default function Account({navigation, route}: AccountScreenProps) {
             <FlatList
               ListHeaderComponent={<Header />}
               data={addresses}
+              // sections={[
+              //   {
+              //     title: 'Addresses',
+              //     data: addresses,
+              //   },
+              // ]}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => `${index}`}
@@ -232,6 +238,13 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   onDelete={() => DeleteAddress(item.id)}
                 />
               )}
+              stickyHeaderIndices={[0]}
+              // stickySectionHeadersEnabled={true}
+              // renderSectionHeader={({section: {title}}) => (
+              //   <Text style={[styles.sectionTitle, {backgroundColor: '#fff'}]}>
+              //     {title}
+              //   </Text>
+              // )}
               ListEmptyComponent={
                 <View>
                   <Text style={{fontStyle: 'italic'}}>
@@ -317,7 +330,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   userName: {
     fontSize: 16,
@@ -387,5 +400,6 @@ const styles = StyleSheet.create({
   },
   footerComponent: {
     width: '100%',
+    paddingBottom: 100,
   },
 });

@@ -63,7 +63,7 @@ const Restaurant = ({onClick, values}: props) => {
           )}
           <Text style={styles.detailsText}>{`${
             values.preparationDuration
-          } . ${values.address.slice(0, 10)}...`}</Text>
+          } . ${values.address}`}</Text>
           <Text style={[styles.detailsText, styles.ordeOnlineText]}>
             {values.opening
               ? isAvailable(values.opening, values.closing)

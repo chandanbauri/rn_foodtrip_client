@@ -34,7 +34,8 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   let trigger = React.useRef(false);
   let Resouce = useResource();
   const [foodList, setFoodList] = React.useState<Array<any>>([]);
-  const [tabList, setTabList] = React.useState<Array<any>>([]);
+  // const [tabList, setTabList] = React.useState<Array<any>>([]);
+  const tablist = React.useRef<Array<any>>([]);
   const {collection, id, name, address} = route.params;
   let isFocused = useIsFocused();
   const goBack = () => {
@@ -62,7 +63,8 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         setCategories(catList);
         let items = list.filter((item: any) => item.category == catList[0]);
         setActiveTab(0);
-        setTabList(items);
+        // setTabList(items);
+        tablist.current = items;
         setInitializing(false);
       }
     } catch (error) {
@@ -74,7 +76,8 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const onCategoryClick = (categoryName: string, index: number) => {
     let list = foodList.filter(item => item.category == categoryName);
     setActiveTab(index);
-    setTabList(list);
+    // setTabList(list);
+    tablist.current = list;
   };
 
   React.useEffect(() => {
@@ -132,9 +135,10 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
       />
       <View style={styles.root}>
         <FlatList
-          data={tabList}
+          data={tablist.current}
           ListHeaderComponent={() => <MainHeader title={name} />}
           keyExtractor={(item: any) => item?.id}
+          showsVerticalScrollIndicator={false}
           renderItem={({item}: any) => (
             <Food
               id={id}
