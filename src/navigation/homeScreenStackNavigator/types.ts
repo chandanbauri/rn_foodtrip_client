@@ -17,6 +17,7 @@ export type HomeScreenStackParamList = {
     city?: string;
     state?: string;
     isEditMode: boolean;
+    title: string;
   };
   Terms: undefined;
   AboutUs: undefined;

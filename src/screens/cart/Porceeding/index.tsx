@@ -26,6 +26,7 @@ import Loader from '../../../components/loader/loader';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FocusedStatusBar from '../../../components/statusBar';
 import firestore from '@react-native-firebase/firestore';
+import {Screen} from 'react-native-screens';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({
@@ -169,9 +170,7 @@ export default function ProceedingScreen({
                             onPress: () => {
                               Resource?.EmptyCart();
                               Resource?.saveRestaurantDetils(null);
-                              navigation.navigate('Orders', {
-                                screen: 'pending',
-                              });
+                              navigation.navigate('pending');
                             },
                           },
                         ]);
@@ -312,7 +311,9 @@ export default function ProceedingScreen({
                               [
                                 {
                                   text: 'OK',
-                                  onPress: () => {navigation.navigate('Cart');},
+                                  onPress: () => {
+                                    navigation.navigate('Cart');
+                                  },
                                 },
                               ],
                             );
@@ -325,7 +326,9 @@ export default function ProceedingScreen({
                         Alert.alert('Sorry Can not place order right now', '', [
                           {
                             text: 'OK',
-                            onPress: () => {navigation.navigate('Cart');},
+                            onPress: () => {
+                              navigation.navigate('Cart');
+                            },
                           },
                         ]);
                       });
@@ -335,7 +338,9 @@ export default function ProceedingScreen({
                     Alert.alert('Sorry Can not place order right now', '', [
                       {
                         text: 'OK',
-                        onPress: () => {navigation.navigate('Cart');},
+                        onPress: () => {
+                          navigation.navigate('Cart');
+                        },
                       },
                     ]);
                     throw error;

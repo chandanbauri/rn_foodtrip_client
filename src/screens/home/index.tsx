@@ -34,7 +34,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   const getPromotionBanners = async () => {
     try {
       let res = await fetchBanner();
-      if (res) {
+      if (res && isFocused) {
         let parseddata = JSON.parse(res.data);
         let {files} = parseddata;
         let bannerLinks = files[0].map((item: any, index: number) => {

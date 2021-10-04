@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: colors.brown,
+    maxWidth: width * 0.6,
   },
   detailsText: {
     fontFamily: 'OpenSans-Bold',

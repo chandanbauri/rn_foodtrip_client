@@ -38,10 +38,20 @@ function CartInfo() {
           .get();
         if (list.size) {
           setAddresses(() => {
-            return list.docs.map((item, index) => ({
-              ...item.data(),
-              id: item.id,
-            }));
+            return list.docs.map((item, index) => {
+              if (index == 0)
+                setOrderAddress(
+                  `${item.data().home}, ${item.data().area}, ${
+                    item.data().landmark
+                  }, ${item.data().city}, ${item.data().state},${
+                    item.data().pincode
+                  }`,
+                );
+              return {
+                ...item.data(),
+                id: item.id,
+              };
+            });
           });
 
           // );

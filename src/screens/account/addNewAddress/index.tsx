@@ -170,7 +170,11 @@ export default function AddNewAddress({
       value: 'others',
     },
   ];
-
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: route.params.title,
+    });
+  }, []);
   if (initializing) return <Loader />;
   return (
     <>
@@ -181,11 +185,6 @@ export default function AddNewAddress({
       />
       <ScrollView>
         <View style={styles.root}>
-          <View style={styles.header}>
-            <Text style={styles.title}>
-              {isEditMode ? `Edit address` : `Add New Address`}
-            </Text>
-          </View>
           <View>
             {/* <TextInput
             placeholder="Tag"
@@ -361,9 +360,10 @@ export default function AddNewAddress({
 
 const styles = StyleSheet.create({
   root: {
-    height: height,
-    width: width,
-    // backgroundColor: colors.white,
+    // height: height,
+    // width: width,
+    backgroundColor: colors.white,
+    flex: 1,
     paddingHorizontal: 14,
     paddingBottom: 30,
     justifyContent: 'flex-end',
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   header: {
     height: height * 0.1,
     width: '100%',
-    position: 'absolute',
+    // position: 'absolute',
     justifyContent: 'center',
     paddingHorizontal: 14,
     top: 20,

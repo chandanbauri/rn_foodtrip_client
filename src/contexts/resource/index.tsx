@@ -135,6 +135,9 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
           saveCartToAsync(current).catch(error => {
             throw error;
           });
+          if (current.length == 0) {
+            saveRestaurantDetils(null);
+          }
           return current;
         });
       } else {
@@ -151,6 +154,9 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
           saveCartToAsync(current).catch(error => {
             throw error;
           });
+          if (current.length == 0) {
+            saveRestaurantDetils(null);
+          }
           return current;
         });
       }

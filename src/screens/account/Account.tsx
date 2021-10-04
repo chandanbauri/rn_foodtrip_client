@@ -94,6 +94,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
       landmark: address.landmark,
       city: address.city,
       state: address.state,
+      title: 'Edit address',
     });
   };
   const DeleteAddress = async (id: string) => {
@@ -259,6 +260,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                     onPress={() => {
                       navigation.navigate('AddNewAddress', {
                         isEditMode: false,
+                        title: 'Add New Address',
                       });
                     }}
                   />

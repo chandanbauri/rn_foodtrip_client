@@ -14,7 +14,7 @@ import {useResource} from '../../contexts/resource';
 import TermsScreen from '../../screens/Terms';
 import AboutUsScreen from '../../screens/about/about';
 import {colors} from '../../utilities';
-import {Pressable} from 'react-native';
+import {Pressable, Text} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import RefundScreen from '../../screens/refund';
 const Stack = createStackNavigator<HomeScreenStackParamList>();
@@ -79,7 +79,18 @@ const HomeScreenStack = () => {
       <Stack.Screen
         name="AddNewAddress"
         component={AddNewAddress}
-        options={{headerShown: false}}
+        options={{
+          headerTitleStyle: {color: colors.brown},
+          headerLeft: () => (
+            <Pressable
+              style={{padding: 15}}
+              onPress={() => {
+                navigation.navigate('Home');
+              }}>
+              <Feather name="arrow-left" size={24} color={colors.brown} />
+            </Pressable>
+          ),
+        }}
       />
       <Stack.Screen
         name="Terms"

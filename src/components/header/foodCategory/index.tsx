@@ -41,17 +41,19 @@ const FoodCategoryHeader = ({onOptionClick, categories, activeTab}: props) => {
     );
   };
   return (
-    <View style={styles.root}>
-      <FlatList
-        horizontal={true}
-        data={categories}
-        renderItem={({item, index}) => (
-          <HeaderItem item={{text: item}} index={index} />
-        )}
-        keyExtractor={(item, index) => `${index}`}
-        showsHorizontalScrollIndicator={false}
-      />
-    </View>
+    <FlatList
+      maxToRenderPerBatch={categories.length}
+      style={{backgroundColor: colors.white}}
+      initialScrollIndex={activeTab}
+      initialNumToRender={categories.length}
+      horizontal={true}
+      data={categories}
+      renderItem={({item, index}) => (
+        <HeaderItem item={{text: item}} index={index} />
+      )}
+      keyExtractor={(item, index) => `${index}`}
+      showsHorizontalScrollIndicator={false}
+    />
   );
 };
 
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
 
   itemRoot: {
     flex: 1,
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     paddingVertical: 4,
     paddingHorizontal: 4,
     alignItems: 'center',

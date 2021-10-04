@@ -1,30 +1,16 @@
 import * as React from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
+import {Alert, Dimensions, Pressable, StyleSheet} from 'react-native';
 import {Text, View, FlatList} from 'react-native';
 import Food from '../../components/cards/food';
-import AnimatedHeader from '../../components/header/animated';
-import Animated, {
-  Extrapolate,
-  Value,
-  interpolateColors,
-} from 'react-native-reanimated';
 import FocusedStatusBar from '../../components/statusBar';
 import {RestaurantScreenProps} from '../../navigation/homeScreenStackNavigator/types';
 import {colors} from '../../utilities';
-import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-import {ResourceContext, useResource} from '../../contexts/resource';
+import {useResource} from '../../contexts/resource';
 import {getFoodList} from '../../utilities/cloud/functions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FoodCategoryHeader from '../../components/header/foodCategory';
 import Loader from '../../components/loader/loader';
 import {useIsFocused} from '@react-navigation/native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 const {height, width} = Dimensions.get('window');
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
@@ -34,7 +20,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   let trigger = React.useRef(false);
   let Resouce = useResource();
   const [foodList, setFoodList] = React.useState<Array<any>>([]);
-  // const [tabList, setTabList] = React.useState<Array<any>>([]);
   const tablist = React.useRef<Array<any>>([]);
   const {collection, id, name, address} = route.params;
   let isFocused = useIsFocused();
@@ -56,7 +41,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const fetchFoodList = async () => {
     try {
       let res = await getFoodList({parentName: collection, parentID: id});
-      if (res && res.data) {
+      if (res && res.data && isFocused) {
         let list = JSON.parse(res.data);
         let catList = extractCategories(list);
         setFoodList(list);
@@ -76,7 +61,6 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const onCategoryClick = (categoryName: string, index: number) => {
     let list = foodList.filter(item => item.category == categoryName);
     setActiveTab(index);
-    // setTabList(list);
     tablist.current = list;
   };
 
