@@ -1,6 +1,14 @@
 import {useIsFocused} from '@react-navigation/native';
 import * as React from 'react';
-import {Alert, FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Loader from '../../../../components/loader/loader';
 import FocusedStatusBar from '../../../../components/statusBar';
 import {AuthContext} from '../../../../contexts/Auth';
@@ -11,10 +19,12 @@ import OrderCard from '../../../../components/cards/order';
 const usersCollection = firestore().collection('Users');
 export default function RejectedOrderScreen() {
   const [data, setData] = React.useState<Array<any>>([]);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const isFocused = useIsFocused();
   const Auth = React.useContext(AuthContext);
   const getData = async () => {
+    setInitializing(true);
     try {
       let myOrders = await usersCollection
         .doc(Auth?.user?.uid)
@@ -34,10 +44,21 @@ export default function RejectedOrderScreen() {
       } else {
         setData([]);
       }
+      setInitializing(false);
     } catch (error) {
       setData([]);
       throw error;
     }
+  };
+  const onRefresh = () => {
+    if (isFocused) {
+      getData().catch(error => {
+        throw error;
+      });
+    } else {
+      setInitializing(true);
+    }
+    return;
   };
   const OnCancelOrder = async (item: any) => {
     setInitializing(true);
@@ -75,17 +96,10 @@ export default function RejectedOrderScreen() {
   };
   React.useEffect(() => {
     if (isFocused) {
-      getData()
-        .then(value => {
-          if (value != null) {
-            setData(value);
-          }
-          setInitializing(false);
-        })
-        .catch(error => {
-          setInitializing(false);
-          throw error;
-        });
+      getData().catch(error => {
+        setInitializing(false);
+        throw error;
+      });
     } else {
       setInitializing(true);
     }
@@ -106,7 +120,7 @@ export default function RejectedOrderScreen() {
       />
       <View style={styles.root}>
         <FlatList
-          data={data}
+          data={data.sort((a, b) => b.placedAt - a.placedAt)}
           keyExtractor={(item, index: number) => {
             return `${index}`;
           }}
@@ -120,6 +134,13 @@ export default function RejectedOrderScreen() {
               }}
             />
           )}
+          refreshControl={
+            <RefreshControl
+              colors={[colors.brown, colors.gray]}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         />
       </View>
     </>

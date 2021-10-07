@@ -2,11 +2,14 @@ import * as React from 'react';
 import {
   Dimensions,
   Image,
+  ImageProps,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import {Grayscale} from 'react-native-color-matrix-image-filters';
+import {color} from 'react-native-reanimated';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {colors, isAvailable} from '../../../utilities';
 
@@ -14,7 +17,11 @@ type props = {
   onClick: () => void;
   values: any;
 };
-
+const GrayscaledImage = (imageProps: ImageProps) => (
+  <Grayscale amount={2} style={{height: 100, width: 100}}>
+    <Image {...imageProps} />
+  </Grayscale>
+);
 const {width} = Dimensions.get('screen');
 const Sekelton = () => {
   return (
@@ -32,14 +39,32 @@ const Restaurant = ({onClick, values}: props) => {
     return (
       <Pressable style={styles.root} onPress={onClick}>
         <View style={{height: 100, width: 100}}>
-          {values.image && (
-            <Image
-              source={{
-                uri: values.image,
-              }}
-              style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
-            />
-          )}
+          {values.opening
+            ? isAvailable(values.opening, values.closing)
+              ? values.image && (
+                  <Image
+                    source={{
+                      uri: values.image,
+                    }}
+                    style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
+                  />
+                )
+              : values.image && (
+                  <GrayscaledImage
+                    source={{
+                      uri: values.image,
+                    }}
+                    style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
+                  />
+                )
+            : values.image && (
+                <GrayscaledImage
+                  source={{
+                    uri: values.image,
+                  }}
+                  style={{flex: 1, resizeMode: 'cover', borderRadius: 10}}
+                />
+              )}
           <View
             style={{
               position: 'absolute',
@@ -47,8 +72,9 @@ const Restaurant = ({onClick, values}: props) => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: '#00000020',
               borderRadius: 10,
+              zIndex: 10,
+              opacity: 0.3,
             }}
           />
         </View>
@@ -61,10 +87,20 @@ const Restaurant = ({onClick, values}: props) => {
               {values.tags.slice(0, 2).join(' . ')}
             </Text>
           )}
-          <Text style={styles.detailsText}>{`${
-            values.preparationDuration
-          } . ${values.address}`}</Text>
-          <Text style={[styles.detailsText, styles.ordeOnlineText]}>
+          <Text
+            style={[
+              styles.detailsText,
+              {color: colors.time_and_address},
+            ]}>{`${values.preparationDuration} . ${values.address}`}</Text>
+          <Text
+            style={[
+              styles.detailsText,
+              values.opening
+                ? isAvailable(values.opening, values.closing)
+                  ? styles.ordeOnlineText
+                  : {color: colors.closed, fontWeight: 'bold'}
+                : {color: colors.closed, fontWeight: 'bold'},
+            ]}>
             {values.opening
               ? isAvailable(values.opening, values.closing)
                 ? 'Order online'
@@ -105,15 +141,15 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 15,
     fontWeight: 'bold',
-    color: colors.brown,
+    color: colors.logo_color,
   },
   detailsText: {
     fontFamily: 'OpenSans',
     fontSize: 13,
-    color: colors.brown,
+    color: colors.type_color,
   },
   ordeOnlineText: {
     fontWeight: 'bold',
-    color: colors.purple,
+    color: colors.order_online,
   },
 });

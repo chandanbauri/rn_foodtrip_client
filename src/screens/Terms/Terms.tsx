@@ -22,7 +22,7 @@ let data = [
       },
       {
         feild_title: 'Privacy:',
-        description: `Your privacy is very important to us. We will assure you that your any private data will not be disclosed anywhere at any cost. If you have any questions or concerns about terms and conditions, please contact us at support@addafood.com`,
+        description: `Your privacy is very important to us. We will assure you that your any private data will not be disclosed anywhere at any cost. If you have any questions or concerns about terms and conditions, please contact us at fooddhaba2021@gmail.com`,
       },
     ],
     un_ordered_concerns: [
@@ -39,7 +39,7 @@ let data = [
         description: `Do not access other user’s account without their permission. Do not disturb other people’s personal information like email Id, passwords, play store or app store credentials without their permission.`,
       },
     ],
-    special_delclaration: `In case of any illegal activities from user, we can block their account permanently.`,
+    special_delclaration: `: In case of any illegal activities from user, we can block their account permanently.`,
   },
   // special_delclaration: `In case of any illegal activities from user, we can block their account permanently.`,
 ];

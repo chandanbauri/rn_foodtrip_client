@@ -44,7 +44,7 @@ const BottomNavigator = () => {
         options={{
           headerTitle: `Food Dhaba`,
           headerTitleStyle: {
-            color: colors.brown,
+            color: colors.logo_color,
             fontFamily: 'OpenSans-SemiBold',
           },
           headerRight: () => (
@@ -53,7 +53,7 @@ const BottomNavigator = () => {
               onPress={() => {
                 navigation.navigate('Search');
               }}>
-              <Feather name="search" size={24} color={colors.brown} />
+              <Feather name="search" size={24} color={colors.divider} />
             </Pressable>
           ),
         }}
@@ -70,13 +70,13 @@ const BottomNavigator = () => {
         }}
       />
       <BottomTab.Screen
-        name="Account"
-        component={AccountNavigator}
+        name="MyOrder"
+        component={OrderStackNavigator}
         options={{headerShown: false}}
       />
       <BottomTab.Screen
-        name="MyOrder"
-        component={OrderStackNavigator}
+        name="Account"
+        component={AccountNavigator}
         options={{headerShown: false}}
       />
     </BottomTab.Navigator>

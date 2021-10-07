@@ -21,7 +21,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   let Resouce = useResource();
   const [foodList, setFoodList] = React.useState<Array<any>>([]);
   const tablist = React.useRef<Array<any>>([]);
-  const {collection, id, name, address} = route.params;
+  const {collection, id, name, address, isOpen} = route.params;
   let isFocused = useIsFocused();
   const goBack = () => {
     navigation.navigate('Home');
@@ -92,7 +92,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         </Pressable>
         <Text
           style={{
-            color: colors.brown,
+            color: colors.logo_color,
             fontSize: 18,
             marginLeft: 20,
             fontWeight: '700',
@@ -100,6 +100,19 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           {title.slice(0, 40)}
         </Text>
       </View>
+      {!isOpen && (
+        <View
+          style={{
+            paddingHorizontal: 14,
+            paddingVertical: 4,
+            backgroundColor: colors.gray,
+            alignItems: 'center',
+          }}>
+          <Text style={{color: colors.white}}>
+            {'The partner is currently no accepting orders'}
+          </Text>
+        </View>
+      )}
       <FoodCategoryHeader
         categories={categories}
         activeTab={activeTab}
@@ -125,6 +138,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           showsVerticalScrollIndicator={false}
           renderItem={({item}: any) => (
             <Food
+              isClosed={!isOpen}
               id={id}
               item={item}
               addToCardAction={() => {
@@ -163,29 +177,35 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
             bottom: 0,
             paddingTop: 20,
           }}>
-          <View style={{width: '100%', paddingHorizontal: 14}}>
-            <Pressable
-              style={{}}
-              onPress={() => {
-                if (
-                  trigger.current &&
-                  Resouce &&
-                  Resouce?.getTotalCost() >= 150
-                )
-                  navigation.navigate('BookOrder');
-              }}>
-              <View style={styles.gotoCartButton}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: colors.white,
-                  }}>
-                  Proceed
-                </Text>
-              </View>
-            </Pressable>
-          </View>
-          <View style={styles.bottomTextContainer}>
+          {isOpen && (
+            <View style={{width: '100%', paddingHorizontal: 14}}>
+              <Pressable
+                style={{}}
+                onPress={() => {
+                  if (
+                    trigger.current &&
+                    Resouce &&
+                    Resouce?.getTotalCost() >= 150
+                  )
+                    navigation.navigate('BookOrder');
+                }}>
+                <View style={styles.gotoCartButton}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: colors.white,
+                    }}>
+                    Proceed
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+          )}
+          <View
+            style={[
+              styles.bottomTextContainer,
+              isOpen ? {} : {backgroundColor: colors.gray},
+            ]}>
             <Text
               style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
           </View>

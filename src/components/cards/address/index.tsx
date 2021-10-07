@@ -32,27 +32,38 @@ const AddressCard = ({
   return (
     <Pressable>
       <View style={styles.root}>
-        <Text style={styles.title}>{tag}</Text>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+          }}>
+          <View>
+            <Text style={styles.title}>{tag}</Text>
+          </View>
+          <View style={styles.actionBar}>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                if (onEdit) onEdit();
+              }}>
+              <Text style={styles.buttonText}>Edit</Text>
+            </Pressable>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                if (onDelete) onDelete();
+              }}>
+              <Text style={styles.buttonText}>Delete</Text>
+            </Pressable>
+          </View>
+        </View>
         <Text
           style={
             styles.address
           }>{`${home}, ${area}, ${landmark}, ${city}, ${state},${pincode}`}</Text>
-        <View style={styles.actionBar}>
-          <Pressable
-            style={styles.button}
-            onPress={() => {
-              if (onEdit) onEdit();
-            }}>
-            <Text style={styles.buttonText}>Edit</Text>
-          </Pressable>
-          <Pressable
-            style={styles.button}
-            onPress={() => {
-              if (onDelete) onDelete();
-            }}>
-            <Text style={styles.buttonText}>Delete</Text>
-          </Pressable>
-        </View>
       </View>
     </Pressable>
   );
@@ -87,17 +98,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   actionBar: {
-    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 10,
   },
   button: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     backgroundColor: colors.white,
-    marginRight: 20,
+    marginLeft: 10,
     borderRadius: 4,
   },
   buttonText: {

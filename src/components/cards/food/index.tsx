@@ -21,6 +21,7 @@ type props = {
   removeFromCardAction?: () => void;
   isInCartView?: boolean;
   id?: string;
+  isClosed?: boolean;
 };
 
 function Food({
@@ -29,6 +30,7 @@ function Food({
   removeFromCardAction,
   isInCartView,
   id,
+  isClosed,
 }: props) {
   const Resource = React.useContext(ResourceContext);
 
@@ -75,78 +77,79 @@ function Food({
         }`}</Text>
         {/* </View> */}
       </View>
-      {Resource?.findItemInTheCart(item.id) ? (
-        <View style={styles.controllButtonsContainer}>
-          <Pressable
-            onPress={() => {
-              setCounter(prev => {
-                if (Resource?.cart.length <= 1 && removeFromCardAction) {
-                  removeFromCardAction();
-                }
-                prev === 1
-                  ? Resource?.deleteItemFromCart(item.id)
-                  : Resource?.updateItem({...item, count: prev - 1});
-                return prev - 1;
-              });
-            }}>
-            <MaterialCommunityIcons
-              name="minus-box-outline"
-              size={24}
-              color={colors.brown}
-            />
-          </Pressable>
-          <Text>{counter}</Text>
-          <Pressable
-            onPress={() => {
-              setCounter(prev => {
-                if (addToCardAction) addToCardAction();
-                Resource?.updateItem({...item, count: prev + 1});
-                return prev + 1;
-              });
-            }}>
-            <MaterialCommunityIcons
-              name="plus-box-outline"
-              size={24}
-              color={colors.brown}
-            />
-          </Pressable>
-        </View>
-      ) : (
-        <Pressable
-          onPress={() => {
-            if (
-              Resource?.restaurantDetails &&
-              Resource?.restaurantDetails.id == id
-            ) {
-              setCounter(1);
-              if (addToCardAction) addToCardAction();
-              Resource?.addToCart({...item, count: 1});
-            } else if (!Resource?.restaurantDetails) {
-              setCounter(1);
-              if (addToCardAction) addToCardAction();
-              Resource?.addToCart({...item, count: 1});
-            } else if (
-              Resource?.restaurantDetails &&
-              Resource?.restaurantDetails.id !== id
-            ) {
-              Alert.alert(
-                'You can only order from one Restaurant at a time',
-                '',
-                [{text: 'OK', onPress: () => {}}],
-              );
-            }
-          }}>
-          <View
-            style={{
-              padding: 8,
-              borderWidth: 1,
-              borderColor: colors.brown,
-              borderRadius: 100 / 2,
-            }}>
-            <AntDesign name="plus" size={24} color={colors.brown} />
+      {!isClosed &&
+        (Resource?.findItemInTheCart(item.id) ? (
+          <View style={styles.controllButtonsContainer}>
+            <Pressable
+              onPress={() => {
+                setCounter(prev => {
+                  if (Resource?.cart.length <= 1 && removeFromCardAction) {
+                    removeFromCardAction();
+                  }
+                  prev === 1
+                    ? Resource?.deleteItemFromCart(item.id)
+                    : Resource?.updateItem({...item, count: prev - 1});
+                  return prev - 1;
+                });
+              }}>
+              <MaterialCommunityIcons
+                name="minus-box-outline"
+                size={24}
+                color={colors.brown}
+              />
+            </Pressable>
+            <Text>{counter}</Text>
+            <Pressable
+              onPress={() => {
+                setCounter(prev => {
+                  if (addToCardAction) addToCardAction();
+                  Resource?.updateItem({...item, count: prev + 1});
+                  return prev + 1;
+                });
+              }}>
+              <MaterialCommunityIcons
+                name="plus-box-outline"
+                size={24}
+                color={colors.divider}
+              />
+            </Pressable>
           </View>
-        </Pressable>
-      )}
+        ) : (
+          <Pressable
+            onPress={() => {
+              if (
+                Resource?.restaurantDetails &&
+                Resource?.restaurantDetails.id == id
+              ) {
+                setCounter(1);
+                if (addToCardAction) addToCardAction();
+                Resource?.addToCart({...item, count: 1});
+              } else if (!Resource?.restaurantDetails) {
+                setCounter(1);
+                if (addToCardAction) addToCardAction();
+                Resource?.addToCart({...item, count: 1});
+              } else if (
+                Resource?.restaurantDetails &&
+                Resource?.restaurantDetails.id !== id
+              ) {
+                Alert.alert(
+                  'You can only order from one Restaurant at a time',
+                  '',
+                  [{text: 'OK', onPress: () => {}}],
+                );
+              }
+            }}>
+            <View
+              style={{
+                padding: 8,
+                borderWidth: 1,
+                borderColor: colors.brown,
+                borderRadius: 100 / 2,
+              }}>
+              <AntDesign name="plus" size={24} color={colors.brown} />
+            </View>
+          </Pressable>
+        ))}
     </View>
   );
 }
@@ -175,14 +178,14 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 12,
     fontWeight: '700',
-    color: colors.brown,
+    color: colors.logo_color,
     maxWidth: width * 0.6,
   },
   detailsText: {
     fontFamily: 'OpenSans-Bold',
     fontSize: 13,
     fontWeight: '100',
-    color: colors.brown,
+    color: colors.time_and_address,
   },
   controllButtonsContainer: {
     width: 120,

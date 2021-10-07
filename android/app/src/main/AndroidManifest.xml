@@ -15,7 +15,9 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:exported="true"
         android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:screenOrientation="portrait"
+        >
         <!-- <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -24,7 +26,9 @@
       <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
       android:theme="@style/BootTheme"
-      android:launchMode="singleTask">
+      android:launchMode="singleTask"
+      android:screenOrientation="portrait"
+      >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

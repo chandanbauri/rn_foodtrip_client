@@ -8,7 +8,7 @@ import {AboutUsScreenProps} from '../../navigation/homeScreenStackNavigator/type
 const data = [
   {
     feild_title: 'ABOUT COMPANY',
-    main_Description: `Food Dhaba is a Sikkim restaurant aggregator and food delivery company founded in 2021. It provides information, menus and food delivery options from various partner restaurants in selected cities of Sikkim.`,
+    main_Description: `Food Dhaba is a Sikkim restaurant aggregator and food delivery company founded in 2021. It provides information, menus and food delivery options from various partner restaurants in selected cities of Sikkim. We provide online   food   delivery,   which   offers   time-poor,   busy   consumers   the convenience, and efficiency they need by providing them with the ability to quickly choose meals or groceries without the need for physical store or restaurant visits. We offering online food delivery services and online payment methods, we have an easy-to-use website, android application to give consumers the ease and convenience that they demand.`,
   },
 ];
 

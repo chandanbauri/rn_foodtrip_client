@@ -180,30 +180,61 @@ export default function Account({navigation, route}: AccountScreenProps) {
   ];
 
   const Header = () => (
-    <View style={{backgroundColor: '#fff'}}>
-      <View style={styles.titleBox}>
-        <View>
-          <Text style={styles.userName}>
-            {auth().currentUser?.displayName
-              ? auth().currentUser?.displayName
-              : 'User Name'}
-          </Text>
-          <Text style={styles.phoneNumber}>{`${
-            auth().currentUser?.phoneNumber
-          }`}</Text>
-          {auth().currentUser?.email && (
-            <Text style={styles.phoneNumber}>{`${
-              auth().currentUser?.email
+    <>
+      <View
+        style={{
+          backgroundColor: '#fff',
+          borderColor: colors.divider,
+          borderWidth: 1,
+          paddingHorizontal: 10,
+          paddingVertical: 10,
+          borderRadius: 10,
+        }}>
+        <Text
+          style={{
+            fontSize: 18,
+            color: colors.logo_color,
+            fontWeight: 'bold',
+          }}>{`My profile`}</Text>
+        <View style={styles.titleBox}>
+          <View>
+            <Text style={styles.userName}>
+              {`Name : ${
+                auth().currentUser?.displayName
+                  ? auth().currentUser?.displayName
+                  : 'User Name'
+              }`}
+            </Text>
+            <Text style={styles.phoneNumber}>{`Phone : ${
+              auth().currentUser?.phoneNumber
             }`}</Text>
-          )}
-        </View>
-        <View>
-          <Pressable onPress={() => navigation.navigate('EditProfile')}>
-            <Text>Edit</Text>
-          </Pressable>
+            {auth().currentUser?.email && (
+              <Text style={styles.phoneNumber}>{`Email : ${
+                auth().currentUser?.email
+              }`}</Text>
+            )}
+          </View>
+          <View>
+            <Pressable
+              onPress={() => navigation.navigate('EditProfile')}
+              style={{
+                marginTop: 20,
+                width: '100%',
+                maxWidth: 100,
+                paddingVertical: 2,
+                borderRadius: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderColor: colors.divider,
+                borderWidth: 1,
+              }}>
+              <Text style={{fontSize: 12}}>Edit</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
-    </View>
+      <Text style={styles.ListHeaderTitle}>Addresses</Text>
+    </>
   );
   if (initializing) return <Loader />;
   if (Auth?.user !== null)
@@ -239,7 +270,6 @@ export default function Account({navigation, route}: AccountScreenProps) {
                   onDelete={() => DeleteAddress(item.id)}
                 />
               )}
-              stickyHeaderIndices={[0]}
               // stickySectionHeadersEnabled={true}
               // renderSectionHeader={({section: {title}}) => (
               //   <Text style={[styles.sectionTitle, {backgroundColor: '#fff'}]}>
@@ -273,7 +303,11 @@ export default function Account({navigation, route}: AccountScreenProps) {
                             screen: 'Terms',
                           });
                         }}>
-                        <Text style={{color: '#AAA', fontSize: 14}}>
+                        <Text
+                          style={{
+                            color: colors.time_and_address,
+                            fontSize: 14,
+                          }}>
                           Terms & Conditions
                         </Text>
                       </Pressable>
@@ -284,7 +318,11 @@ export default function Account({navigation, route}: AccountScreenProps) {
                             screen: 'Refund',
                           });
                         }}>
-                        <Text style={{color: '#AAA', fontSize: 14}}>
+                        <Text
+                          style={{
+                            color: colors.time_and_address,
+                            fontSize: 14,
+                          }}>
                           Refund Policy
                         </Text>
                       </Pressable>
@@ -295,7 +333,11 @@ export default function Account({navigation, route}: AccountScreenProps) {
                             screen: 'AboutUs',
                           });
                         }}>
-                        <Text style={{color: '#AAA', fontSize: 14}}>
+                        <Text
+                          style={{
+                            color: colors.time_and_address,
+                            fontSize: 14,
+                          }}>
                           About Company
                         </Text>
                       </Pressable>
@@ -329,9 +371,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   titleBox: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingVertical: 10,
   },
   userName: {
@@ -340,7 +381,7 @@ const styles = StyleSheet.create({
   },
   phoneNumber: {
     fontSize: 12,
-    color: '#AAAAAA',
+    color: colors.time_and_address,
   },
   guestUserContainer: {
     position: 'absolute',
@@ -403,5 +444,12 @@ const styles = StyleSheet.create({
   footerComponent: {
     width: '100%',
     paddingBottom: 100,
+  },
+  ListHeaderTitle: {
+    color: colors.logo_color,
+    fontWeight: '700',
+    fontSize: 16,
+    marginTop: 20,
+    marginBottom: 10,
   },
 });

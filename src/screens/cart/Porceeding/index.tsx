@@ -158,6 +158,7 @@ export default function ProceedingScreen({
                       isOnGoing: false,
                       isDelivered: false,
                       isRejected: false,
+                      placedAt: Date.now(),
                     };
                     try {
                       let res = await createOrder({order: ORDER});
@@ -270,6 +271,7 @@ export default function ProceedingScreen({
                             isOnGoing: false,
                             isDelivered: false,
                             isRejected: false,
+                            placedAt: Date.now(),
                           };
                           try {
                             let res = await createOrder({order: ORDER});

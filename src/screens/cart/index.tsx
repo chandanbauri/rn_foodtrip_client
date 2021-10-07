@@ -82,19 +82,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   emptyCartText: {
-    color: colors.brown,
+    color: colors.logo_color,
     fontWeight: 'bold',
     fontSize: 12,
   },
   visitNearByRestaurantButton: {
     borderWidth: 2,
-    borderColor: colors.brown,
+    borderColor: colors.divider,
     paddingVertical: 12,
     paddingHorizontal: 35,
     marginTop: 10,
   },
   visitNearByRestaurantButtonText: {
-    color: colors.brown,
+    color: colors.logo_color,
     textTransform: 'uppercase',
     fontSize: 12,
     fontWeight: 'bold',

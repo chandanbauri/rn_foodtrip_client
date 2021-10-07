@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import Restaurant from '../../components/cards/Restaurant';
 import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
@@ -29,6 +30,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   let isFocused = useIsFocused();
   const Resource = React.useContext(ResourceContext);
   const [initializing, setInitializing] = React.useState<boolean>(true);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [banners, setBanners] = React.useState<any>([]);
   const ref = React.useRef(null);
   const getPromotionBanners = async () => {
@@ -58,6 +60,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   };
 
   const getList = async () => {
+    setInitializing(true);
     if (isFocused)
       try {
         let res = await getRestaurantList();
@@ -75,6 +78,13 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       } catch (error) {
         // console.log(error);
       }
+  };
+  const onRefresh = () => {
+    if (isFocused)
+      getList().catch(error => {
+        throw error;
+      });
+    return;
   };
   React.useEffect(() => {
     if (isFocused)
@@ -141,6 +151,11 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       </View>
     </>
   );
+  const Divider = () => (
+    <View
+      style={{height: 0.9, width: '100%', backgroundColor: colors.divider}}
+    />
+  );
   if (initializing) return <Loader />;
   return (
     <>
@@ -184,17 +199,29 @@ const Home = ({navigation, route}: HomeScreenProps) => {
                         collection: 'restaurants',
                         address: item.address,
                         name: item.restaurantName,
+                        isOpen: true,
                       });
                     else {
-                      Alert.alert(
-                        'Opps',
-                        'This Restaurant is not accepting Orders for now',
-                      );
+                      navigation.navigate('Restaurant', {
+                        id: item.id,
+                        collection: 'restaurants',
+                        address: item.address,
+                        name: item.restaurantName,
+                        isOpen: false,
+                      });
                     }
                   }}
                   values={item}
                 />
               )}
+              ItemSeparatorComponent={() => <Divider />}
+              refreshControl={
+                <RefreshControl
+                  colors={[colors.brown, colors.gray]}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
             />
           ) : (
             <View

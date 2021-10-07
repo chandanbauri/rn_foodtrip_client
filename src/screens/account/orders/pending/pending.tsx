@@ -1,5 +1,13 @@
 import * as React from 'react';
-import {Alert, FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import FocusedStatusBar from '../../../../components/statusBar';
 import firestore from '@react-native-firebase/firestore';
 import Loader from '../../../../components/loader/loader';
@@ -12,9 +20,11 @@ const usersCollection = firestore().collection('Users');
 export default function PendingOrdersScreen() {
   const [data, setData] = React.useState<Array<any>>([]);
   const [initializing, setInitializing] = React.useState<boolean>(true);
+  const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
   const Auth = React.useContext(AuthContext);
   const getData = async () => {
+    setInitializing(true);
     try {
       let myOrders = await usersCollection
         .doc(Auth?.user?.uid)
@@ -30,6 +40,7 @@ export default function PendingOrdersScreen() {
       } else {
         setData([]);
       }
+      setInitializing(false);
     } catch (error) {
       setData([]);
       throw error;
@@ -69,6 +80,16 @@ export default function PendingOrdersScreen() {
       ]);
     }
   };
+  const onRefresh = () => {
+    if (isFocused) {
+      getData().catch(error => {
+        throw error;
+      });
+    } else {
+      setInitializing(true);
+    }
+    return;
+  };
   React.useEffect(() => {
     if (isFocused) {
       getData()
@@ -87,6 +108,7 @@ export default function PendingOrdersScreen() {
     }
     return;
   }, [isFocused]);
+
   if (initializing)
     return (
       <>
@@ -102,7 +124,7 @@ export default function PendingOrdersScreen() {
       />
       <View style={styles.root}>
         <FlatList
-          data={data}
+          data={data.sort((a, b) => b.placedAt - a.placedAt)}
           keyExtractor={(item, index: number) => {
             return `${index}`;
           }}
@@ -116,6 +138,13 @@ export default function PendingOrdersScreen() {
               }}
             />
           )}
+          refreshControl={
+            <RefreshControl
+              colors={[colors.brown, colors.gray]}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         />
       </View>
     </>

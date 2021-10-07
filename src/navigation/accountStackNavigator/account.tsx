@@ -25,10 +25,12 @@ const Stack = createStackNavigator<AccountNavigatorParamlist>();
 export default function AccountNavigator() {
   const navigation = useNavigation<CombinedNavigationProp>();
   return (
-    <Stack.Navigator
-      initialRouteName="Profile"
-      screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Profile" component={Account} />
+    <Stack.Navigator initialRouteName="Profile">
+      <Stack.Screen
+        name="Profile"
+        component={Account}
+        options={{headerTitle: 'Account'}}
+      />
       {/* <Stack.Screen
         name="Orders"
         component={OrderNavigator}

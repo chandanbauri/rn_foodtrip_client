@@ -69,7 +69,7 @@ export default function OrderCard({item, onCancel, onRepeat}: props) {
                   style={[
                     styles.text,
                     styles.caption,
-                  ]}>{`Order is On the way`}</Text>
+                  ]}>{`Order is Preparing `}</Text>
               )}
               {item.isDelivered && (
                 <Text

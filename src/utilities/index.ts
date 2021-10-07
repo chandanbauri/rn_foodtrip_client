@@ -11,6 +11,12 @@ export const colors = {
   black: '#0F0F0F',
   purple: '#6930C3',
   error: '#FF2442',
+  logo_color: '#302b28',
+  type_color: '#B6B6B8',
+  time_and_address: '#65646A',
+  order_online: '#48984b',
+  closed: '#E81333',
+  divider: '#D17755',
 };
 
 export const setValue = async (value: any, key: string) => {
