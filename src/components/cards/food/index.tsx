@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   detailsTitle: {
     fontFamily: 'OpenSans-SemiBold',
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '700',
     color: colors.logo_color,
     maxWidth: width * 0.6,

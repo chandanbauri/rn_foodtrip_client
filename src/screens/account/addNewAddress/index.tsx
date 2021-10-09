@@ -18,6 +18,7 @@ import {stat} from 'fs';
 import {AddNewAddressScreenProps} from '../../../navigation/homeScreenStackNavigator/types';
 import Loader from '../../../components/loader/loader';
 import FocusedStatusBar from '../../../components/statusBar';
+import NetInfo from '@react-native-community/netinfo';
 
 const {height, width} = Dimensions.get('window');
 export default function AddNewAddress({
@@ -27,6 +28,9 @@ export default function AddNewAddress({
   let {isEditMode, tag, state, area, home, city, landmark, pincode, id} =
     route.params;
   let initState = {
+    name: auth().currentUser?.displayName
+      ? auth().currentUser?.displayName
+      : '',
     tag: tag ?? 'office',
     pincode: pincode ?? '',
     home: home ?? '',
@@ -37,6 +41,7 @@ export default function AddNewAddress({
   };
   const pickerRef = React.createRef<Picker<string>>();
   const [appState, setState] = React.useState(initState);
+  const [netState, setNetState] = React.useState<any>(null);
   const handleTextInput = (name: string) => (text: string) => {
     setState(prev => ({...prev, [name]: text}));
   };
@@ -175,12 +180,25 @@ export default function AddNewAddress({
       title: route.params.title,
     });
   }, []);
-  if (initializing) return <Loader />;
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
+  if (initializing) return <Loader netState={netState} />;
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <ScrollView>
@@ -198,6 +216,20 @@ export default function AddNewAddress({
             }}
             onChangeText={handleTextInput('tag')}
           /> */}
+            {!auth().currentUser?.displayName ? (
+              <TextInput
+                placeholder="Name"
+                placeholderTextColor={colors.brown}
+                value={appState.name ?? ''}
+                style={{
+                  borderBottomColor: colors.brown,
+                  borderBottomWidth: 1,
+                  color: colors.brown,
+                  marginVertical: 15,
+                }}
+                onChangeText={handleTextInput('name')}
+              />
+            ) : null}
             <View
               style={{
                 borderBottomColor: colors.brown,
@@ -315,6 +347,20 @@ export default function AddNewAddress({
               text="save"
               onPress={async () => {
                 setInitializing(true);
+                if (!auth().currentUser?.displayName) {
+                  if (appState.name !== ' ' && appState.name !== '')
+                    auth().currentUser?.updateProfile({
+                      displayName: appState.name,
+                    });
+                  else {
+                    Alert.alert('Name Cannot Be Empty', '', [
+                      {
+                        text: 'Ok',
+                      },
+                    ]);
+                    return;
+                  }
+                }
                 if (
                   appState.area == '' ||
                   appState.city == '' ||
@@ -325,7 +371,7 @@ export default function AddNewAddress({
                   appState.tag == ''
                 ) {
                   Alert.alert(
-                    'Please Fille the Required Fields',
+                    'Please Fill the Required Fields',
                     'All the fields are required',
                     [
                       {
@@ -340,7 +386,7 @@ export default function AddNewAddress({
                   } else {
                     await SaveNew();
                   }
-                  // console.log(state);
+                  // //console.log(state);
                   setInitializing(false);
                 }
               }}

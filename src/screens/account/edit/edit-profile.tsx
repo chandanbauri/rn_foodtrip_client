@@ -6,6 +6,7 @@ import FocusedStatusBar from '../../../components/statusBar';
 import {colors} from '../../../utilities';
 import auth from '@react-native-firebase/auth';
 import {EditProfileProps} from '../../../navigation/accountStackNavigator/account';
+import NetInfo from '@react-native-community/netinfo';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -42,7 +43,7 @@ export default function EditProfileScreen({
   let initDetails = {
     // tag: '',
     name: '',
-    email: '',
+    // email: '',
     // pincode: '',
     // home: '',
     // area: '',
@@ -53,16 +54,30 @@ export default function EditProfileScreen({
   };
   const [details, setDetails] = React.useState(initDetails);
   const [initializing, setInitializing] = React.useState<boolean>(false);
+  const [netState, setNetState] = React.useState<any>(null);
   const [refresh, setRefresh] = React.useState<number>(1);
   const handleTextInput = (name: string) => (text: string) => {
     setDetails(prev => ({...prev, [name]: text}));
   };
-  if (initializing) return <Loader />;
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
+  if (initializing) return <Loader netState={netState} />;
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <View style={styles.root}>
@@ -100,7 +115,7 @@ export default function EditProfileScreen({
             }}
             onChangeText={handleTextInput('name')}
           />
-          <TextInput
+          {/* <TextInput
             placeholder="email"
             placeholderTextColor={colors.brown}
             style={{
@@ -110,7 +125,7 @@ export default function EditProfileScreen({
             }}
             onChangeText={handleTextInput('email')}
             keyboardType="email-address"
-          />
+          /> */}
           <View
             style={{
               position: 'absolute',
@@ -127,13 +142,27 @@ export default function EditProfileScreen({
                 onPress={async () => {
                   setInitializing(true);
                   try {
-                    if (details.name.length > 0)
+                    if (
+                      details.name !== ' ' &&
+                      details.name !== '' &&
+                      details.name.length > 0
+                    )
                       auth().currentUser?.updateProfile({
                         displayName: details.name,
                       });
-                    if (details.email.length > 0) {
-                      auth().currentUser?.updateEmail(details.email);
+                    else {
+                      Alert.alert('Name Cannot Be Empty', '', [
+                        {
+                          text: 'Ok',
+                        },
+                      ]);
+                      setInitializing(false);
+                      return;
                     }
+                    // if (details.email.length > 0) {
+                    //   // let user = await auth().signInWithPhoneNumber(`${auth().currentUser?.phoneNumber}`)
+                    //   await auth().currentUser?.updateEmail(details.email);
+                    // }
                     // if (details.phoneNumber.length === 10) {
                     //   auth().currentUser?.updatePhoneNumber(
                     //     auth.PhoneAuthProvider.credential(

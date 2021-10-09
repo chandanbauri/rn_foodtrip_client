@@ -42,7 +42,7 @@ const AuthNavigator = () => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
 
     messaging().onNotificationOpenedApp(remoteMessage => {
-      // console.log(
+      // //console.log(
       //   'Notification caused app to open from background state:',
       //   remoteMessage.notification,
       // );
@@ -54,7 +54,7 @@ const AuthNavigator = () => {
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-          // console.log(
+          // //console.log(
           //   'Notification caused app to open from quit state:',
           //   remoteMessage.notification,
           // );

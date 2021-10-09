@@ -37,15 +37,15 @@ export default function OrderNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: colors.brown,
+        tabBarActiveTintColor: colors.logo_color,
         tabBarLabelStyle: {
           fontWeight: 'bold',
           fontSize: 12,
           textTransform: 'capitalize',
         },
         tabBarIndicatorStyle: {
-          borderColor: colors.brown,
-          backgroundColor: colors.brown,
+          borderColor: colors.divider,
+          backgroundColor: colors.divider,
         },
         tabBarBounces: true,
         tabBarAllowFontScaling: true,

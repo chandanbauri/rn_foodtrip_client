@@ -51,7 +51,7 @@ const BottomNavigator = () => {
             <Pressable
               style={{padding: 15}}
               onPress={() => {
-                navigation.navigate('Search');
+                navigation.navigate('Search', {isFoodSearch: false});
               }}>
               <Feather name="search" size={24} color={colors.divider} />
             </Pressable>

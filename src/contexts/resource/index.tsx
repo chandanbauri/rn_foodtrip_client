@@ -81,7 +81,7 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
           [...otherProducts, item].forEach((val: any) => {
             total = total + val.cost * val.count;
           });
-          // console.log(total);
+          // //console.log(total);
           totalCost.current = total;
           return [...otherProducts, item];
         });

@@ -4,6 +4,7 @@ import {colors, getTotalCost} from '../../../utilities';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FilledButton from '../../buttons/filled';
 import {ResourceContext} from '../../../contexts/resource';
+import moment from 'moment';
 type props = {
   item: any;
   onCancel?: () => void;
@@ -64,7 +65,14 @@ export default function OrderCard({item, onCancel, onRepeat}: props) {
                     styles.caption,
                   ]}>{`Order is Canceled`}</Text>
               )}
-              {item.isOnGoing && (
+              {item.isOnGoing && item.isPickedUp && (
+                <Text
+                  style={[
+                    styles.text,
+                    styles.caption,
+                  ]}>{`Order is On the way `}</Text>
+              )}
+              {item.isOnGoing && !item.isPickedUp && (
                 <Text
                   style={[
                     styles.text,
@@ -84,6 +92,22 @@ export default function OrderCard({item, onCancel, onRepeat}: props) {
               parseInt(item.deliveryCharge ?? 0) +
               parseFloat(item.gst ?? 0)
             }`}</Text>
+            {item.placedAt && (
+              <View style={{marginTop: 10}}>
+                <Text style={{color: colors.time_and_address, fontSize: 12}}>
+                  ORDERED ON
+                </Text>
+                <Text
+                  style={{
+                    color: colors.divider,
+                    marginTop: 5,
+                    fontWeight: '700',
+                    fontSize: 12,
+                  }}>
+                  {moment(item.placedAt).format('DD MMM YYYY [at] h:mm a')}
+                </Text>
+              </View>
+            )}
           </View>
 
           {expand && (
@@ -150,7 +174,7 @@ export default function OrderCard({item, onCancel, onRepeat}: props) {
                     Repeat Order
                   </Text>
                 </Pressable>
-                {!item.isCanceled && item.isPending && (
+                {/* {!item.isCanceled && item.isPending && (
                   <Pressable
                     style={{
                       paddingHorizontal: 10,
@@ -165,7 +189,7 @@ export default function OrderCard({item, onCancel, onRepeat}: props) {
                       Cancel
                     </Text>
                   </Pressable>
-                )}
+                )} */}
               </View>
             </View>
           )}

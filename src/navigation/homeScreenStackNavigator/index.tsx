@@ -64,7 +64,7 @@ const HomeScreenStack = () => {
             <Pressable
               style={{padding: 15}}
               onPress={() => {
-                navigation.navigate('Home');
+                navigation.goBack();
               }}>
               <Feather name="arrow-left" size={24} color={colors.brown} />
             </Pressable>
@@ -85,7 +85,7 @@ const HomeScreenStack = () => {
             <Pressable
               style={{padding: 15}}
               onPress={() => {
-                navigation.navigate('Home');
+                navigation.goBack();
               }}>
               <Feather name="arrow-left" size={24} color={colors.brown} />
             </Pressable>

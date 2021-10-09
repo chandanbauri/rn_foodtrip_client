@@ -15,6 +15,7 @@ import {AuthContext} from '../../../contexts/Auth';
 import {getFeatures} from '../../../utilities/cloud/functions';
 import Loader from '../../loader/loader';
 import RNPickerSelect from 'react-native-picker-select';
+import NetInfo from '@react-native-community/netinfo';
 function CartInfo() {
   const isFocused = useIsFocused();
   const usersCollection = firestore().collection('Users');
@@ -28,6 +29,7 @@ function CartInfo() {
   const [features, setFeature] = React.useState<any>();
   const [totalCost, setTotalCost] = React.useState<number>(0);
   const [addresses, setAddresses] = React.useState<Array<any>>([]);
+  const [netState, setNetState] = React.useState<any>(null);
   const [initializing, setInitializing] = React.useState<boolean>(false);
   const getUserDetails = async () => {
     if (Auth && Auth.user) {
@@ -69,7 +71,7 @@ function CartInfo() {
       let res = await getFeatures();
       if (res) {
         let data = res.data;
-        // console.log(data);
+        // //console.log(data);
         setFeature(data);
         setInitializing(false);
       }
@@ -109,8 +111,21 @@ function CartInfo() {
       });
     return;
   }, [isFocused]);
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
   const navigation = useNavigation<CombinedNavigationProp>();
-  if (initializing) return <Loader />;
+  if (initializing) return <Loader netState={netState} />;
   return (
     <View style={styles.root}>
       <View style={{marginTop: 20}}>

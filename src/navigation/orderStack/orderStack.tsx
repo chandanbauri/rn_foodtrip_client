@@ -27,7 +27,7 @@ export default function OrderStackNavigator() {
         component={OrderNavigator}
         options={{
           headerShown: true,
-          headerTitleStyle: {color: colors.brown},
+          headerTitleStyle: {color: colors.logo_color},
           //   headerLeft: () => (
           //     <Pressable
           //       onPress={() => {

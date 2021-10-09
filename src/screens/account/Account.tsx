@@ -9,6 +9,8 @@ import {
   FlatList,
   ActivityIndicator,
   SectionList,
+  Linking,
+  Image,
 } from 'react-native';
 import PhoneAuthForm from '../../components/forms/phoneAuth';
 import {AuthContext} from '../../contexts/Auth';
@@ -29,6 +31,8 @@ import {cancelOrder} from '../../utilities/cloud/functions';
 import Loader from '../../components/loader/loader';
 import {AccountScreenProps} from '../../navigation/accountStackNavigator/account';
 import FocusedStatusBar from '../../components/statusBar';
+import NetInfo from '@react-native-community/netinfo';
+
 // import auth from '@react-native-firebase/auth';
 
 const usersCollection = firestore().collection('Users');
@@ -53,6 +57,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
   const [refresh, setRefresh] = React.useState<number>(1);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const [details, setDetails] = React.useState(initDetails);
+  const [netState, setNetState] = React.useState<any>(null);
   // variables
   const snapPoints = React.useMemo(() => ['1%', '40%'], []);
 
@@ -163,6 +168,19 @@ export default function Account({navigation, route}: AccountScreenProps) {
     }
     return;
   }, [isFocused, refresh]);
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
 
   let tags = [
     {
@@ -236,13 +254,13 @@ export default function Account({navigation, route}: AccountScreenProps) {
       <Text style={styles.ListHeaderTitle}>Addresses</Text>
     </>
   );
-  if (initializing) return <Loader />;
+  if (initializing) return <Loader netState={netState} />;
   if (Auth?.user !== null)
     return (
       <>
         <FocusedStatusBar
-          backgroundColor="#FFF"
-          barStyle="dark-content"
+          backgroundColor="#D17755"
+          barStyle="light-content"
           translucent={true}
         />
         <View style={styles.root}>
@@ -342,12 +360,64 @@ export default function Account({navigation, route}: AccountScreenProps) {
                         </Text>
                       </Pressable>
                     </View>
-                    <FilledButton
-                      text="Log out"
-                      onPress={() => {
-                        Auth?.signOut();
+                    <Pressable
+                      style={{
+                        paddingVertical: 15,
+                        backgroundColor: colors.gray,
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 5,
+                        marginTop: 10,
                       }}
-                    />
+                      onPress={() => {
+                        Alert.alert('Are you sure ?', 'You want to logout', [
+                          {
+                            text: 'cancel',
+                          },
+                          {
+                            text: 'Sure',
+                            onPress: () => {
+                              Auth?.signOut();
+                            },
+                          },
+                        ]);
+                      }}>
+                      <Text style={{color: colors.white, fontSize: 16}}>
+                        Log out
+                      </Text>
+                    </Pressable>
+                    <View
+                      style={{
+                        marginTop: 80,
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Pressable
+                        style={{flexDirection: 'row', alignItems: 'center'}}
+                        onPress={() => {
+                          Linking.openURL('https://webchal.in');
+                        }}>
+                        <Text
+                          style={{
+                            color: colors.logo_color,
+                            marginRight: 4,
+                            fontSize: 12,
+                          }}>
+                          Developed By{' '}
+                        </Text>
+                        <View style={{width: 90}}>
+                          <Image
+                            source={require('../../assets/webchal_logo.png')}
+                            style={{
+                              height: 25,
+                              width: '100%',
+                            }}
+                          />
+                        </View>
+                      </Pressable>
+                    </View>
                   </View>
                 </>
               }

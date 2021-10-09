@@ -11,16 +11,21 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import FoodCategoryHeader from '../../components/header/foodCategory';
 import Loader from '../../components/loader/loader';
 import {useIsFocused} from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
+import Feather from 'react-native-vector-icons/Feather';
 const {height, width} = Dimensions.get('window');
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const [initializing, setInitializing] = React.useState<boolean>(true);
+  const [netState, setNetState] = React.useState<any>(null);
   const [categories, setCategories] = React.useState<Array<any>>([]);
-  const [activeTab, setActiveTab] = React.useState<number>(1);
+  const [activeTab, setActiveTab] = React.useState<number>(0);
   let trigger = React.useRef(false);
   let Resouce = useResource();
   const [foodList, setFoodList] = React.useState<Array<any>>([]);
-  const tablist = React.useRef<Array<any>>([]);
+  const [searchList, setSearchList] = React.useState<Array<any>>([]);
+  // const tablist = React.useRef<Array<any>>([]);
+  const [tablist, setTablist] = React.useState<Array<any>>([]);
   const {collection, id, name, address, isOpen} = route.params;
   let isFocused = useIsFocused();
   const goBack = () => {
@@ -44,24 +49,25 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
       if (res && res.data && isFocused) {
         let list = JSON.parse(res.data);
         let catList = extractCategories(list);
-        setFoodList(list);
         setCategories(catList);
+        setFoodList(list);
+        setSearchList(list);
         let items = list.filter((item: any) => item.category == catList[0]);
         setActiveTab(0);
         // setTabList(items);
-        tablist.current = items;
+        setTablist(items);
         setInitializing(false);
       }
     } catch (error) {
       // throw error;
-      console.log(error);
+      //console.log(error);
     }
   };
 
   const onCategoryClick = (categoryName: string, index: number) => {
     let list = foodList.filter(item => item.category == categoryName);
     setActiveTab(index);
-    tablist.current = list;
+    setTablist(list);
   };
 
   React.useEffect(() => {
@@ -70,6 +76,19 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
         throw error;
       });
     return;
+  }, []);
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
   }, []);
   const MainHeader = ({title}: any) => (
     <>
@@ -99,17 +118,34 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           }}>
           {title.slice(0, 40)}
         </Text>
+        <View style={{flexGrow: 1}} />
+        <Pressable
+          onPress={() => {
+            navigation.navigate('Search', {
+              isFoodSearch: true,
+              id: id,
+              collection: 'restaurants',
+              address: address,
+              name: name,
+              isOpen: isOpen,
+              foodList: searchList,
+            });
+          }}>
+          <View style={{paddingRight: 5, paddingVertical: 5}}>
+            <Feather name="search" size={24} color={colors.divider} />
+          </View>
+        </Pressable>
       </View>
       {!isOpen && (
         <View
           style={{
             paddingHorizontal: 14,
             paddingVertical: 4,
-            backgroundColor: colors.gray,
+            backgroundColor: colors.divider,
             alignItems: 'center',
           }}>
           <Text style={{color: colors.white}}>
-            {'The partner is currently no accepting orders'}
+            {'The partner is currently not accepting orders'}
           </Text>
         </View>
       )}
@@ -122,17 +158,17 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
       />
     </>
   );
-  if (initializing) return <Loader />;
+  if (initializing) return <Loader netState={netState} />;
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <View style={styles.root}>
         <FlatList
-          data={tablist.current}
+          data={tablist}
           ListHeaderComponent={() => <MainHeader title={name} />}
           keyExtractor={(item: any) => item?.id}
           showsVerticalScrollIndicator={false}
@@ -188,6 +224,13 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
                     Resouce?.getTotalCost() >= 150
                   )
                     navigation.navigate('BookOrder');
+                  else {
+                    Alert.alert('Menu item added is less than ₹ 150 ', '', [
+                      {
+                        text: 'Ok',
+                      },
+                    ]);
+                  }
                 }}>
                 <View style={styles.gotoCartButton}>
                   <Text
@@ -204,7 +247,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
           <View
             style={[
               styles.bottomTextContainer,
-              isOpen ? {} : {backgroundColor: colors.gray},
+              isOpen ? {} : {backgroundColor: colors.divider},
             ]}>
             <Text
               style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>

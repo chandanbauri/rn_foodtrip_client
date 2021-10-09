@@ -27,6 +27,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FocusedStatusBar from '../../../components/statusBar';
 import firestore from '@react-native-firebase/firestore';
 import {Screen} from 'react-native-screens';
+import NetInfo from '@react-native-community/netinfo';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({
@@ -38,6 +39,7 @@ export default function ProceedingScreen({
   const [isCOD, setIsCOD] = React.useState<boolean>(false);
   const [isOnline, setIsOnline] = React.useState<boolean>(true);
   const [initializing, setInitializing] = React.useState<boolean>(false);
+  const [netState, setNetState] = React.useState<any>(null);
   const Resource = React.useContext(ResourceContext);
 
   // React.useEffect(() => {
@@ -45,7 +47,20 @@ export default function ProceedingScreen({
   //     navigation.navigate('Home');
   //   }
   // });
-  if (initializing) return <Loader />;
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
+  if (initializing) return <Loader netState={netState} />;
   if (!Resource?.cart.length) {
     navigation.goBack();
     return (
@@ -110,7 +125,7 @@ export default function ProceedingScreen({
           </View>
           <View>
             <FilledButton
-              text="Book Now"
+              text="Order Now"
               onPress={async () => {
                 setInitializing(true);
                 if (isCOD && !isOnline) {
@@ -219,7 +234,7 @@ export default function ProceedingScreen({
                       currency: 'INR',
                     });
                     let data = JSON.parse(res.data);
-                    // //console.log('DATA',data.data.id)
+                    // ////console.log('DATA',data.data.id)
                     var options = {
                       name: 'Food Dhaba',
                       image: '',
@@ -291,7 +306,7 @@ export default function ProceedingScreen({
                                 },
                               ]);
                             } else {
-                              //console.log('ERROR 1');
+                              ////console.log('ERROR 1');
                               Alert.alert(
                                 'Sorry Can not place order right now',
                                 '',

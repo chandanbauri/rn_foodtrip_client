@@ -7,6 +7,7 @@ import Loader from '../../../components/loader/loader';
 import FocusedStatusBar from '../../../components/statusBar';
 import {AuthContext} from '../../../contexts/Auth';
 import {VerifyScreenProps} from '../../../navigation/authNavigator/types';
+import NetInfo from '@react-native-community/netinfo';
 import {colors} from '../../../utilities';
 const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   const {phone} = route.params;
@@ -14,6 +15,7 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   const isFocused = useIsFocused();
   const [value, setValue] = React.useState('');
   const [Error, setError] = React.useState<string>('');
+  const [netState, setNetState] = React.useState<any>(null);
   const [initializing, setInitializing] = React.useState<boolean>(false);
   const decreaseCounter = () => {
     let timer = setInterval(() => {
@@ -69,13 +71,26 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
     // decreaseCounter();
     return;
   }, []);
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
 
-  if (initializing) return <Loader />;
+  if (initializing) return <Loader netState={netState} />;
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <View style={styles.root}>

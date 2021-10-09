@@ -13,7 +13,11 @@ import {
 import Restaurant from '../../../components/cards/Restaurant';
 import Loader from '../../../components/loader/loader';
 import FocusedStatusBar from '../../../components/statusBar';
-import {ResourceContext, ResourceProvider} from '../../../contexts/resource';
+import {
+  ResourceContext,
+  ResourceProvider,
+  useResource,
+} from '../../../contexts/resource';
 import {SearchScreenProps} from '../../../navigation/homeScreenStackNavigator/types';
 import {colors, isAvailable} from '../../../utilities';
 import {
@@ -22,15 +26,28 @@ import {
 } from '../../../utilities/cloud/functions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import NetInfo from '@react-native-community/netinfo';
+import Food from '../../../components/cards/food';
 const {width, height} = Dimensions.get('window');
-const Search = ({navigation}: SearchScreenProps) => {
+const Search = ({navigation, route}: SearchScreenProps) => {
+  const [netState, setNetState] = React.useState<any>(null);
   const Resource = React.useContext(ResourceContext);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const [results, setResults] = React.useState<Array<any>>([]);
   const textVal = React.useRef<string>('');
+  let trigger = React.useRef(false);
+  let Resouce = useResource();
+  const {isFoodSearch, isOpen, collection, id, name, address, foodList} =
+    route.params;
   // let results = React.useRef<Array<any>>([]);
   const ref = React.createRef<TextInput>();
   let isFocused = useIsFocused();
+  const openBottomSheet = () => {
+    trigger.current = true;
+  };
+  const closeBottomSheet = () => {
+    trigger.current = false;
+  };
   const getList = async () => {
     if (isFocused)
       try {
@@ -47,7 +64,7 @@ const Search = ({navigation}: SearchScreenProps) => {
         }
         setInitializing(false);
       } catch (error) {
-        // console.log(error);
+        // //console.log(error);
       }
   };
   const onTextChange = (text: string) => {
@@ -75,7 +92,9 @@ const Search = ({navigation}: SearchScreenProps) => {
         <View style={styles.searchBar}>
           <TextInput
             ref={ref}
-            placeholder="Search your favourite Restaurant"
+            placeholder={`Search your favourite ${
+              isFoodSearch ? 'Food' : 'Restaurant'
+            }`}
             placeholderTextColor={colors.brown}
             style={styles.searchBarTextInput}
             onChangeText={onTextChange}
@@ -84,13 +103,25 @@ const Search = ({navigation}: SearchScreenProps) => {
       </View>
     </View>
   );
-
-  if (initializing) return <Loader />;
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
+  if (initializing) return <Loader netState={netState} />;
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       {Resource && Resource.restaurantList && Resource.restaurantList.length ? (
@@ -100,26 +131,61 @@ const Search = ({navigation}: SearchScreenProps) => {
             keyExtractor={(item, index) => `${index}`}
             ListHeaderComponent={<ListHeader />}
             stickyHeaderIndices={[0]}
-            renderItem={({item, index: number}) => (
-              <Restaurant
-                onClick={() => {
-                  if (item.opening && isAvailable(item.opening, item.closing))
-                    navigation.navigate('Restaurant', {
-                      id: item.id,
-                      collection: 'restaurants',
-                      address: item.address,
-                      name: item.restaurantName,
-                    });
-                  else {
-                    Alert.alert(
-                      'Opps',
-                      'This Restaurant is not accepting Orders for now',
-                    );
-                  }
-                }}
-                values={item}
-              />
-            )}
+            renderItem={({item, index: number}) =>
+              isFoodSearch ? (
+                <Food
+                  isClosed={!isOpen}
+                  id={id}
+                  item={item}
+                  addToCardAction={() => {
+                    if (!Resouce?.restaurantDetails) {
+                      Resouce?.saveRestaurantDetils({id, name, address});
+                      openBottomSheet();
+                    } else {
+                      if (
+                        Resouce?.restaurantDetails &&
+                        Resouce?.restaurantDetails?.id == id
+                      ) {
+                        openBottomSheet();
+                      } else {
+                        Alert.alert(
+                          'You can only order from one Restaurant at a time',
+                          '',
+                          [{text: 'OK', onPress: () => {}}],
+                        );
+                      }
+                    }
+                  }}
+                  removeFromCardAction={() => {
+                    Resouce?.saveRestaurantDetils(null);
+                    closeBottomSheet();
+                  }}
+                />
+              ) : (
+                <Restaurant
+                  onClick={() => {
+                    if (item.opening && isAvailable(item.opening, item.closing))
+                      navigation.navigate('Restaurant', {
+                        id: item.id,
+                        collection: 'restaurants',
+                        address: item.address,
+                        name: item.restaurantName,
+                        isOpen: true,
+                      });
+                    else {
+                      navigation.navigate('Restaurant', {
+                        id: item.id,
+                        collection: 'restaurants',
+                        address: item.address,
+                        name: item.restaurantName,
+                        isOpen: false,
+                      });
+                    }
+                  }}
+                  values={item}
+                />
+              )
+            }
             ListEmptyComponent={() => (
               <View
                 style={{
@@ -129,7 +195,9 @@ const Search = ({navigation}: SearchScreenProps) => {
                 }}>
                 {textVal.current == '' ? (
                   <Text style={{marginTop: 250, color: colors.brown}}>
-                    Search your favourite Restaurants
+                    {isFoodSearch
+                      ? `Welcome to ${name}`
+                      : `Search your favourite Restaurants`}
                   </Text>
                 ) : (
                   <Text style={{marginTop: 250, color: colors.brown}}>
@@ -138,35 +206,103 @@ const Search = ({navigation}: SearchScreenProps) => {
                 )}
               </View>
             )}
-            ListFooterComponent={() => <View style={{paddingBottom: 120}} />}
+            ListFooterComponent={() => <View style={{paddingBottom: 200}} />}
           />
           <View
             style={{
               position: 'absolute',
-              bottom: 10,
+              bottom: 0,
               left: 0,
               right: 0,
-              paddingHorizontal: 10,
             }}>
-            <Pressable
+            {isOpen && isFoodSearch && (
+              <View
+                style={{
+                  width: '100%',
+                  marginBottom: 10,
+                  paddingHorizontal: 10,
+                }}>
+                <Pressable
+                  style={{}}
+                  onPress={() => {
+                    if (
+                      trigger.current &&
+                      Resouce &&
+                      Resouce?.getTotalCost() >= 150
+                    )
+                      navigation.navigate('BookOrder');
+                    else {
+                      Alert.alert('Menu item added is less than ₹ 150 ', '', [
+                        {
+                          text: 'Ok',
+                        },
+                      ]);
+                    }
+                  }}>
+                  <View
+                    style={{
+                      width: '100%',
+                      paddingVertical: 15,
+                      backgroundColor: colors.brown,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: colors.white,
+                      }}>
+                      Proceed
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+            )}
+            <View
               style={{
                 width: '100%',
-                paddingVertical: 15,
-                backgroundColor: colors.brown,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 8,
-              }}
-              onPress={() => {
-                let list = Resource?.restaurantList?.filter((res: any) =>
-                  res.restaurantName
-                    .toLowerCase()
-                    .includes(textVal.current.toLocaleLowerCase()),
-                );
-                setResults(list);
+                paddingHorizontal: 10,
               }}>
-              <Text style={{color: colors.white}}>Search</Text>
-            </Pressable>
+              <Pressable
+                style={{
+                  width: '100%',
+                  paddingVertical: 15,
+                  backgroundColor: colors.brown,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 8,
+                }}
+                onPress={() => {
+                  if (!isFoodSearch) {
+                    let list = Resource?.restaurantList?.filter((res: any) =>
+                      res.restaurantName
+                        .toLowerCase()
+                        .includes(textVal.current.toLocaleLowerCase()),
+                    );
+                    setResults(list);
+                    return;
+                  }
+                  if (isFoodSearch && foodList) {
+                    let list = foodList.filter((res: any) =>
+                      res.name
+                        .toLowerCase()
+                        .includes(textVal.current.toLocaleLowerCase()),
+                    );
+                    setResults(list);
+                  }
+                }}>
+                <Text style={{color: colors.white}}>Search</Text>
+              </Pressable>
+            </View>
+            <View
+              style={[
+                styles.bottomTextContainer,
+                isOpen ? {} : {backgroundColor: colors.divider},
+              ]}>
+              <Text
+                style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
+            </View>
           </View>
         </>
       ) : (
@@ -277,5 +413,16 @@ const styles = StyleSheet.create({
     color: colors.brown,
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  bottomTextContainer: {
+    marginTop: 10,
+    paddingVertical: 3,
+    backgroundColor: colors.green,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomText: {
+    fontSize: 10,
+    color: '#FFFFFF',
   },
 });

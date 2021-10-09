@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     alignItems: 'center',
     flexDirection: 'row',
-    marginBottom: 10,
+    marginVertical: 5,
   },
   detailsContainer: {
     marginLeft: 10,

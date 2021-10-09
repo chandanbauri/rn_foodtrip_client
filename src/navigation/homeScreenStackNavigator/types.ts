@@ -5,7 +5,15 @@ import {CombinedNavigationProp} from '../types';
 
 export type HomeScreenStackParamList = {
   TabNav: NavigatorScreenParams<BottomTabNavigatorParamList>;
-  Search: undefined;
+  Search: {
+    isFoodSearch: boolean;
+    isOpen?: boolean;
+    id?: string;
+    collection?: string;
+    name?: string;
+    address?: string;
+    foodList?: Array<any>;
+  };
   Restaurant: {
     isOpen: boolean;
     id: string;

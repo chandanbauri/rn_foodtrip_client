@@ -143,8 +143,8 @@ export default function RefundScreen({navigation, route}: TermsScreenProps) {
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <View style={styles.root}>

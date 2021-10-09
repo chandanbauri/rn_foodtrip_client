@@ -24,6 +24,7 @@ import FocusedStatusBar from '../../components/statusBar';
 import Loader from '../../components/loader/loader';
 import Carousel from 'react-native-snap-carousel';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import NetInfo from '@react-native-community/netinfo';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
@@ -32,6 +33,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const [refreshing, setRefreshing] = React.useState(false);
   const [banners, setBanners] = React.useState<any>([]);
+  const [netState, setNetState] = React.useState<any>(null);
   const ref = React.useRef(null);
   const getPromotionBanners = async () => {
     try {
@@ -41,10 +43,10 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         let {files} = parseddata;
         let bannerLinks = files[0].map((item: any, index: number) => {
           // for (let key in item.metadata) {
-          //   console.log('META DATA', key, ' : ', item.metadata[key]);
+          //   //console.log('META DATA', key, ' : ', item.metadata[key]);
           // }
           // // 'https://firebasestorage.googleapis.com/v0/b/foodadda3-3aeca.appspot.com/o/promotions%2Flogo.png?alt=media&token=aa253456-7767-4c0d-a709-3c76761ebc6d'
-          // console.log('FILE', index);
+          // //console.log('FILE', index);
           return `https://firebasestorage.googleapis.com/v0/b/${
             item.metadata.bucket
           }/o/${item.metadata.name.replace('/', '%2F')}?alt=media&token=${
@@ -76,7 +78,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         }
         setInitializing(false);
       } catch (error) {
-        // console.log(error);
+        // //console.log(error);
       }
   };
   const onRefresh = () => {
@@ -99,6 +101,19 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         throw error;
       });
     return;
+  }, []);
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      // setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
   }, []);
   const Banner = ({url}: any) => {
     return (
@@ -156,12 +171,12 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       style={{height: 0.9, width: '100%', backgroundColor: colors.divider}}
     />
   );
-  if (initializing) return <Loader />;
+  if (initializing) return <Loader netState={netState} />;
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <SafeAreaView style={styles.root}>
@@ -190,6 +205,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
               data={Resource?.restaurantList}
               keyExtractor={(item, index) => `${index}`}
               ListHeaderComponent={<ListHeader />}
+              showsVerticalScrollIndicator={false}
               renderItem={({item, index: number}) => (
                 <Restaurant
                   onClick={() => {
@@ -308,7 +324,8 @@ const styles = StyleSheet.create({
   categoryList: {
     backgroundColor: colors.white,
     width: '100%',
-    paddingVertical: 30,
+    paddingTop: 10,
+    paddingBottom: 10,
     flexDirection: 'row',
   },
   restaurantListContainer: {

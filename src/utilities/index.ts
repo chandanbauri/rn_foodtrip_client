@@ -55,10 +55,10 @@ export const isAvailable = (before: string, after: string) => {
     beforeTime = moment(before.split(':'), format),
     afterTime = moment(after.split(':'), format);
   if (time.isBetween(beforeTime, afterTime)) {
-    // console.log('TRUE');
+    // //console.log('TRUE');
     return true;
   } else {
-    // console.log('FALSE');
+    // //console.log('FALSE');
     return false;
   }
 };

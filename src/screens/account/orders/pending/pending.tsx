@@ -16,12 +16,14 @@ import {AuthContext} from '../../../../contexts/Auth';
 import {colors, getTotalCost} from '../../../../utilities';
 import {cancelOrder} from '../../../../utilities/cloud/functions';
 import OrderCard from '../../../../components/cards/order';
+import NetInfo from '@react-native-community/netinfo';
 const usersCollection = firestore().collection('Users');
 export default function PendingOrdersScreen() {
   const [data, setData] = React.useState<Array<any>>([]);
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
+  const [netState, setNetState] = React.useState<any>(null);
   const Auth = React.useContext(AuthContext);
   const getData = async () => {
     setInitializing(true);
@@ -91,6 +93,19 @@ export default function PendingOrdersScreen() {
     return;
   };
   React.useEffect(() => {
+    const unsubscribe = () => {
+      setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
+  React.useEffect(() => {
     if (isFocused) {
       getData()
         .then(value => {
@@ -112,14 +127,14 @@ export default function PendingOrdersScreen() {
   if (initializing)
     return (
       <>
-        <Loader />
+        <Loader netState={netState} />
       </>
     );
   return (
     <>
       <FocusedStatusBar
-        backgroundColor="#FFF"
-        barStyle="dark-content"
+        backgroundColor="#D17755"
+        barStyle="light-content"
         translucent={true}
       />
       <View style={styles.root}>
@@ -130,6 +145,18 @@ export default function PendingOrdersScreen() {
           }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
+          ListEmptyComponent={
+            <View
+              style={{
+                marginTop: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{color: colors.brown}}>
+                No Pending orders available
+              </Text>
+            </View>
+          }
           renderItem={({item, index}) => (
             <OrderCard
               item={item}
