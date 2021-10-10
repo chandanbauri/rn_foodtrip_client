@@ -32,6 +32,7 @@ import Loader from '../../components/loader/loader';
 import {AccountScreenProps} from '../../navigation/accountStackNavigator/account';
 import FocusedStatusBar from '../../components/statusBar';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../components/NoInternet';
 
 // import auth from '@react-native-firebase/auth';
 
@@ -254,7 +255,8 @@ export default function Account({navigation, route}: AccountScreenProps) {
       <Text style={styles.ListHeaderTitle}>Addresses</Text>
     </>
   );
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   if (Auth?.user !== null)
     return (
       <>
@@ -387,7 +389,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                         Log out
                       </Text>
                     </Pressable>
-                    <View
+                    {/* <View
                       style={{
                         marginTop: 80,
                         width: '100%',
@@ -417,7 +419,7 @@ export default function Account({navigation, route}: AccountScreenProps) {
                           />
                         </View>
                       </Pressable>
-                    </View>
+                    </View> */}
                   </View>
                 </>
               }

@@ -7,6 +7,7 @@ import {colors} from '../../../utilities';
 import auth from '@react-native-firebase/auth';
 import {EditProfileProps} from '../../../navigation/accountStackNavigator/account';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../../components/NoInternet';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -72,7 +73,8 @@ export default function EditProfileScreen({
     };
     return unsubscribe();
   }, []);
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar

@@ -15,13 +15,29 @@ import {colors} from '../../utilities';
 import CartInfo from '../../components/bottomSheet/cart';
 import FocusedStatusBar from '../../components/statusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../components/NoInternet';
 
 const {height, width} = Dimensions.get('window');
 function Cart({navigation}: CartScreenProps) {
+  const [netState, setNetState] = React.useState<any>(null);
   // const bottomSheetRef = React.useRef<BottomSheet>(null);
   // const snapPoints = React.useMemo(() => [150, 200], []);
   const Auth = React.useContext(ResourceContext);
-
+  React.useEffect(() => {
+    const unsubscribe = () => {
+      // setInitializing(true);
+      NetInfo.addEventListener(state => {
+        //console.log('Connection type', state.type);
+        //console.log('Is connected?', state.isConnected);
+        // networkState.current = state.isInternetReachable;
+        setNetState(state.isConnected);
+        // setInitializing(!state.isConnected);
+      });
+    };
+    return unsubscribe();
+  }, []);
+  if (!netState) return <NoInternet />;
   if (Auth && Auth?.cart && Auth?.cart?.length) {
     return (
       <>

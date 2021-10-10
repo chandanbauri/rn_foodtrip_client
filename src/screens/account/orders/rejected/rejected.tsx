@@ -17,6 +17,7 @@ import {cancelOrder} from '../../../../utilities/cloud/functions';
 import firestore from '@react-native-firebase/firestore';
 import OrderCard from '../../../../components/cards/order';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../../../components/NoInternet';
 const usersCollection = firestore().collection('Users');
 export default function RejectedOrderScreen() {
   const [data, setData] = React.useState<Array<any>>([]);
@@ -124,9 +125,10 @@ export default function RejectedOrderScreen() {
   if (initializing)
     return (
       <>
-        <Loader netState={netState} />
+        <Loader />
       </>
     );
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar

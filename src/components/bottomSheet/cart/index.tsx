@@ -16,6 +16,7 @@ import {getFeatures} from '../../../utilities/cloud/functions';
 import Loader from '../../loader/loader';
 import RNPickerSelect from 'react-native-picker-select';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../NoInternet';
 function CartInfo() {
   const isFocused = useIsFocused();
   const usersCollection = firestore().collection('Users');
@@ -125,7 +126,8 @@ function CartInfo() {
     return unsubscribe();
   }, []);
   const navigation = useNavigation<CombinedNavigationProp>();
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <View style={styles.root}>
       <View style={{marginTop: 20}}>

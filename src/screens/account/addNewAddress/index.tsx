@@ -19,6 +19,7 @@ import {AddNewAddressScreenProps} from '../../../navigation/homeScreenStackNavig
 import Loader from '../../../components/loader/loader';
 import FocusedStatusBar from '../../../components/statusBar';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../../components/NoInternet';
 
 const {height, width} = Dimensions.get('window');
 export default function AddNewAddress({
@@ -193,7 +194,8 @@ export default function AddNewAddress({
     };
     return unsubscribe();
   }, []);
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar

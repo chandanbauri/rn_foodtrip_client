@@ -25,6 +25,7 @@ import Loader from '../../components/loader/loader';
 import Carousel from 'react-native-snap-carousel';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../components/NoInternet';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
@@ -37,8 +38,8 @@ const Home = ({navigation, route}: HomeScreenProps) => {
   const ref = React.useRef(null);
   const getPromotionBanners = async () => {
     try {
-      let res = await fetchBanner();
-      if (res && isFocused) {
+      if (isFocused) {
+        let res = await fetchBanner();
         let parseddata = JSON.parse(res.data);
         let {files} = parseddata;
         let bannerLinks = files[0].map((item: any, index: number) => {
@@ -110,7 +111,7 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         //console.log('Is connected?', state.isConnected);
         // networkState.current = state.isInternetReachable;
         setNetState(state.isConnected);
-        setInitializing(!state.isConnected);
+        // setInitializing(!state.isConnected);
       });
     };
     return unsubscribe();
@@ -171,7 +172,8 @@ const Home = ({navigation, route}: HomeScreenProps) => {
       style={{height: 0.9, width: '100%', backgroundColor: colors.divider}}
     />
   );
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar

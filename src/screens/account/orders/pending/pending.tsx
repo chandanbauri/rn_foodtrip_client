@@ -17,6 +17,7 @@ import {colors, getTotalCost} from '../../../../utilities';
 import {cancelOrder} from '../../../../utilities/cloud/functions';
 import OrderCard from '../../../../components/cards/order';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../../../components/NoInternet';
 const usersCollection = firestore().collection('Users');
 export default function PendingOrdersScreen() {
   const [data, setData] = React.useState<Array<any>>([]);
@@ -87,8 +88,6 @@ export default function PendingOrdersScreen() {
       getData().catch(error => {
         throw error;
       });
-    } else {
-      setInitializing(true);
     }
     return;
   };
@@ -127,9 +126,10 @@ export default function PendingOrdersScreen() {
   if (initializing)
     return (
       <>
-        <Loader netState={netState} />
+        <Loader />
       </>
     );
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar

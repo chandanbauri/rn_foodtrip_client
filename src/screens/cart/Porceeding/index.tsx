@@ -28,6 +28,7 @@ import FocusedStatusBar from '../../../components/statusBar';
 import firestore from '@react-native-firebase/firestore';
 import {Screen} from 'react-native-screens';
 import NetInfo from '@react-native-community/netinfo';
+import NoInternet from '../../../components/NoInternet';
 
 const {height, width} = Dimensions.get('window');
 export default function ProceedingScreen({
@@ -60,7 +61,8 @@ export default function ProceedingScreen({
     };
     return unsubscribe();
   }, []);
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   if (!Resource?.cart.length) {
     navigation.goBack();
     return (

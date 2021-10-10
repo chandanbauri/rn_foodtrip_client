@@ -29,6 +29,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
 import Food from '../../../components/cards/food';
+import NoInternet from '../../../components/NoInternet';
 const {width, height} = Dimensions.get('window');
 const Search = ({navigation, route}: SearchScreenProps) => {
   const [netState, setNetState] = React.useState<any>(null);
@@ -53,6 +54,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
   const getList = async () => {
     if (isFocused)
       try {
+        setInitializing(true);
         let res = await getRestaurantList();
         let menuRes = await getMenuList();
         let menu = JSON.parse(menuRes.data);
@@ -128,18 +130,19 @@ const Search = ({navigation, route}: SearchScreenProps) => {
   );
   React.useEffect(() => {
     const unsubscribe = () => {
-      setInitializing(true);
+      // setInitializing(true);
       NetInfo.addEventListener(state => {
         //console.log('Connection type', state.type);
         //console.log('Is connected?', state.isConnected);
         // networkState.current = state.isInternetReachable;
         setNetState(state.isConnected);
-        setInitializing(!state.isConnected);
+        // setInitializing(!state.isConnected);
       });
     };
     return unsubscribe();
   }, []);
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar
@@ -255,11 +258,15 @@ const Search = ({navigation, route}: SearchScreenProps) => {
                     )
                       navigation.navigate('BookOrder');
                     else {
-                      Alert.alert(`The minimum order price is ₹ ${features.minimum_order_price} INR`, '', [
-                        {
-                          text: 'Ok',
-                        },
-                      ]);
+                      Alert.alert(
+                        `The minimum order price is ₹ ${features.minimum_order_price} INR`,
+                        '',
+                        [
+                          {
+                            text: 'Ok',
+                          },
+                        ],
+                      );
                     }
                   }}>
                   <View

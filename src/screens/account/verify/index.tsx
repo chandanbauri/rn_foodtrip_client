@@ -9,6 +9,7 @@ import {AuthContext} from '../../../contexts/Auth';
 import {VerifyScreenProps} from '../../../navigation/authNavigator/types';
 import NetInfo from '@react-native-community/netinfo';
 import {colors} from '../../../utilities';
+import NoInternet from '../../../components/NoInternet';
 const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
   const {phone} = route.params;
   const [counter, setCounter] = React.useState<number>(30);
@@ -85,7 +86,8 @@ const VerificationScreen = ({navigation, route}: VerifyScreenProps) => {
     return unsubscribe();
   }, []);
 
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar

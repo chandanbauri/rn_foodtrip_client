@@ -14,6 +14,7 @@ function Root() {
         'Double Click on the back button to exit',
         ToastAndroid.SHORT,
       );
+      return true;
     }
     if (exitApp.current === 1) {
       BackHandler.exitApp();

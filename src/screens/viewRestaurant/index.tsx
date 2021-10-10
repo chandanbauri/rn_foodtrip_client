@@ -179,7 +179,8 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
       />
     </>
   );
-  if (initializing) return <Loader netState={netState} />;
+  if (initializing) return <Loader />;
+  if (!netState) return <NoInternet />;
   return (
     <>
       <FocusedStatusBar
