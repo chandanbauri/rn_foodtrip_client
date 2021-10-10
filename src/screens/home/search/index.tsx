@@ -21,6 +21,7 @@ import {
 import {SearchScreenProps} from '../../../navigation/homeScreenStackNavigator/types';
 import {colors, isAvailable} from '../../../utilities';
 import {
+  getFeatures,
   getMenuList,
   getRestaurantList,
 } from '../../../utilities/cloud/functions';
@@ -33,6 +34,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
   const [netState, setNetState] = React.useState<any>(null);
   const Resource = React.useContext(ResourceContext);
   const [initializing, setInitializing] = React.useState<boolean>(true);
+  const [features, setFeatures] = React.useState<any>({});
   const [results, setResults] = React.useState<Array<any>>([]);
   const textVal = React.useRef<string>('');
   let trigger = React.useRef(false);
@@ -72,6 +74,27 @@ const Search = ({navigation, route}: SearchScreenProps) => {
 
     textVal.current = text;
   };
+  const fetchFeatures = async () => {
+    try {
+      setInitializing(true);
+      let res = await getFeatures();
+      if (res) {
+        let data = res.data;
+        // //console.log(data);
+        setFeatures(data);
+        setInitializing(false);
+      }
+    } catch (error) {
+      setInitializing(false);
+      throw error;
+    }
+  };
+  React.useEffect(() => {
+    if (isFocused)
+      fetchFeatures().catch(error => {
+        throw error;
+      });
+  }, []);
   React.useEffect(() => {
     if (isFocused)
       getList().catch(error => {
@@ -228,11 +251,11 @@ const Search = ({navigation, route}: SearchScreenProps) => {
                     if (
                       trigger.current &&
                       Resouce &&
-                      Resouce?.getTotalCost() >= 150
+                      Resouce?.getTotalCost() >= features.minimum_order_price
                     )
                       navigation.navigate('BookOrder');
                     else {
-                      Alert.alert('Menu item added is less than ₹ 150 ', '', [
+                      Alert.alert(`The minimum order price is ₹ ${features.minimum_order_price} INR`, '', [
                         {
                           text: 'Ok',
                         },
@@ -301,7 +324,9 @@ const Search = ({navigation, route}: SearchScreenProps) => {
                 isOpen ? {} : {backgroundColor: colors.divider},
               ]}>
               <Text
-                style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
+                style={
+                  styles.bottomText
+                }>{`Minimum order amount ₹ ${features.minimum_order_price}`}</Text>
             </View>
           </View>
         </>

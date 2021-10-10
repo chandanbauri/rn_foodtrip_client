@@ -6,7 +6,7 @@ import FocusedStatusBar from '../../components/statusBar';
 import {RestaurantScreenProps} from '../../navigation/homeScreenStackNavigator/types';
 import {colors} from '../../utilities';
 import {useResource} from '../../contexts/resource';
-import {getFoodList} from '../../utilities/cloud/functions';
+import {getFeatures, getFoodList} from '../../utilities/cloud/functions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FoodCategoryHeader from '../../components/header/foodCategory';
 import Loader from '../../components/loader/loader';
@@ -19,6 +19,7 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const [initializing, setInitializing] = React.useState<boolean>(true);
   const [netState, setNetState] = React.useState<any>(null);
   const [categories, setCategories] = React.useState<Array<any>>([]);
+  const [features, setFeatures] = React.useState<any>({});
   const [activeTab, setActiveTab] = React.useState<number>(0);
   let trigger = React.useRef(false);
   let Resouce = useResource();
@@ -31,7 +32,21 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const goBack = () => {
     navigation.navigate('Home');
   };
-
+  const fetchFeatures = async () => {
+    try {
+      setInitializing(true);
+      let res = await getFeatures();
+      if (res) {
+        let data = res.data;
+        // //console.log(data);
+        setFeatures(data);
+        setInitializing(false);
+      }
+    } catch (error) {
+      setInitializing(false);
+      throw error;
+    }
+  };
   const openBottomSheet = () => {
     trigger.current = true;
   };
@@ -70,6 +85,12 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
     setTablist(list);
   };
 
+  React.useEffect(() => {
+    if (isFocused)
+      fetchFeatures().catch(error => {
+        throw error;
+      });
+  }, []);
   React.useEffect(() => {
     if (isFocused)
       fetchFoodList().catch(error => {
@@ -221,15 +242,19 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
                   if (
                     trigger.current &&
                     Resouce &&
-                    Resouce?.getTotalCost() >= 150
+                    Resouce?.getTotalCost() >= features.minimum_order_price
                   )
                     navigation.navigate('BookOrder');
                   else {
-                    Alert.alert('Menu item added is less than ₹ 150 ', '', [
-                      {
-                        text: 'Ok',
-                      },
-                    ]);
+                    Alert.alert(
+                      `Menu item added is less than ₹ ${features.minimum_order_price} `,
+                      '',
+                      [
+                        {
+                          text: 'Ok',
+                        },
+                      ],
+                    );
                   }
                 }}>
                 <View style={styles.gotoCartButton}>
@@ -250,7 +275,9 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
               isOpen ? {} : {backgroundColor: colors.divider},
             ]}>
             <Text
-              style={styles.bottomText}>{`Minimum order amount ₹ 150`}</Text>
+              style={
+                styles.bottomText
+              }>{`Minimum order amount ₹ ${features.minimum_order_price}`}</Text>
           </View>
         </View>
       </View>

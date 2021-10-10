@@ -220,7 +220,7 @@ function CartInfo() {
         text="Proceed"
         onPress={() => {
           if (Auth?.user) {
-            if (totalCost >= 150)
+            if (totalCost >= features.minimum_order_price)
               if (addresses && addresses.length)
                 navigation.navigate('Proceed', {
                   grandTotal:
@@ -245,12 +245,16 @@ function CartInfo() {
                   },
                 ]);
             else
-              Alert.alert('The minimum order price is ₹ 150 INR', '', [
-                {
-                  text: 'Ok',
-                  onPress: () => {},
-                },
-              ]);
+              Alert.alert(
+                `The minimum order price is ₹ ${features.minimum_order_price} INR`,
+                '',
+                [
+                  {
+                    text: 'Ok',
+                    onPress: () => {},
+                  },
+                ],
+              );
           } else {
             Alert.alert('To place an Order you need to login first', '', [
               {
