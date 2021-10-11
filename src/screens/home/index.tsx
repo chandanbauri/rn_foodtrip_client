@@ -15,8 +15,8 @@ import {HomeScreenProps} from '../../navigation/bottomTabNavigator/types';
 import {colors, isAvailable} from '../../utilities';
 import {
   fetchBanner,
-  getMenuList,
-  getRestaurantList,
+  // getMenuList,
+  // getRestaurantList,
 } from '../../utilities/cloud/functions';
 import {ResourceContext} from '../../contexts/resource';
 import {useIsFocused} from '@react-navigation/native';
@@ -26,6 +26,7 @@ import Carousel from 'react-native-snap-carousel';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
 import NoInternet from '../../components/NoInternet';
+import firebase from '@react-native-firebase/app';
 const {height, width} = Dimensions.get('window');
 const Home = ({navigation, route}: HomeScreenProps) => {
   // const Location = React.useContext(LocationContext);
@@ -62,46 +63,113 @@ const Home = ({navigation, route}: HomeScreenProps) => {
     }
   };
 
-  const getList = async () => {
-    setInitializing(true);
-    if (isFocused)
-      try {
-        let res = await getRestaurantList();
-        let menuRes = await getMenuList();
-        let menu = JSON.parse(menuRes.data);
-        let restaurants = JSON.parse(res.data);
+  // const getList = async () => {
+  //   setInitializing(true);
+  //   if (isFocused)
+  //     try {
+  //       let res = await getRestaurantList();
+  //       let menuRes = await getMenuList();
+  //       let menu = JSON.parse(menuRes.data);
+  //       let restaurants = JSON.parse(res.data);
 
-        if (restaurants.length) {
-          Resource?.setRestaurants(restaurants);
-        }
-        if (menu.length) {
-          Resource?.setMenu(menu);
-        }
-        setInitializing(false);
-      } catch (error) {
-        // //console.log(error);
-      }
-  };
+  //       if (restaurants.length) {
+  //         Resource?.setRestaurants(restaurants);
+  //       }
+  //       if (menu.length) {
+  //         Resource?.setMenu(menu);
+  //       }
+  //       setInitializing(false);
+  //     } catch (error) {
+  //       // //console.log(error);
+  //     }
+  // };
+
   const onRefresh = () => {
-    if (isFocused)
-      getList().catch(error => {
-        throw error;
+    const fetchList = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('restaurants')
+      .onSnapshot(snap => {
+        let restaurants: Array<any> = [];
+        snap.forEach(restaurant => {
+          restaurants.push({...restaurant.data(), id: restaurant.id});
+        });
+        Resource?.setRestaurants(restaurants);
+        setInitializing(false);
       });
-    return;
+    return () => fetchList();
   };
-  React.useEffect(() => {
-    if (isFocused)
-      getList().catch(error => {
-        throw error;
-      });
-    return;
-  }, []);
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     getList().catch(error => {
+  //       throw error;
+  //     });
+  //   return;
+  // }, []);
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     getList().catch(error => {
+  //       throw error;
+  //     });
+  //   return;
+  // }, []);
   React.useEffect(() => {
     if (isFocused)
       getPromotionBanners().catch(error => {
         throw error;
       });
     return;
+  }, []);
+  React.useEffect(() => {
+    setInitializing(true);
+    const fetchList = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('restaurants')
+      .onSnapshot(snap => {
+        let restaurants: Array<any> = [];
+        snap.forEach(restaurant => {
+          restaurants.push({...restaurant.data(), id: restaurant.id});
+        });
+        Resource?.setRestaurants(restaurants);
+        setInitializing(false);
+      });
+
+    return () => fetchList();
+  }, []);
+  React.useEffect(() => {
+    setInitializing(true);
+    const fetchList = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('categories')
+      .onSnapshot(snap => {
+        let categories: Array<any> = [];
+        snap.forEach(restaurant => {
+          categories.push({...restaurant.data(), id: restaurant.id});
+        });
+        Resource?.setMenu(categories);
+        setInitializing(false);
+      });
+
+    return () => fetchList();
+  }, []);
+  React.useEffect(() => {
+    setInitializing(true);
+    const fetchList = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('categories')
+      .onSnapshot(snap => {
+        let categories: Array<any> = [];
+        snap.forEach(restaurant => {
+          categories.push({...restaurant.data(), id: restaurant.id});
+        });
+        Resource?.setMenu(categories);
+        setInitializing(false);
+      });
+
+    return () => fetchList();
   }, []);
   React.useEffect(() => {
     const unsubscribe = () => {
@@ -331,7 +399,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   restaurantListContainer: {
-    marginTop: 10,
+    // marginTop: 10,
     backgroundColor: colors.white,
   },
   ListHeader: {

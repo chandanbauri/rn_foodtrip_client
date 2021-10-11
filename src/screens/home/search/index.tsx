@@ -22,11 +22,12 @@ import {SearchScreenProps} from '../../../navigation/homeScreenStackNavigator/ty
 import {colors, isAvailable} from '../../../utilities';
 import {
   getFeatures,
-  getMenuList,
-  getRestaurantList,
+  // getMenuList,
+  // getRestaurantList,
 } from '../../../utilities/cloud/functions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import firebase from '@react-native-firebase/app';
 import NetInfo from '@react-native-community/netinfo';
 import Food from '../../../components/cards/food';
 import NoInternet from '../../../components/NoInternet';
@@ -51,26 +52,26 @@ const Search = ({navigation, route}: SearchScreenProps) => {
   const closeBottomSheet = () => {
     trigger.current = false;
   };
-  const getList = async () => {
-    if (isFocused && !isFoodSearch)
-      try {
-        setInitializing(true);
-        let res = await getRestaurantList();
-        let menuRes = await getMenuList();
-        let menu = JSON.parse(menuRes.data);
-        let restaurants = JSON.parse(res.data);
+  // const getList = async () => {
+  //   if (isFocused && !isFoodSearch)
+  //     try {
+  //       setInitializing(true);
+  //       let res = await getRestaurantList();
+  //       let menuRes = await getMenuList();
+  //       let menu = JSON.parse(menuRes.data);
+  //       let restaurants = JSON.parse(res.data);
 
-        if (restaurants.length) {
-          Resource?.setRestaurants(restaurants);
-        }
-        if (menu.length) {
-          Resource?.setMenu(menu);
-        }
-        setInitializing(false);
-      } catch (error) {
-        // //console.log(error);
-      }
-  };
+  //       if (restaurants.length) {
+  //         Resource?.setRestaurants(restaurants);
+  //       }
+  //       if (menu.length) {
+  //         Resource?.setMenu(menu);
+  //       }
+  //       setInitializing(false);
+  //     } catch (error) {
+  //       // //console.log(error);
+  //     }
+  // };
   const onTextChange = (text: string) => {
     if (ref.current) ref.current.focus();
 
@@ -91,19 +92,55 @@ const Search = ({navigation, route}: SearchScreenProps) => {
       throw error;
     }
   };
+
   React.useEffect(() => {
     if (isFocused)
       fetchFeatures().catch(error => {
         throw error;
       });
   }, []);
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     getList().catch(error => {
+  //       throw error;
+  //     });
+  //   return;
+  // }, []);
   React.useEffect(() => {
-    if (isFocused)
-      getList().catch(error => {
-        throw error;
+    setInitializing(true);
+    const fetchList = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('restaurants')
+      .onSnapshot(snap => {
+        let restaurants: Array<any> = [];
+        snap.forEach(restaurant => {
+          restaurants.push({...restaurant.data(), id: restaurant.id});
+        });
+        Resource?.setRestaurants(restaurants);
       });
-    return;
+
+    setInitializing(false);
+    return () => fetchList();
   }, []);
+  React.useEffect(() => {
+    setInitializing(true);
+    const fetchList = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('categories')
+      .onSnapshot(snap => {
+        let categories: Array<any> = [];
+        snap.forEach(restaurant => {
+          categories.push({...restaurant.data(), id: restaurant.id});
+        });
+        Resource?.setMenu(categories);
+      });
+    setInitializing(false);
+
+    return () => fetchList();
+  }, []);
+
   const ListHeader = () => (
     <View
       style={{
@@ -141,7 +178,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
     };
     return unsubscribe();
   }, []);
-  console.log(results);
+  // console.log(results);
   if (initializing) return <Loader />;
   if (!netState) return <NoInternet />;
   return (
@@ -154,7 +191,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
       {Resource && Resource.restaurantList && Resource.restaurantList.length ? (
         <>
           <FlatList
-            data={!isFoodSearch ? results : foodList}
+            data={results}
             keyExtractor={(item, index) => `${index}`}
             ListHeaderComponent={<ListHeader />}
             stickyHeaderIndices={[0]}
@@ -191,7 +228,11 @@ const Search = ({navigation, route}: SearchScreenProps) => {
               ) : (
                 <Restaurant
                   onClick={() => {
-                    if (item.opening && isAvailable(item.opening, item.closing))
+                    if (
+                      item.opening &&
+                      isAvailable(item.opening, item.closing)
+                    ) {
+                      setResults([]);
                       navigation.navigate('Restaurant', {
                         id: item.id,
                         collection: 'restaurants',
@@ -199,7 +240,8 @@ const Search = ({navigation, route}: SearchScreenProps) => {
                         name: item.restaurantName,
                         isOpen: true,
                       });
-                    else {
+                    } else {
+                      setResults([]);
                       navigation.navigate('Restaurant', {
                         id: item.id,
                         collection: 'restaurants',
