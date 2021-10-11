@@ -7,7 +7,7 @@ import {enableScreens} from 'react-native-screens';
 function App() {
   enableScreens();
   React.useEffect(() => {
-    RNBootSplash.hide({fade: true});
+    setTimeout(() => RNBootSplash.hide({fade: true}), 5000);
   });
   return (
     <NavigationContainer>

@@ -52,7 +52,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
     trigger.current = false;
   };
   const getList = async () => {
-    if (isFocused)
+    if (isFocused && !isFoodSearch)
       try {
         setInitializing(true);
         let res = await getRestaurantList();
@@ -141,6 +141,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
     };
     return unsubscribe();
   }, []);
+  console.log(results);
   if (initializing) return <Loader />;
   if (!netState) return <NoInternet />;
   return (
@@ -153,7 +154,7 @@ const Search = ({navigation, route}: SearchScreenProps) => {
       {Resource && Resource.restaurantList && Resource.restaurantList.length ? (
         <>
           <FlatList
-            data={results}
+            data={!isFoodSearch ? results : foodList}
             keyExtractor={(item, index) => `${index}`}
             ListHeaderComponent={<ListHeader />}
             stickyHeaderIndices={[0]}

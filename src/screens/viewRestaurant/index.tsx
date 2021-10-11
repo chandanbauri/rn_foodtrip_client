@@ -13,6 +13,7 @@ import Loader from '../../components/loader/loader';
 import {useIsFocused} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import Feather from 'react-native-vector-icons/Feather';
+import NoInternet from '../../components/NoInternet';
 const {height, width} = Dimensions.get('window');
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
@@ -34,16 +35,16 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   };
   const fetchFeatures = async () => {
     try {
-      setInitializing(true);
+      // setInitializing(true);
       let res = await getFeatures();
       if (res) {
         let data = res.data;
         // //console.log(data);
         setFeatures(data);
-        setInitializing(false);
+        // setInitializing(false);
       }
     } catch (error) {
-      setInitializing(false);
+      // setInitializing(false);
       throw error;
     }
   };
@@ -100,13 +101,13 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   }, []);
   React.useEffect(() => {
     const unsubscribe = () => {
-      setInitializing(true);
+      // setInitializing(true);
       NetInfo.addEventListener(state => {
         //console.log('Connection type', state.type);
         //console.log('Is connected?', state.isConnected);
         // networkState.current = state.isInternetReachable;
         setNetState(state.isConnected);
-        setInitializing(!state.isConnected);
+        // setInitializing(!state.isConnected);
       });
     };
     return unsubscribe();

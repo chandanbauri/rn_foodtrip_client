@@ -13,26 +13,22 @@ let data = [
     //   'You must accept these terms and conditions when you use Adda Food Application:',
     ordered_concerns: [
       {
-        feild_title: 'For Restaurant Owner:',
-        description: `In case of payment did by mistake or in case of any payment related issues from Google Play Store or App Store, we are not entitled to refund any amount. If it is very crucial and any genuine problem is seen in our system than we can look into it and resolve the issue or issue refund.`,
+        feild_title: 'For Customer:',
+        description: `In case of payment did by mistake or in case of any payment related issue from Google Play Store, we are not entitled to refund any amount. If it is very crucial and any genuine problem is seen in our system than we can look into it and resolve the issue or issue refund.`,
       },
       {
-        feild_title: 'For Customer of Restaurant:',
-        description: `In case of payment did by mistake or in case of any payment related issues for food ordered with Food Dhaba, we are not entitled to refund any amount. Restaurant Owner will be responsible for issue refund to customer for placed order in any case.`,
+        feild_title: 'For orders from Restaurant:',
+        description: `Food Dhaba in not responsible for increase in amount of any of the item provided in menu list from specific restaurants. Amount per Item in Menu List is provided by Restaurants and may vary from time to time.`,
       },
     ],
     un_ordered_concerns: [
       {
         feild_title: 'Order Approval:',
-        description: `Food Dhaba is not responsible for any kind of order cancelation or approval. Delivery time, Taxes, Delivery Charges and Delivery times are decided by the restaurant owner. Restaurant owners are only responsible for any kind of updates and changes of extra charges. Food Dhaba is not taking any kind of taxes or extra charges from the customers.`,
-      },
-      {
-        feild_title: 'Communication Problems between Customer and Restaurant:',
-        description: `In case of misbehaviour, miscommunication or any illegal activities done by customer and restaurant registered here, we will not be responsible for any such activities, as we are not taking any proof of their identity.`,
+        description: `Food Dhaba may approve or cancel order. Delivery time may vary based on specific restaurants preparation time and location. Delivery charge and Food GST charges will be applied per order.`,
       },
       {
         feild_title: 'Blocking or Deleting your Account:',
-        description: `If we notice any illegal activity then we have all rights to permanently Block your account without any notice and reasons.`,
+        description: `If we notice any illegal activity then we have all the rights to permanently block your account without any notice and reasons.`,
       },
     ],
     // special_delclaration: `In case of any illegal activities from user, we can block their account permanently.`,
