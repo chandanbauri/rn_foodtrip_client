@@ -17,6 +17,7 @@ import Loader from '../../loader/loader';
 import RNPickerSelect from 'react-native-picker-select';
 import NetInfo from '@react-native-community/netinfo';
 import NoInternet from '../../NoInternet';
+import firebase from '@react-native-firebase/app';
 function CartInfo() {
   const isFocused = useIsFocused();
   const usersCollection = firestore().collection('Users');
@@ -27,61 +28,56 @@ function CartInfo() {
   const pickerRef = React.createRef<Picker<string>>();
   const Resource = React.useContext(ResourceContext);
   const Auth = React.useContext(AuthContext);
-  const [features, setFeature] = React.useState<any>();
+  const [features, setFeatures] = React.useState<any>();
   const [totalCost, setTotalCost] = React.useState<number>(0);
   const [addresses, setAddresses] = React.useState<Array<any>>([]);
   const [netState, setNetState] = React.useState<any>(null);
   const [initializing, setInitializing] = React.useState<boolean>(false);
-  const getUserDetails = async () => {
+
+  React.useEffect(() => {
+    const getFeatures = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('Features')
+      .doc('production')
+      .onSnapshot(snap => {
+        setFeatures(snap.data());
+      });
+    return () => getFeatures();
+  }, []);
+  React.useEffect(() => {
     if (Auth && Auth.user) {
-      try {
-        let list = await usersCollection
-          .doc(Auth.user.uid)
-          .collection('addresses')
-          .get();
-        if (list.size) {
-          setAddresses(() => {
-            return list.docs.map((item, index) => {
-              if (index == 0)
-                setOrderAddress(
-                  `${item.data().home}, ${item.data().area}, ${
-                    item.data().landmark
-                  }, ${item.data().city}, ${item.data().state},${
-                    item.data().pincode
-                  }`,
-                );
-              return {
-                ...item.data(),
-                id: item.id,
-              };
-            });
+      const fetchUserAddress = firebase
+        .app()
+        .firestore()
+        .collection('Users')
+        .doc(Auth?.user.uid)
+        .collection('addresses')
+        .onSnapshot(snap => {
+          let address: Array<any> = [];
+          // console.log('SNAP SIZE', snap.size);
+          if (snap.size === 0) {
+            setAddresses([]);
+            return;
+          }
+          snap.forEach(addess => {
+            if (orderAddress == '') {
+              setOrderAddress(
+                `${addess.data().home}, ${addess.data().area}, ${
+                  addess.data().landmark
+                }, ${addess.data().city}, ${addess.data().state},${
+                  addess.data().pincode
+                }`,
+              );
+            }
+            address.push({...addess.data(), id: addess.id});
           });
-
-          // );
-        } else {
-          setAddresses([]);
-        }
-      } catch (error) {
-        throw error;
-      }
+          setAddresses(address);
+        });
+      return () => fetchUserAddress();
     }
-  };
-  const fetchFeatures = async () => {
-    try {
-      setInitializing(true);
-      let res = await getFeatures();
-      if (res) {
-        let data = res.data;
-        // //console.log(data);
-        setFeature(data);
-        setInitializing(false);
-      }
-    } catch (error) {
-      setInitializing(false);
-      throw error;
-    }
-  };
-
+    setAddresses([]);
+  }, [Auth, Auth?.user]);
   function open() {
     if (pickerRef && pickerRef.current) pickerRef.current.focus();
   }
@@ -99,19 +95,13 @@ function CartInfo() {
     }
     return;
   }, [Resource?.cart]);
-  React.useEffect(() => {
-    getUserDetails().catch(error => {
-      throw error;
-    });
-    return;
-  }, []);
-  React.useEffect(() => {
-    if (isFocused)
-      fetchFeatures().catch(error => {
-        throw error;
-      });
-    return;
-  }, [isFocused]);
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     fetchFeatures().catch(error => {
+  //       throw error;
+  //     });
+  //   return;
+  // }, [isFocused]);
   React.useEffect(() => {
     const unsubscribe = () => {
       setInitializing(true);

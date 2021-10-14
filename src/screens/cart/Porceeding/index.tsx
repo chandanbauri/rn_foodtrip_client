@@ -188,7 +188,18 @@ export default function ProceedingScreen({
                             onPress: () => {
                               Resource?.EmptyCart();
                               Resource?.saveRestaurantDetils(null);
-                              navigation.navigate('pending');
+                              navigation.navigate('Main', {
+                                screen: 'TabNav',
+                                params: {
+                                  screen: 'MyOrder',
+                                  params: {
+                                    screen: 'Orders',
+                                    params: {
+                                      screen: 'pending',
+                                    },
+                                  },
+                                },
+                              });
                             },
                           },
                         ]);
@@ -301,8 +312,17 @@ export default function ProceedingScreen({
                                   onPress: () => {
                                     Resource?.EmptyCart();
                                     Resource?.saveRestaurantDetils(null);
-                                    navigation.navigate('Orders', {
-                                      screen: 'pending',
+                                    navigation.navigate('Main', {
+                                      screen: 'TabNav',
+                                      params: {
+                                        screen: 'MyOrder',
+                                        params: {
+                                          screen: 'Orders',
+                                          params: {
+                                            screen: 'pending',
+                                          },
+                                        },
+                                      },
                                     });
                                   },
                                 },

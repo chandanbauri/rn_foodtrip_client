@@ -77,28 +77,28 @@ const Search = ({navigation, route}: SearchScreenProps) => {
 
     textVal.current = text;
   };
-  const fetchFeatures = async () => {
-    try {
-      setInitializing(true);
-      let res = await getFeatures();
-      if (res) {
-        let data = res.data;
-        // //console.log(data);
-        setFeatures(data);
-        setInitializing(false);
-      }
-    } catch (error) {
-      setInitializing(false);
-      throw error;
-    }
-  };
+  // const fetchFeatures = async () => {
+  //   try {
+  //     setInitializing(true);
+  //     let res = await getFeatures();
+  //     if (res) {
+  //       let data = res.data;
+  //       // //console.log(data);
+  //       setFeatures(data);
+  //       setInitializing(false);
+  //     }
+  //   } catch (error) {
+  //     setInitializing(false);
+  //     throw error;
+  //   }
+  // };
 
-  React.useEffect(() => {
-    if (isFocused)
-      fetchFeatures().catch(error => {
-        throw error;
-      });
-  }, []);
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     fetchFeatures().catch(error => {
+  //       throw error;
+  //     });
+  // }, []);
   // React.useEffect(() => {
   //   if (isFocused)
   //     getList().catch(error => {
@@ -139,6 +139,17 @@ const Search = ({navigation, route}: SearchScreenProps) => {
     setInitializing(false);
 
     return () => fetchList();
+  }, []);
+  React.useEffect(() => {
+    const getFeatures = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('Features')
+      .doc('production')
+      .onSnapshot(snap => {
+        setFeatures(snap.data());
+      });
+    return () => getFeatures();
   }, []);
 
   const ListHeader = () => (

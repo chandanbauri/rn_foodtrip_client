@@ -48,7 +48,13 @@ export const ResourceProvider: React.FunctionComponent = ({children}) => {
 
   const fetchLastSavedCartInfo = async () => {
     try {
-      setCart(await getPreviousCartValue());
+      let cart = await getPreviousCartValue();
+      let total: number = 0;
+      cart.forEach((food: any) => {
+        total += parseInt(food.cost) + parseInt(food.count);
+      });
+      totalCost.current = total;
+      setCart(cart);
       let lastSavedRestaurant = await getValue('lastRestaurant');
       if (lastSavedRestaurant !== null) {
         setRestaurantDetails(lastSavedRestaurant);

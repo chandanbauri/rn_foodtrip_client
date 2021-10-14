@@ -14,6 +14,7 @@ import {useIsFocused} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import Feather from 'react-native-vector-icons/Feather';
 import NoInternet from '../../components/NoInternet';
+import firebase from '@react-native-firebase/app';
 const {height, width} = Dimensions.get('window');
 
 function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
@@ -33,21 +34,21 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
   const goBack = () => {
     navigation.navigate('Home');
   };
-  const fetchFeatures = async () => {
-    try {
-      // setInitializing(true);
-      let res = await getFeatures();
-      if (res) {
-        let data = res.data;
-        // //console.log(data);
-        setFeatures(data);
-        // setInitializing(false);
-      }
-    } catch (error) {
-      // setInitializing(false);
-      throw error;
-    }
-  };
+  // const fetchFeatures = async () => {
+  //   try {
+  //     // setInitializing(true);
+  //     let res = await getFeatures();
+  //     if (res) {
+  //       let data = res.data;
+  //       // //console.log(data);
+  //       setFeatures(data);
+  //       // setInitializing(false);
+  //     }
+  //   } catch (error) {
+  //     // setInitializing(false);
+  //     throw error;
+  //   }
+  // };
   const openBottomSheet = () => {
     trigger.current = true;
   };
@@ -55,30 +56,30 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
     trigger.current = false;
   };
 
-  const extractCategories = (list: Array<any>) => {
-    let raw = list.map(item => item.category);
-    return [...new Set(raw)];
-  };
-  const fetchFoodList = async () => {
-    try {
-      let res = await getFoodList({parentName: collection, parentID: id});
-      if (res && res.data && isFocused) {
-        let list = JSON.parse(res.data);
-        let catList = extractCategories(list);
-        setCategories(catList);
-        setFoodList(list);
-        setSearchList(list);
-        let items = list.filter((item: any) => item.category == catList[0]);
-        setActiveTab(0);
-        // setTabList(items);
-        setTablist(items);
-        setInitializing(false);
-      }
-    } catch (error) {
-      // throw error;
-      //console.log(error);
-    }
-  };
+  // const extractCategories = (list: Array<any>) => {
+  //   let raw = list.map(item => item.category);
+  //   return [...new Set(raw)];
+  // };
+  // const fetchFoodList = async () => {
+  //   try {
+  //     let res = await getFoodList({parentName: collection, parentID: id});
+  //     if (res && res.data && isFocused) {
+  //       let list = JSON.parse(res.data);
+  //       let catList = extractCategories(list);
+  //       setCategories(catList);
+  //       setFoodList(list);
+  //       setSearchList(list);
+  //       let items = list.filter((item: any) => item.category == catList[0]);
+  //       setActiveTab(0);
+  //       // setTabList(items);
+  //       setTablist(items);
+  //       setInitializing(false);
+  //     }
+  //   } catch (error) {
+  //     // throw error;
+  //     //console.log(error);
+  //   }
+  // };
 
   const onCategoryClick = (categoryName: string, index: number) => {
     let list = foodList.filter(item => item.category == categoryName);
@@ -86,18 +87,60 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
     setTablist(list);
   };
 
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     fetchFeatures().catch(error => {
+  //       throw error;
+  //     });
+  // }, []);
+  // React.useEffect(() => {
+  //   if (isFocused)
+  //     fetchFoodList().catch(error => {
+  //       throw error;
+  //     });
+  //   return;
+  // }, []);
   React.useEffect(() => {
-    if (isFocused)
-      fetchFeatures().catch(error => {
-        throw error;
+    setInitializing(true);
+    const getFoodMenu = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection(collection)
+      .doc(id)
+      .collection('foods')
+      .onSnapshot(snap => {
+        let categories: Array<any> = [];
+        let list: Array<any> = [];
+        snap.forEach(food => {
+          categories.push(food.data().category);
+          list.push({...food.data(), id: food.id});
+        });
+        // let list = snap.docs;
+        // let catList = extractCategories(list);
+        setCategories([...new Set(categories)]);
+        setFoodList(list);
+        setSearchList(list);
+        let items = list.filter(
+          (item: any) => item.category == [...new Set(categories)][0],
+        );
+        setActiveTab(0);
+        // setTabList(items);
+        setTablist(items);
+        // setInitializing(false);
+        setInitializing(false);
       });
+    return () => getFoodMenu();
   }, []);
   React.useEffect(() => {
-    if (isFocused)
-      fetchFoodList().catch(error => {
-        throw error;
+    const getFeatures = firebase
+      .app('SECONDARY_APP')
+      .firestore()
+      .collection('Features')
+      .doc('production')
+      .onSnapshot(snap => {
+        setFeatures(snap.data());
       });
-    return;
+    return () => getFeatures();
   }, []);
   React.useEffect(() => {
     const unsubscribe = () => {
@@ -241,8 +284,9 @@ function ViewRestaurant({navigation, route}: RestaurantScreenProps) {
               <Pressable
                 style={{}}
                 onPress={() => {
+                  // console.log('TOTAL COST', Resouce?.getTotalCost());
                   if (
-                    trigger.current &&
+                    // trigger.current &&
                     Resouce &&
                     Resouce?.getTotalCost() >= features.minimum_order_price
                   )
