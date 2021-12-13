@@ -23,10 +23,7 @@ import {config} from '../../../utilities/razorpay';
 import RazorpayCheckout from 'react-native-razorpay';
 import auth from '@react-native-firebase/auth';
 import Loader from '../../../components/loader/loader';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FocusedStatusBar from '../../../components/statusBar';
-import firestore from '@react-native-firebase/firestore';
-import {Screen} from 'react-native-screens';
 import NetInfo from '@react-native-community/netinfo';
 import NoInternet from '../../../components/NoInternet';
 
@@ -42,19 +39,10 @@ export default function ProceedingScreen({
   const [initializing, setInitializing] = React.useState<boolean>(false);
   const [netState, setNetState] = React.useState<any>(null);
   const Resource = React.useContext(ResourceContext);
-
-  // React.useEffect(() => {
-  //   if (!Resource?.cart.length) {
-  //     navigation.navigate('Home');
-  //   }
-  // });
   React.useEffect(() => {
     const unsubscribe = () => {
       setInitializing(true);
       NetInfo.addEventListener(state => {
-        //console.log('Connection type', state.type);
-        //console.log('Is connected?', state.isConnected);
-        // networkState.current = state.isInternetReachable;
         setNetState(state.isConnected);
         setInitializing(!state.isConnected);
       });
@@ -78,7 +66,6 @@ export default function ProceedingScreen({
           style={{
             height: height * 0.5,
             width: '100%',
-            // flex: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

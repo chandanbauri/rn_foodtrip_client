@@ -94,7 +94,11 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         snap.forEach(restaurant => {
           restaurants.push({...restaurant.data(), id: restaurant.id});
         });
-        Resource?.setRestaurants(restaurants);
+        Resource?.setRestaurants(
+          restaurants.sort(item =>
+            item.opening && isAvailable(item.opening, item.closing) ? -1 : 1,
+          ),
+        );
         setInitializing(false);
       });
     return () => fetchList();
@@ -131,7 +135,11 @@ const Home = ({navigation, route}: HomeScreenProps) => {
         snap.forEach(restaurant => {
           restaurants.push({...restaurant.data(), id: restaurant.id});
         });
-        Resource?.setRestaurants(restaurants);
+        Resource?.setRestaurants(
+          restaurants.sort(item =>
+            item.opening && isAvailable(item.opening, item.closing) ? -1 : 1,
+          ),
+        );
         setInitializing(false);
       });
 
@@ -272,7 +280,11 @@ const Home = ({navigation, route}: HomeScreenProps) => {
           Resource.restaurantList &&
           Resource.restaurantList.length ? (
             <FlatList
-              data={Resource?.restaurantList}
+              data={Resource?.restaurantList.sort((item: any) =>
+                item.opening && isAvailable(item.opening, item.closing)
+                  ? -1
+                  : 1,
+              )}
               keyExtractor={(item, index) => `${index}`}
               ListHeaderComponent={<ListHeader />}
               showsVerticalScrollIndicator={false}
